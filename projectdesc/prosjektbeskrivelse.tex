@@ -1,0 +1,105 @@
+\documentclass[a4paper,norsk]{report}
+
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel,textcomp}
+\usepackage[pdftex]{graphicx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{varioref}
+
+\setlength\topmargin{0in}
+\setlength\headheight{0in}
+\setlength\headsep{0in}
+\setlength\textheight{8.7in}
+\setlength\textwidth{6.5in}
+\setlength\oddsidemargin{0in}
+\setlength\evensidemargin{0in}
+\setlength\parindent{0.25in}
+\setlength\parskip{0.15in}
+
+\hypersetup{pdfborder={0 0 0},colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
+
+\title{Masteroppgave - prosjektbeskrivelse}
+\author{Eivind Barstad Waaler (\emph{eivindwa})\\
+  \url{eivindwa@student.matnat.uio.no}}
+
+\begin{document}
+\maketitle
+
+\chapter{Mål, omfang, problemstilling og tittel}
+
+\section{Mål}
+
+Målet med oppgaven er å se på hvor godt egnet Scala er til å bygge
+spesialiserte DSLer (Domain Specific Languages). Et sekundært mål er å
+sammenligne Scala med dynamiske språk i forhold til implementasjon av
+DSL.
+
+\section{Omfang}
+
+3 forskjellige DSLer implementeres i Scala, samt ett eller flere
+dynamiske språk. Grundige sammenligninger foretaes, med bruk av
+målinger der mulig.
+
+\section{Problemstilling}
+
+Innen matematisk og statistisk programmering benyttes ofte høynivå
+språk som er spesifikke til sitt bruk. Man kan på mange måter si at
+disse språkene blir DSLer for sitt spesialområde. Man skriver kort og
+konsis kode som gjør avanserte matematiske operasjoner. Disse språkene
+vil typisk ikke ha så god støtte for å bygge applikasjoner. Da
+benyttes gjerne mer generelle språk som C++, Java eller C\#.
+
+Scala er et relativt nytt språk som har alle muligheter man kan
+forvente av et generelt språk. Samtidig har det såpass avansert
+syntaks at man kan skrive kosis DSL-kode. Tanken er å vise at man ved
+hjelp av Scala vil kunne skrive en DSL som kan sammenlignes med et
+høynivå spesialisert språk, samtidig som man har alle muligheter for
+applikasjonsprogrammering man har i et generelt språk.
+
+\section{Foreløpig tittel: Evaluation of DSL capabilities in Scala}
+
+\chapter{Metoder}
+
+Hovedmetoden vil være som egendrevet eksperiment. Eksemplene kommer
+til å bli skrevet av meg. Et teoristudium vil benyttes for å begrunne
+og understøtte påstander, og sørge for at ``best practice'' følges i
+implementasjonene.
+
+Det vil være et fokus på målinger og metode for måling. Dersom man
+skal kunne generalisere noe av de konkrete eksemplene som lages er det
+viktig at målingene er nøyaktige og mest mulig korrekte. Det er viktig
+å ha et fokus på hva som skal måles og hvordan.
+
+\chapter{Fremdriftsplan}
+
+\section{Overordnet plan}
+
+\begin{itemize}
+  \item 1. mai 2009 - Oppstart.
+  \item Mai - juni 2009 - Teorisøk og overordnet valg av teori.
+  \item Juli - september 2009 - Lese teori.
+  \item September 2009 - Finne og bestemme eksempler for implementasjon.
+  \item Oktober - desember 2009 - Implementere eksempler og kjøre
+    sammenlignende målinger.
+  \item Januar - april 2010 - Skrive rapport, samt detaljere/rafinere
+    implementasjoner/eksempler.
+  \item 1. mai 2010 - Levering.
+\end{itemize}
+
+\section{Milepælsplan}
+
+\begin{itemize}
+  \item 01.05.2009 - Prosjektbeskrivelse med foreløpig tittel.
+  \item 01.07.2009 - Foreløpig teoriliste.
+  \item 01.09.2009 - Revidert problembeskrivelse.
+  \item 01.10.2009 - Liste over eksempler som skal implementeres.
+  \item 01.12.2009 - Første utkast til implementasjon og målinger.
+  \item 01.01.2010 - Implementasjoner og målinger ferdig.
+  \item 01.02.2010 - Rapport oppsett og struktur klar.
+  \item 01.03.2010 - Første utkast til endelig rapport.
+  \item 01.05.2010 - Levere ferdig rapport.
+\end{itemize}
+
+\end{document}

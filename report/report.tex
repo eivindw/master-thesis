@@ -1,0 +1,96 @@
+\documentclass[a4paper,english]{report}
+
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fourier}
+\usepackage{babel,textcomp}
+\usepackage[pdftex]{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{varioref}
+\usepackage{cite}
+\usepackage[color]{uiosloforside}
+
+\setlength\topmargin{0in}
+\setlength\headheight{0in}
+\setlength\headsep{0in}
+\setlength\textheight{8.7in}
+\setlength\textwidth{6.5in}
+\setlength\oddsidemargin{0in}
+\setlength\evensidemargin{0in}
+\setlength\parindent{0.25in}
+\setlength\parskip{0.15in}
+\setlength\columnsep{0.25in}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{matnat}{rgb}{0.004,0.47,0.44}
+
+% "define" Scala
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,
+    do,else,extends,false,final,finally,
+    for,if,implicit,import,match,mixin,
+    new,null,object,override,package,
+    private,protected,requires,return,sealed,
+    super,this,throw,trait,true,try,
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+\lstset{basicstyle=\footnotesize,
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  frame=single,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  language=scala
+}
+
+\hypersetup{pdfborder={0 0 0},colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
+
+\title{Creating high performance DSLs in Scala}
+\author{Eivind Barstad Waaler (\emph{eivindwa})}
+
+\begin{document}
+\uiosloforside[kind={Master thesis},boxcolor=matnat,textcolor=white]
+
+\chapter{Abstract}
+
+Scala is an increasingly popular programming language running on the
+JVM (Java Virtual Machine). It was first released in 2003 and is now
+available in version 2.7.5. Scala has a number of features that could
+be useful when developing Domain-Specific Languages (DSLs). The goal
+of this paper is to provide an overview and evaluate these features
+with examples and discussion.
+
+\tableofcontents
+
+\listoftables
+
+\listoffigures
+
+\chapter{Preface}
+
+\chapter{Introduction}
+
+\chapter{Method}
+
+\chapter{Summary}
+
+\bibliography{master}
+\bibliographystyle{plain}
+
+\end{document}

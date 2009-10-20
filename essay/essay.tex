@@ -1,0 +1,317 @@
+\documentclass[a4paper,english,twocolumn]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fourier}
+\usepackage{babel,textcomp}
+\usepackage[pdftex]{graphicx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{varioref}
+\usepackage{cite}
+
+\setlength\topmargin{0in}
+\setlength\headheight{0in}
+\setlength\headsep{0in}
+\setlength\textheight{8.7in}
+\setlength\textwidth{6.5in}
+\setlength\oddsidemargin{0in}
+\setlength\evensidemargin{0in}
+\setlength\parindent{0.25in}
+\setlength\parskip{0.15in}
+\setlength\columnsep{0.25in}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+% "define" Scala
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,
+    do,else,extends,false,final,finally,
+    for,if,implicit,import,match,mixin,
+    new,null,object,override,package,
+    private,protected,requires,return,sealed,
+    super,this,throw,trait,true,try,
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+\lstset{basicstyle=\footnotesize,
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  frame=single,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  language=scala
+}
+
+\hypersetup{pdfborder={0 0 0},colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
+
+\title{DSL Capabilities in Scala}
+
+\author{Eivind Barstad Waaler (\emph{eivindwa})\\
+  \url{eivindwa@student.matnat.uio.no}}
+
+\begin{document}
+\maketitle
+
+\section*{Abstract}
+
+Scala is an increasingly popular programming language running on the
+JVM (Java Virtual Machine). It was first released in 2003 and is now
+available in version 2.7.7. Scala has a number of features that could
+be useful when developing Domain-Specific Languages (DSLs). The goal
+of this paper is to provide an overview and evaluate these features
+with examples and discussion.
+
+\section{DSL Description and Terminology}
+
+``Domain-specific languages (DSLs) are languages tailored to a
+specific application domain. They offer substantial gains in
+expressiveness and ease of use compared with general-purpose
+programming languages.''\cite{mer05}
+
+We have two main types of DSLs; internal and external DSLs. Internal
+DSLs uses the host language so that it gets the feel of a particular
+language. They are compiled and run together with the host
+language. Internal DSLs are also referred to as embedded DSLs or
+Fluent Interfaces. Eternal DSLs have custom syntax and typically
+requires you to write a full parser to process them.
+
+Scala has features to support development of both internal and
+external DSLs. They will be described in the following sections.
+
+\section{Internal DSL Features}
+
+Internal DSLs are typically developed as highly specialized APIs
+(libraries). They run directly in the host language using only
+features present in the language. As such they can take advantage of
+the compiler and tool support for the host language. The disadvantage
+is that you have to rely only on the features and syntax found in the
+host language.
+
+The main use for internal DSLs will typically be libraries where you
+want to control the usage to a specific syntax or programming style. A
+good example is testing frameworks for behaviour driven development,
+like RSpec (\url{http://rspec.info}) or Cucumber
+(\url{http://cukes.info}).
+
+\subsection{Type Inference and Implicits}
+
+The Scala compiler will try to infer the types used. So if the type is
+obvious there is no need to specify it:
+
+\begin{lstlisting}
+val i = 42 // Type Int is infered
+val d = i + 2.1 // Type Double is infered
+\end{lstlisting}
+
+The language also supports implicit type conversions. So if an object
+does not have the method being called on it, the compiler will try to
+convert it to a type that contains the method:
+
+\begin{lstlisting}
+// Wrapper class for int
+class MyInt(val i: Int) {
+  def doubleIt = i * 2 // Method
+}
+// Implicit conversion
+implicit def fromInt(i: Int) = new MyInt(i)
+// Convert Int to MyInt and call method
+4.doubleIt
+\end{lstlisting}
+
+\subsection{Method Names and Operator Notation}
+
+Scala has two features regarding method names and syntax that are
+interesting with regards to DSL development:
+
+\begin{itemize}
+\item Arbitrary method names - Scala methods can have special
+  characters as names. As such Scala has full support for operator
+  overloading, as operators are just regular methods with special
+  names. For example \texttt{+}, \texttt{!=} and \texttt{<=}.
+\item Operator notation - Methods in Scala can be called without the
+  dot and parentheses, as shown in the examples below.
+\end{itemize}
+
+\begin{lstlisting}
+abstract class Matrix {
+  // Method names can be operators
+  def +(other: Matrix) = add(other)
+  // Regular method name
+  def add(other: Matrix): Matrix
+}
+// Regular notation
+val m3 = m1.+(m2)
+val m3 = m1.add(m2)
+// Operator notation
+val m3 = m1 + m2
+val m3 = m1 add m2
+\end{lstlisting}
+
+\subsection{The ``magic'' \texttt{apply} Method}
+
+Scala uses the \texttt{apply} method to let classes and object define
+functionality that appears to be native in the language. In the
+following example the \texttt{apply} method is used to index the
+\texttt{Matrix} class as if it was a native feature:
+
+\begin{lstlisting}
+class Matrix[T] {
+  def apply(row: Int, col: Int): T = ...
+}
+val intMatrix = ... // Matrix[Int]
+// Get Int at position 2, 4
+val intVal = intMatrix(2, 4)
+\end{lstlisting}
+
+\subsection{Traits - Polymorphic Abilities}
+
+Scala has support for virtual types (abstract type members) and
+familiy polymorphism\cite{ode03}, mixin composition\cite{ode05} and
+higher-order genericity\cite{moo08}. These are all powerful features
+that support polymorphic embedding of DSLs\cite{hof08}.
+
+This allows building DSLs that can have several different
+interpretations as reusable components. It can also be used to
+effectively combine different DSLs into new ones. The paper
+``Polymorphic Embedding of DSLs''\cite{hof08} describes this in detail
+with examples.
+
+A use of traits can be to split functionality in several traits and
+create classes/objects with only the methods that we need. In the
+following example the \texttt{Matrix} class does not have any methods,
+but instances of the class can be mixed in with traits containing
+various methods:
+
+\begin{lstlisting}
+class Matrix {} // No methods
+
+trait AvgMtx { this: Matrix =>
+  def avg(): Matrix = { ... }
+}
+
+trait MorphMtx { this: Matrix =>
+  def erode(): Matrix = { ... }
+  def dilate(): Matrix = { ... }
+}
+
+// Matrix with only avg() method
+val m1 = new Matrix with AvgMtx
+// Matrix with erode() and dilate() methods
+val m2 = new Matrix with MorphMtx
+// Matrix with "all" methods
+val m3 = new Matrix with AvgMtx with MorphMtx
+\end{lstlisting}
+
+\section{External DSL Features}
+
+An external DSL is a separate language with its own syntax. The main
+advantage with this is that the DSL is completely free in the way
+syntax and structure is defined. The main disadvantage (compared to an
+internal DSL) is that is will not get compiler and tool support from
+the host language.
+
+The main use for external DSLs is separate languages for specific
+tasks. Examples are data-languages like XML and JSON (which are both
+implemented as external DSLs in Scala).
+
+\subsection{Combinator Parsing}
+
+Scala includes a library for building parser combinators - functions
+and operators defined in Scala that will serve as building blocks for
+parsers. The mechanism is described in detail in chapter 31 in the
+``Programming in Scala'' book\cite{ode08}.
+
+Simply explained this allows a developer to specify a grammar with
+actions directly in Scala, thus building support for an internal
+DSL. The example below show a simple grammar for arithmetic
+expressions:
+
+\begin{lstlisting}
+import scala.util.parsing.combinator._ 
+
+// Simple arithmetic parser
+class Arith extends JavaTokenParsers { 
+  def expr: Parser[Any] =
+    term~rep("+"~term | "-"~term) 
+  def term: Parser[Any] =
+    factor~rep("*"~factor | "/"~factor) 
+  def factor: Parser[Any] =
+    floatingPointNumber | "("~expr~")" 
+}
+
+// Testing the parser
+val parser = new Arith
+val input = "2 * (4 + 5)" // OK input
+println(parser.parseAll(parser.expr, input))
+val bad = "2 * ((4 + 5)" // Bad parenthesis
+println(parser.parseAll(parser.expr, bad))
+\end{lstlisting}
+
+The example does not perform any actions, but still shows how the
+mechanism works. The first example passes ok and the second one yields
+an error as it is missing a parenthesis:
+
+\begin{lstlisting}[language=tex]
+parser.parseAll(parser.expr, bad)
+
+[1.13] failure: `)' expected but `' found
+
+2 * ((4 + 5)
+            ^
+\end{lstlisting}
+
+A simplified version of the above example implemented with actions
+could look as follows:
+
+\begin{lstlisting}
+import scala.util.parsing.combinator._
+
+class Arith extends JavaTokenParsers {
+  def expr: Parser[Double] =
+    factor~"+"~factor ^^ 
+      { case f1~"+"~f2 => f1 + f2 }
+  def factor: Parser[Double] =
+    floatingPointNumber ^^ (_.toDouble)
+}
+
+// Testing
+val p = new Arith
+val parse = p.parseAll(p.expr, _: String).get
+println(parse("2 + 3")) // Output: 5.0
+println(parse("2.5 + 3.1")) // Output: 5.6
+\end{lstlisting}
+
+In this example the grammar is simple enough to evaluate directly in
+the actions. It would be easy to create a separate evaluation system
+instead. However it is implemented this allows for using the
+combinator parsing framework to embed an external DSL directly in the
+language.
+
+\section{Conclusion}
+
+Scala has a wide range of features that are useful when creating a
+DSL. It can support internal (embedded) DSLs because of concise
+syntax, a powerful type system and polymorphic abilities. Scala can
+also directly support the development of an external DSL with the
+parser combinator framework.
+
+\bibliography{master}
+\bibliographystyle{plain}
+
+\end{document}
