@@ -72,11 +72,13 @@
 \chapter{Abstract}
 
 Scala is an increasingly popular programming language running on the
-JVM (Java Virtual Machine). It was first released in 2003 and is now
-available in version 2.7.5. Scala has a number of features that could
-be useful when developing Domain-Specific Languages (DSLs). The goal
-of this paper is to provide an overview and evaluate these features
-with examples and discussion.
+JVM (Java Virtual Machine). One of its pronounced goals is to simplify
+the creation of DSLs (Domain-Specific Languages) with extensible
+syntax and combination of Object-Oriented and Functional
+Programming. This thesis examines these possibilities with regard to
+performance. It is demonstrated how you can use Scala to create
+efficient DSLs on the JVM, utilizing parallel and concurrent
+mechanisms found in modern computers.
 
 \tableofcontents
 
@@ -167,13 +169,30 @@ Pure syntax examples.
 
 \subsection{Parallel Processing}
 
-General description of parallel computing on Image Processing.
+With images larger than a certain size, the operations performed in
+the image analysis are bound to be heavy in terms of the number of
+computations that need to be executed. This opens up a demand for
+exploiting the capabilities found in modern computers with regard to
+parallelization and concurrency. In the following sections we look at
+different mechanisms available from the Scala language to achieve
+better performance through utilization of the hardware resources
+available in the computer. The first two sections discuss mechanisms
+for concurrent programming on a multi-core/-processor environment,
+while the third section discuss a mechanism for parallelization using
+the GPU (Graphics Processing Unit).
+
+\subsubsection{Actors API}
+\label{sec:actors}
+
+Describe Actors API with example from DSL.
 
 \subsubsection{Futures API}
+\label{sec:futures}
 
 Describe Futures API with example from DSL.
 
 \subsubsection{OpenCL with ScalaCL}
+\label{sec:opencl}
 
 Brief description of OpenCL and ScalaCL.
 
