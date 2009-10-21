@@ -10,6 +10,8 @@
 \usepackage{varioref}
 \usepackage{cite}
 \usepackage[color]{uiosloforside}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
 
 \setlength\topmargin{0in}
 \setlength\headheight{0in}
@@ -84,11 +86,110 @@ with examples and discussion.
 
 \chapter{Preface}
 
+Description of master-thesis, amount of work.
+
+Short introduction to department (IFI) and group (OMS).
+
+Thanks to supervisor++
+
 \chapter{Introduction}
 
-\chapter{Method}
+\section{Problem Description}
+
+Detailed description of why and what. 
+
+\section{Method}
+
+Description of main method -- exploratory research.
+
+Description of theory search and selection. Review of existing
+literature.
+
+TODO - look through material from INF5500 about methods and searching.
+
+\chapter{Domain Specific Languages}
+
+Description of DSL terminology and existing literature and research.
+
+\chapter{Scala}
+
+Test referance here \cite{hud96}.
+
+Short general description of Scala.
+
+More detailed description on DSL capabilities in Scala.
+
+More detailed description on concurrent/parallel capabilities in Scala.
+
+\section{Scala and Java}
+
+The relationship between Scala and Java is illustrated in figure
+\ref{fig:scalajava}.
+
+\begin{figure}
+  \begin{center}
+  \tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=5em, text centered, rounded corners, minimum height=4em]
+  \tikzstyle{line} = [draw, -latex']
+  \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=2.5cm, minimum height=2em]
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [cloud] (class) {.class};
+    \node [block, left of=class, above of=class] (scalacompile) {scalac};
+    \node [cloud, left of=scalacompile] (scala) {.scala};
+    \node [block, right of=class, above of=class] (javacompile) {javac};
+    \node [cloud, right of=javacompile] (java) {.java};
+    \node [block, below of=class] (jvm) {Java Virtual Machine};
+    % Draw edges
+    \path [line] (scalacompile) -- (class);
+    \path [line] (javacompile) -- (class);
+    \path [line] (class) -- (jvm);
+    \path [line] (scala) -- (scalacompile);
+    \path [line] (java) -- (javacompile);
+  \end{tikzpicture}
+  \end{center}
+  \caption{Showing the relationship between Scala and
+    Java.\label{fig:scalajava}}
+\end{figure}
+
+\chapter{Results}
+
+\section{DSL for Image Processing}
+
+\subsection{Description}
+
+General description of DSL.
+
+\subsection{Syntax}
+
+Pure syntax examples.
+
+\subsection{Parallel Processing}
+
+General description of parallel computing on Image Processing.
+
+\subsubsection{Futures API}
+
+Describe Futures API with example from DSL.
+
+\subsubsection{OpenCL with ScalaCL}
+
+Brief description of OpenCL and ScalaCL.
+
+Description of DSL example using ScalaCL.
+
+\subsection{Efficient Implementation Tips}
+
+General tips/lessons learned:
+
+\begin{itemize}
+  \item Datastructures -- \texttt{Array} over \texttt{List}.
+  \item Iterating -- \texttt{while-loops} over \texttt{for comprehensions}.
+  \item Scala and primitives
+\end{itemize}
 
 \chapter{Summary}
+
+Summary.. $\ddot\smile$
 
 \bibliography{master}
 \bibliographystyle{plain}
