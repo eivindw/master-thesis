@@ -9,5 +9,7 @@ TODO/idea list for master
 - Search/read more theory on embedded DSLs
 - Build example using Swarm
 - Read on method/structure from INF5500
-- More DSL examples using Actor API
+- More DSL examples using Actor API:
+  * Mashup example (XML avinor, yr.no ++ combined)
+  * Chess DSL (Moves f4-h2+, multithreaded "brain")
 - Learn more about partial functions vs. partially applied functions
