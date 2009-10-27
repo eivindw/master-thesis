@@ -13,3 +13,10 @@ TODO/idea list for master
   * Mashup example (XML avinor, yr.no ++ combined)
   * Chess DSL (Moves f4-h2+, multithreaded "brain")
 - Learn more about partial functions vs. partially applied functions
+- JVM options (-XX:+UseConcMarkSweepGC -XX:+UseCompressedOops ++)
+  * http://blog.juma.me.uk/2009/10/26/new-jvm-options-and-scala-iteration-performance/
+- Create proper benchmark suite to test/compare performance:
+  * 2DArray vs List[List]
+  * for comprehensions vs while
+  * JVM tuning
+  * ScalaCL vs parallel vs single-thread vs Swarm(?)

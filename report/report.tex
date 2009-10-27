@@ -149,18 +149,36 @@ Description of DSL terminology and existing literature and research.
 
 \chapter{Scala}
 
-Test reference here \cite{hud96}.
+\textit{``Scala is a general purpose programming language designed to
+  express common programming patterns in a concise, elegant, and
+  type-safe way. It smoothly integrates features of object-oriented
+  and functional languages, enabling Java and other programmers to be
+  more productive. Code sizes are typically reduced by a factor of two
+  to three when compared to an equivalent Java
+  application''}\cite{scala}.
 
-Short general description of Scala.
+Scala is a relatively new language (first version released 2003
+\cite{scala}) providing exciting programming capabilities on the Java
+Virtual Machine (JVM). The main reason for chosing Scala in this
+thesis is the combination of powerful programming structures (both
+object-oriented and functional) with the cross-platform and wide
+adoption of the JVM. Code written in Scala can be run on any JVM
+version 1.5 or newer, and can utilize any library written in Java. It
+can thus be seen as a <<best of both worlds>> language.
 
-More detailed description on DSL capabilities in Scala.
-
-More detailed description on concurrent/parallel capabilities in Scala.
+The following sections describe properties of Scala that might make it
+suited for building <<high performance DLSs>> on the JVM. For more
+detailed information about Scala please refer to \cite{ode08},
+\cite{scala} or \cite{scalatour}.
 
 \section{Scala and Java}
 
-The relationship between Scala and Java is illustrated in figure
-\vref{fig:scalajava}.
+Scala code (.scala files) compiles to Java bytecode (.class files)
+through a special compiler (\texttt{scalac}). The bytecode can then be
+run on the JVM as if it was created from Java source (.java files). In
+adition Scala provides a number of library classes that need to be
+included as a jar file. This relationship between Scala and Java is
+illustrated in figure \vref{fig:scalajava}.
 
 \begin{figure}
   \begin{center}
@@ -185,9 +203,34 @@ The relationship between Scala and Java is illustrated in figure
     \path [dotted, line] (scalalib) -- (jvm);
   \end{tikzpicture}
   \end{center}
-  \caption{Showing the relationship between Scala and
+  \caption{Visual representation of the relationship between Scala and
     Java.\label{fig:scalajava}}
 \end{figure}
+
+The tight relationship with Java has a number of advantages when using
+Scala:
+
+\begin{itemize}
+\item Cross-platform distribution -- Code written in Scala can be run
+  on any platform supporting JVM 1.5 or newer.
+\item Stability and standards -- The JVM is a stable platform with
+  good support for internationalization (Unicode support ++) and
+  localization (supports local languages and standards).
+\item Access to libraries -- The JVM has a wide range of libraries
+  available, many being Open Source.
+\item High performance -- The JVM has been proven to be a high
+  performant Virtual Machine, with a large number of tuning
+  possibilities.
+\end{itemize}
+
+There are also disadvantages with such a tight coupling to the JVM:
+
+\begin{itemize}
+\item Limitations in bytecode -- Scala, being a functional language,
+  would benefit from features not present in the current version of
+  the JVM (better recursion optimizations, generics without erasure
+  ++).
+\end{itemize}
 
 \chapter{Results}
 
@@ -233,13 +276,180 @@ Brief description of OpenCL \cite{opencl} and ScalaCL \cite{scalacl}.
 Description of DSL example using ScalaCL.
 
 \subsection{Efficient Implementation Tips}
+\label{sec:effimpl}
 
-General tips/lessons learned:
+When performing the same operation a large number of times, as is the
+case with many algorithms for Image Processing, there are various
+implementation related things that need to be considered. In this
+section I summarize the lessons learned with regards to tuning the
+code for maximum performance.
+
+\subsubsection{Choice of data structures}
+\label{sec:datastructures}
+
+The underlying data structure for images and Image Processing is the
+matrix. Since Scala does not include an efficient implementation of
+matrix I ended up testing a few different variants:
 
 \begin{itemize}
-  \item Datastructures -- \texttt{Array} over \texttt{List}.
-  \item Iterating -- \texttt{while-loops} over \texttt{for comprehensions}.
+\item \textbf{List of Lists} -- A very logical implementation of
+  matrix is by using Scala \texttt{Lists}. The idea for this
+  implementation was inspired by a blog post by Jonathan Merritt
+  \cite{mer08}. A simple example of using a list of lists is shown in
+  figure \vref{fig:listoflist}. However, this implementation proves to
+  be very slow in specific element access and iteration.
+\item \textbf{2D Array} -- In Scala an \texttt{Array} will usually be
+  faster than \texttt{List} because it is compiled to a native array
+  in bytecode. It is also faster to implement as one flat array,
+  rather than an array of arrays. This gives a much more efficient
+  implementation with regards to element access and iteration. The
+  implementation becomes slightly less straight-forward as we need to
+  calculate the element positions in the array, as shown in figure
+  \vref{fig:2darray}.
+\end{itemize}
+
+\begin{figure}
+  \begin{lstlisting}
+class Matrix[T](val elements: List[List[T]]) {
+  val nRows = elements.size
+  val nCols = if(elements.isEmpty) 0
+              else elements.head.size
+
+  require(elements.forall(_.length == nCols))
+
+  def apply(row: Int, col: Int): T = elements(row)(col)
+}
+
+val m = new Matrix(List(List(1, 2), List(3, 4)))
+  \end{lstlisting}
+  \caption{Matrix implementation based on List of
+    Lists.\label{fig:listoflist}}
+\end{figure}
+
+\begin{figure}
+  \begin{lstlisting}
+class Matrix[T](cols: Int, val elements: Array[T]) {
+  require(elements.size % cols == 0)
+
+  val nRows = elements.size / cols
+  val nCols = cols
+
+  def apply(row: Int, col: Int): T = elements(col + row * nCols)
+}
+
+val m = new Matrix(2, Array(1, 2, 3, 4))
+  \end{lstlisting}
+  \caption{Matrix implementation based on 2D
+    Array.\label{fig:2darray}}
+\end{figure}
+
+\subsubsection{Iterations -- \texttt{for} comprehensions vs \texttt{while} loops}
+
+Many Image Processing operations require some kind of calculation
+performed for every element in the underlying matrix. As an example,
+consider the neighbour average operation implemented using a general
+structuring-element operation show in figure
+\vref{fig:strelavg}. Having as efficient implementation of the
+\texttt{seOp} method as possible is critical for large matrices. So
+having some way of efficiently iterating over all elements of the
+matrix is essential. Scala provides two basic forms of iterating;
+\texttt{for comprehensions} and \texttt{while loops}:
+
+\begin{itemize}
+\item \textbf{for comprehensions} -- In Scala, for comprehensions are
+  implemented as a monadic combination of the methods \texttt{filter},
+  \texttt{map} and \texttt{flatMap}. This is a very powerful structure
+  allowing compact and readable code. An example of implementing a
+  general structuring-element operation based on for comprehensions is
+  show in figure \vref{fig:forcomp}.
+\item \textbf{while loops} -- For regular loops Scala provides the
+  \texttt{while} keyword. Using this instead of the for comprehensions
+  gives a much more iterative implementation, as shown in figure
+  \vref{fig:whileloop}.
+\end{itemize}
+
+\begin{figure}
+  \begin{lstlisting}
+class Matrix ... {
+  def seOp(se: Matrix, op: (Seq[Int]) => Int) = { ... }
+}
+
+val matrix = ... // Create matrix - load image or similar
+val se = new Matrix(3, Array.make(9, 1))
+val avgMatrix = matrix.seOp(se, (seq) => seq.reduceLeft(_ + _) / seq.size)
+  \end{lstlisting}
+  \caption{Implementing matrix neighbour average using a general
+    structuring-element operation.\label{fig:strelavg}}
+\end{figure}
+
+\begin{figure}
+  \begin{lstlisting}
+def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
+  val w = se.nCols / 2
+  val h = se.nRows / 2
+
+  def seValues(row: Int, col: Int) = {
+    for {
+      x <- -w to w
+      cx = col + x
+      y <- -h to h
+      ry = row + y
+      if(cx >= 0 && cx < nCols && ry >= 0 && ry < nRows)
+    } yield {
+      elements(cx + ry * nCols)
+    }
+  }
+  val range = for(i <- 0 until nRows; j <- 0 until nCols) yield {
+    op(seValues(i, j))
+  }
+  new Matrix(nCols, range.toArray)
+}
+  \end{lstlisting}
+  \caption{Implementation of a structuring element operation on a
+    matrix using \texttt{for comprehensions}.\label{fig:forcomp}}
+\end{figure}
+
+\begin{figure}
+  \begin{lstlisting}
+def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
+  val w = se.nCols / 2
+  val h = se.nRows / 2
+
+  val newArr = Array.make(arr.size, 0)
+  var points: List[Int] = Nil
+  var j, i, x, y, cx, ry = 0
+  while(j < nCols) {
+    i = 0
+    while(i < nRows) {
+      points = Nil
+      x = -w
+      while(x <= w) {
+        cx = i + x
+        y = -h
+        while(y <= h) {
+          ry = j + y
+          if(cx >= 0 && cx < nCols && ry >= 0 && ry < nRows) {
+            points = elements(cx + ry * nCols) :: points
+          }
+          y = y + 1
+        }
+        x = x + 1
+      }
+      newArr(i + j * nCols) = op(points)
+      i = i + 1
+    }
+    j = j + 1
+  }
+  new Matrix(nCols, newArr)
+}
+  \end{lstlisting}
+  \caption{Implementation of a structuring element operation on a
+    matrix using \texttt{while loops}.\label{fig:whileloop}}
+\end{figure}
+
+\begin{itemize}
   \item Scala and primitives
+  \item JVM tuning
 \end{itemize}
 
 \begin{table}[ht]
