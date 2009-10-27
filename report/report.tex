@@ -69,7 +69,8 @@
 \begin{document}
 \uiosloforside[kind={Master thesis},boxcolor=matnat,textcolor=white]
 
-\chapter{Abstract}
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
 
 Scala is an increasingly popular programming language running on the
 JVM (Java Virtual Machine). One of its pronounced goals is to simplify
@@ -86,7 +87,8 @@ mechanisms found in modern computers.
 
 \listoffigures
 
-\chapter{Preface}
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
 
 Description of master-thesis, amount of work.
 
@@ -102,12 +104,13 @@ Detailed description of why and what.
 
 \section{Method}
 
-This section describes the research methods applied in this thesis. In
-\cite{dyb08} the concept ``Evidence-Based Software Engineering'' (EBSE)
-is introduced. Although this article is mainly targeted towards
-practicioners looking to support decision-making I feel that it gives
-a good foundation for evaluating research methods related to Software
-Engineering. The main steps of EBSE are as follows:
+This section describes the research methods applied in this
+thesis. In\cite{dyb08} the concept ``Evidence-Based Software
+Engineering'' (EBSE) is introduced. Although this article is mainly
+targeted towards practicioners looking to support decision-making I
+feel that it gives a good foundation for evaluating research methods
+related to Software Engineering. The main steps of EBSE are as
+follows:
 
 \begin{enumerate}
 \item Convert a relevant problem or need for information into an
@@ -145,7 +148,20 @@ thesis:
 
 \chapter{Domain Specific Languages}
 
-Description of DSL terminology and existing literature and research.
+\textit{``Domain-specific languages (DSLs) are languages tailored to a
+  specific application domain. They offer substantial gains in
+  expressiveness and ease of use compared with general-purpose
+  programming languages.''}\cite{mer05}
+
+We have two main types of DSLs; internal and external DSLs. Internal
+DSLs uses the host language so that it gets the feel of a particular
+language. They are compiled and run together with the host
+language. Internal DSLs are also referred to as embedded DSLs or
+Fluent Interfaces. Internal DSLs have custom syntax and typically
+requires you to write a full parser to process them.
+
+Scala has features to support development of both internal and
+external DSLs. They will be described in the following sections.
 
 \chapter{Scala}
 
@@ -155,11 +171,11 @@ Description of DSL terminology and existing literature and research.
   and functional languages, enabling Java and other programmers to be
   more productive. Code sizes are typically reduced by a factor of two
   to three when compared to an equivalent Java
-  application''}\cite{scala}.
+  application''.}\cite{scala}
 
-Scala is a relatively new language (first version released 2003
-\cite{scala}) providing exciting programming capabilities on the Java
-Virtual Machine (JVM). The main reason for chosing Scala in this
+Scala is a relatively new language (first version released
+2003\cite{scala}) providing exciting programming capabilities on the
+Java Virtual Machine (JVM). The main reason for chosing Scala in this
 thesis is the combination of powerful programming structures (both
 object-oriented and functional) with the cross-platform and wide
 adoption of the JVM. Code written in Scala can be run on any JVM
@@ -168,8 +184,8 @@ can thus be seen as a <<best of both worlds>> language.
 
 The following sections describe properties of Scala that might make it
 suited for building <<high performance DLSs>> on the JVM. For more
-detailed information about Scala please refer to \cite{ode08},
-\cite{scala} or \cite{scalatour}.
+detailed information about Scala please refer
+to\cite{ode08},\cite{scala} or\cite{scalatour}.
 
 \section{Scala and Java}
 
@@ -228,9 +244,206 @@ There are also disadvantages with such a tight coupling to the JVM:
 \begin{itemize}
 \item Limitations in bytecode -- Scala, being a functional language,
   would benefit from features not present in the current version of
-  the JVM (better recursion optimizations, generics without erasure
-  ++).
+  the JVM. Most notably is the (lack of) support for full tail call
+  optimization, which would improve performance of recursive
+  functions.
+\item Generics implemented with erasure -- Scala uses an erasure
+  scheme to implement generics, to be 100\% compatible with
+  Java. However, the implementation of the Scala compiler
+  (\texttt{scalac}) has some advanced solution to many of the problems
+  Java has regarding erasure\cite{emi06}.
 \end{itemize}
+
+\section{DSL capabilities in Scala}
+
+This section describes some features and properties of Scala with
+regard to DSL creation. The first sub sections describe properties
+related to internal DSL building, while section \vref{sec:combparse}
+describes <<Combinator Parsers>> which is a feature used to create
+external DSLs.
+
+\subsection{Type Inference and Implicits}
+
+The Scala compiler will try to infer the types used. So if the type is
+obvious there is no need to specify it:
+
+\begin{lstlisting}
+val i = 42 // Type Int is infered
+val d = i + 2.1 // Type Double is infered
+\end{lstlisting}
+
+The language also supports implicit type conversions. So if an object
+does not have the method being called on it, the compiler will try to
+convert it to a type that contains the method:
+
+\begin{lstlisting}
+// Wrapper class for int
+class MyInt(val i: Int) {
+  def doubleIt = i * 2 // Method
+}
+// Implicit conversion
+implicit def fromInt(i: Int) = new MyInt(i)
+// Convert Int to MyInt and call method
+4.doubleIt
+\end{lstlisting}
+
+\subsection{Method Names and Operator Notation}
+
+Scala has two features regarding method names and syntax that are
+interesting with regards to DSL development:
+
+\begin{itemize}
+\item Arbitrary method names - Scala methods can have special
+  characters as names. As such Scala has full support for operator
+  overloading, as operators are just regular methods with special
+  names. For example \texttt{+}, \texttt{!=} and \texttt{<=}.
+\item Operator notation - Methods in Scala can be called without the
+  dot and parentheses, as shown in the examples below.
+\end{itemize}
+
+\begin{lstlisting}
+abstract class Matrix {
+  // Method names can be operators
+  def +(other: Matrix) = add(other)
+  // Regular method name
+  def add(other: Matrix): Matrix
+}
+// Regular notation
+val m3 = m1.+(m2)
+val m3 = m1.add(m2)
+// Operator notation
+val m3 = m1 + m2
+val m3 = m1 add m2
+\end{lstlisting}
+
+\subsection{The ``magic'' \texttt{apply} Method}
+
+Scala uses the \texttt{apply} method to let classes and object define
+functionality that appears to be native in the language. In the
+following example the \texttt{apply} method is used to index the
+\texttt{Matrix} class as if it was a native feature:
+
+\begin{lstlisting}
+class Matrix[T] {
+  def apply(row: Int, col: Int): T = ...
+}
+val intMatrix = ... // Matrix[Int]
+// Get Int at position 2, 4
+val intVal = intMatrix(2, 4)
+\end{lstlisting}
+
+\subsection{Traits - Polymorphic Abilities}
+
+Scala has support for virtual types (abstract type members) and
+familiy polymorphism\cite{ode03}, mixin composition\cite{ode05} and
+higher-order genericity\cite{moo08}. These are all powerful features
+that support polymorphic embedding of DSLs\cite{hof08}.
+
+This allows building DSLs that can have several different
+interpretations as reusable components. It can also be used to
+effectively combine different DSLs into new ones. The paper
+``Polymorphic Embedding of DSLs''\cite{hof08} describes this in detail
+with examples.
+
+A use of traits can be to split functionality in several traits and
+create classes/objects with only the methods that we need. In the
+following example the \texttt{Matrix} class does not have any methods,
+but instances of the class can be mixed in with traits containing
+various methods:
+
+\begin{lstlisting}
+class Matrix {} // No methods
+
+trait AvgMtx { this: Matrix =>
+  def avg(): Matrix = { ... }
+}
+
+trait MorphMtx { this: Matrix =>
+  def erode(): Matrix = { ... }
+  def dilate(): Matrix = { ... }
+}
+
+// Matrix with only avg() method
+val m1 = new Matrix with AvgMtx
+// Matrix with erode() and dilate() methods
+val m2 = new Matrix with MorphMtx
+// Matrix with "all" methods
+val m3 = new Matrix with AvgMtx with MorphMtx
+\end{lstlisting}
+
+\subsection{Combinator Parsing}
+\label{sec:combparse}
+
+Scala includes a library for building parser combinators - functions
+and operators defined in Scala that will serve as building blocks for
+parsers. The mechanism is described in detail in chapter 31 in the
+``Programming in Scala'' book\cite{ode08}.
+
+Simply explained this allows a developer to specify a grammar with
+actions directly in Scala, thus building support for an internal
+DSL. The example below show a simple grammar for arithmetic
+expressions:
+
+\begin{lstlisting}
+import scala.util.parsing.combinator._ 
+
+// Simple arithmetic parser
+class Arith extends JavaTokenParsers { 
+  def expr: Parser[Any] =
+    term~rep("+"~term | "-"~term) 
+  def term: Parser[Any] =
+    factor~rep("*"~factor | "/"~factor) 
+  def factor: Parser[Any] =
+    floatingPointNumber | "("~expr~")" 
+}
+
+// Testing the parser
+val parser = new Arith
+val input = "2 * (4 + 5)" // OK input
+println(parser.parseAll(parser.expr, input))
+val bad = "2 * ((4 + 5)" // Bad parenthesis
+println(parser.parseAll(parser.expr, bad))
+\end{lstlisting}
+
+The example does not perform any actions, but still shows how the
+mechanism works. The first example passes ok and the second one yields
+an error as it is missing a parenthesis:
+
+\begin{lstlisting}[language=tex]
+parser.parseAll(parser.expr, bad)
+
+[1.13] failure: `)' expected but `' found
+
+2 * ((4 + 5)
+            ^
+\end{lstlisting}
+
+A simplified version of the above example implemented with actions
+could look as follows:
+
+\begin{lstlisting}
+import scala.util.parsing.combinator._
+
+class Arith extends JavaTokenParsers {
+  def expr: Parser[Double] =
+    factor~"+"~factor ^^ 
+      { case f1~"+"~f2 => f1 + f2 }
+  def factor: Parser[Double] =
+    floatingPointNumber ^^ (_.toDouble)
+}
+
+// Testing
+val p = new Arith
+val parse = p.parseAll(p.expr, _: String).get
+println(parse("2 + 3")) // Output: 5.0
+println(parse("2.5 + 3.1")) // Output: 5.6
+\end{lstlisting}
+
+In this example the grammar is simple enough to evaluate directly in
+the actions. It would be easy to create a separate evaluation system
+instead. However it is implemented this allows for using the
+combinator parsing framework to embed an external DSL directly in the
+language.
 
 \chapter{Results}
 
@@ -271,7 +484,7 @@ Describe Futures API with example from DSL.
 \subsubsection{OpenCL with ScalaCL}
 \label{sec:opencl}
 
-Brief description of OpenCL \cite{opencl} and ScalaCL \cite{scalacl}.
+Brief description of OpenCL\cite{opencl} and ScalaCL\cite{scalacl}.
 
 Description of DSL example using ScalaCL.
 
@@ -294,10 +507,10 @@ matrix I ended up testing a few different variants:
 \begin{itemize}
 \item \textbf{List of Lists} -- A very logical implementation of
   matrix is by using Scala \texttt{Lists}. The idea for this
-  implementation was inspired by a blog post by Jonathan Merritt
-  \cite{mer08}. A simple example of using a list of lists is shown in
-  figure \vref{fig:listoflist}. However, this implementation proves to
-  be very slow in specific element access and iteration.
+  implementation was inspired by a blog post by Jonathan
+  Merritt\cite{mer08}. A simple example of using a list of lists is
+  shown in figure \vref{fig:listoflist}. However, this implementation
+  proves to be very slow in specific element access and iteration.
 \item \textbf{2D Array} -- In Scala an \texttt{Array} will usually be
   faster than \texttt{List} because it is compiled to a native array
   in bytecode. It is also faster to implement as one flat array,
@@ -470,6 +683,7 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
 
 Summary.. $\ddot\smile$
 
+\addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{master}
 \bibliographystyle{plain}
 
