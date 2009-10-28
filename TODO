@@ -20,3 +20,8 @@ TODO/idea list for master
   * for comprehensions vs while
   * JVM tuning
   * ScalaCL vs parallel vs single-thread vs Swarm(?)
+- Composition - traits
+  * Compare with other languages (Groovy, Python, Ruby, Java, C# ++)
+  * Are there more powerful ways than traits?
+  * Composition without specific order - "real" traits?
+- Change example pictures to make sure they are not trademarked

@@ -5,6 +5,7 @@
 \usepackage{fourier}
 \usepackage{babel,textcomp}
 \usepackage[pdftex]{graphicx}
+\usepackage{subfigure}
 \usepackage{listings}
 \usepackage{hyperref}
 \usepackage{varioref}
@@ -63,6 +64,8 @@
 
 \hypersetup{pdfborder={0 0 0},colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
 
+\newcommand{\matlab}{\textsc{Matlab}\textregistered}
+
 \title{Creating high performance DSLs in Scala}
 \author{Eivind Barstad Waaler (\emph{eivindwa})}
 
@@ -96,9 +99,7 @@ the Object-orientation, Modelling, and Languages research
 group\cite{oms} at the Department of Informatics, Faculty of
 Mathematics and Natural Sciences, University of Oslo.
 
-Short introduction to department (IFI) and group (OMS).
-
-Thanks to supervisor++
+TODO: Thanks to supervisor++
 
 \begin{flushright}
 \textsc{Eivind Barstad Waaler}\\
@@ -107,12 +108,27 @@ May 2010
 \end{flushright}
 
 \chapter{Introduction}
+\label{sec:introduction}
 
 \section{Problem Description}
+\label{sec:problemdesc}
 
-Detailed description of why and what. 
+Domain Specific Languages (DSLs) are languages written to support the
+implementation of problems in a specific domain or area of
+interest\cite{mer05}. Scala is a relatively new programming language
+being claimed to have good support for writing DSLs\cite{scala}, with
+syntax that is easy to adjust and extend\cite{ode08}. Scala is also
+claimed to contain powerful constructs for concurrent or parallel
+programming, taking advantage of the multi-processor architectures
+that are common in modern computers.
+
+The goal of this thesis is to evaluate Scala with regards to both DSL
+capabilities and parallel programming. Is it possible to combine the
+scalable syntax with powerful concurrency mechanisms to create ``High
+Performance DSLs in Scala''?
 
 \section{Method}
+\label{sec:method}
 
 This section describes the research methods applied in this
 thesis. In\cite{dyb08} the concept ``Evidence-Based Software
@@ -157,6 +173,7 @@ thesis:
 \end{enumerate}
 
 \chapter{Domain Specific Languages}
+\label{sec:dsls}
 
 \textit{``Domain-specific languages (DSLs) are languages tailored to a
   specific application domain. They offer substantial gains in
@@ -174,6 +191,7 @@ Scala has features to support development of both internal and
 external DSLs. They will be described in the following sections.
 
 \chapter{Scala}
+\label{sec:scala}
 
 \textit{``Scala is a general purpose programming language designed to
   express common programming patterns in a concise, elegant, and
@@ -198,6 +216,7 @@ detailed information about Scala please refer
 to\cite{ode08},\cite{scala} or\cite{scalatour}.
 
 \section{Scala and Java}
+\label{sec:scalajava}
 
 Scala code (.scala files) compiles to Java bytecode (.class files)
 through a special compiler (\texttt{scalac}). The bytecode can then be
@@ -265,6 +284,7 @@ There are also disadvantages with such a tight coupling to the JVM:
 \end{itemize}
 
 \section{DSL capabilities in Scala}
+\label{scaladsl}
 
 This section describes some features and properties of Scala with
 regard to DSL creation. The first sub sections describe properties
@@ -461,11 +481,108 @@ language.
 
 \subsection{Description}
 
-General description of DSL.
+Image Processing is an area involving series of computationally heavy
+operations performed on images. Many practicioners in the area have
+more mathematical than computer science oriented background. This
+leads to the need for DSLs where complicated and computationally heavy
+operations can be performed with a simple and straightforward syntax.
+
+A major actor in the art of Image Processing is the product \matlab
+from the company MathWorks\texttrademark. They provide the user with a
+DSL for doing advanced Image Processing operations. I have tried to
+create a similar DSL (with limited functionality) in Scala.
+
+As an example consider the operation of blurring an image using an
+average filter mask show in figures \vref{fig:eximg} and
+\vref{fig:exavg}. This is a basic operation, but serves good as an
+example of using the DSLs.
+
+The \matlab{} code to perform the operation could
+typically look like this:
+\begin{lstlisting}[language=matlab]
+img = imread('cell.jpg');
+% 3x3 neighborhood default
+imgAvg = medfilt2(img);
+imwrite(imgAvg, 'cell_avg.jpg');
+\end{lstlisting}
+
+My goal is to create a Scala DSL to achieve the same result. A
+suggested Scala-solution to the problem will look something like this:
+
+\begin{lstlisting}
+// Imports...
+val img = loadImageCP("/cell.jpg")
+val se = StrEl(Square, 3)
+val imgAvg = img.avg(se)
+saveImage(imgAvg, "/cell_avg.jpg")
+\end{lstlisting}
+
+\begin{figure}
+  \subfigure[Original]{\includegraphics[width=0.49\textwidth]{images/cell}}
+  \hfill
+  \subfigure[Blurred]{\includegraphics[width=0.49\textwidth]{images/cell_avg}}
+  \caption{Example image before and after blurring with average
+    filter.\label{fig:eximg}}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=1.0\textwidth]{images/avg_process}
+  \caption{Visualising the process of blurring an image using average
+    filtering with a 3x3 neighbourhood.\label{fig:exavg}}
+\end{figure}
+
+The rest of this section describes how I implemented this, and what
+the results where with regards to the performance (how efficient the
+implementation is).
 
 \subsection{Syntax}
 
-Pure syntax examples.
+Importing members for easy access:
+
+\begin{lstlisting}
+import io.SImageIO._
+import structs.StrElType._
+
+// SImageIO.loadImageCP("/cell.jpg")
+val img = loadImageCP("/cell.jpg")
+...
+saveImage(imgAvg, "/cell_avg.jpg")
+
+// StrElType.Square
+val se = StrEl(Square, 3)
+\end{lstlisting}
+
+Using singleton objects as factories:
+
+\begin{lstlisting}
+object StrEl {
+  import StrElType._
+  def apply(t: StrElType, num: Int) = Array2DStrEl(t, num)
+}
+
+val se = StrEl(Square, 3)
+\end{lstlisting}
+
+Using Traits to add operations. Optionally using operator notation:
+
+\begin{lstlisting}
+trait Standard { this: GrayScaleImage =>
+  def avg(se: StrEl[Int]) = { ... }
+}
+
+object Image {
+  import operations.{Morphology, Standard}
+
+  def apply(d: Matrix[Int]) = {
+    new GrayScaleImage(d) with Standard with Morphology
+  }
+}
+
+val imgAvg = img.avg(se)
+
+// Equivalent - operator notation
+val imgAvg = img avg se
+\end{lstlisting}
 
 \subsection{Parallel Processing}
 
