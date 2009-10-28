@@ -347,6 +347,7 @@ val m3 = m1 add m2
 \end{lstlisting}
 
 \subsection{The ``magic'' \texttt{apply} Method}
+\label{sec:applymethod}
 
 Scala uses the \texttt{apply} method to let classes and object define
 functionality that appears to be native in the language. In the
@@ -537,7 +538,10 @@ implementation is).
 
 \subsection{Syntax}
 
-Importing members for easy access:
+The methods to load and save the image, as well as the \texttt{Square}
+definition of structuring element, are all member functions in classes
+\texttt{SImageIO} and \texttt{StrElType}. These can be imported with
+the \texttt{.\_} notation in Scala, and are then available directly:
 
 \begin{lstlisting}
 import io.SImageIO._
@@ -552,7 +556,11 @@ saveImage(imgAvg, "/cell_avg.jpg")
 val se = StrEl(Square, 3)
 \end{lstlisting}
 
-Using singleton objects as factories:
+To create the structuring element, the \texttt{StrEl} trait has a
+<<companion object>> with an \texttt{apply} method (described in
+section \vref{sec:applymethod}. This gives a very compact syntax,
+combined with the import of the available structuring element types as
+shown above:
 
 \begin{lstlisting}
 object StrEl {
@@ -563,7 +571,11 @@ object StrEl {
 val se = StrEl(Square, 3)
 \end{lstlisting}
 
-Using Traits to add operations. Optionally using operator notation:
+Using traits, we are able to compose image objects with the operations
+we want. The operations are implemented in separate traits which are
+mixed in with the image on creation. This is using self-type
+annotations to specify that the trait can only be mixed in with
+classes of type \texttt{GrayScaleImage}:
 
 \begin{lstlisting}
 trait Standard { this: GrayScaleImage =>
@@ -601,12 +613,139 @@ the GPU (Graphics Processing Unit).
 \subsubsection{Actors API}
 \label{sec:actors}
 
-Describe Actors API with example from DSL.
+The primary concurrency construct in Scala is actors. Actors are
+basically concurrent processes that communicate by exchanging
+messages\cite{hal06}. My first attempt at making the Image Processing
+DSL parallel was by making a generic executor using the Actors
+API. The result, with an example of simple usage, is shown in figure
+\vref{fig:actorexecutor}. Isolated parts of the processing can be
+split into separate functions that are distributed over a set of
+executors. So my example with a String operation is easily extended to
+Image Processing or any other domain that can be split into several
+parallel functions.
+
+The main issue with this approach is that we need to wait for the
+result to be ready. This is of course not a big problem, but the next
+section describes another technique that is better suited for parallel
+computing.
+
+\begin{figure}
+  \begin{lstlisting}
+import actors.Actor
+import actors.Actor._
+
+// Message contains data and transformation function
+case class ExecMsg[T <: Any](data: T, op: T => T)
+
+// Executor executes function and exits
+class Executor extends Actor {
+  def hasResult = result != None
+
+  def getResult = result
+
+  private var result: Option[Any] = None
+
+  def act {
+    while(true) {
+      receive {
+        case ExecMsg(d, op) => result = Some(op(d)); exit
+      }
+    }
+  }
+}
+
+// Example usage - convert "scala" to upper case in separate thread
+val exec = new Executor
+exec.start // Start running - ready to receive messages
+exec ! ExecMsg("scala", (s: String) => s.toUpperCase) // Send data and function
+while(!exec.hasResult) {} // Busy waiting..
+println("Result: " + exec.getResult.get) // Prints "SCALA"
+  \end{lstlisting}
+  \caption{A generic \texttt{Executor} based on the Scala Actors
+    API.\label{fig:actorexecutor}}
+\end{figure}
 
 \subsubsection{Futures API}
 \label{sec:futures}
 
-Describe Futures API with example from DSL.
+Actors may communicate using futures where requests are handled
+asynchronously, but return a representation (the future) that allows
+to await the reply. This is better suited for the parallel processing
+we are trying to achieve. An example similar to the pure actor example
+in the previous section using futures is shown in figure
+\vref{fig:futureex}.
+
+\begin{figure}
+  \begin{lstlisting}
+import actors.Futures._
+
+// Define function - could also be done directly in the future-block below
+val func = (s: String) => s.toUpperCase
+
+// Create future running the function with the String argument
+val fut = future { func("scala" }
+
+// Wait for and return the result
+println("Result: " + fut())
+  \end{lstlisting}
+  \caption{An example using \texttt{Futures} to execute a function in
+    a separate thread.\label{fig:futureex}}
+\end{figure}
+
+Futures also support waiting for an array of functions to
+complete. This is the mechanism used in the Image Processing DSL. See
+figure \vref{fig:futureipex} for a complete example of how futures are
+used to run several operation in parallel and merge the results once
+all futures have finished running. The \texttt{Splittable} identifier
+is simply a trait specifying \texttt{split} and \texttt{merge} methods
+that need to be implemented by users of the \texttt{parallel}
+function. Notice how the futures are yielded to a sequence directly
+from the for comprehension and awaited completion using the
+\texttt{awaitAll} function.
+
+\begin{figure}
+  \begin{lstlisting}
+import actors.Futures._
+
+object Operations {
+
+  def parallel[T](obj: Splittable[T], op: (T) => Splittable[T]): Splittable[T] = {
+    obj.split match {
+      case Array(region) => op(region)
+      case regions: Array[T] => {
+        val futures = for(region <- regions) yield future {
+          op(region)
+        }
+        val results = awaitAll(5000, futures: _*)
+        val parts = for(result <- results) yield result.get.asInstanceOf[Splittable[T]]
+        parts.reduceLeft(_ merge _)
+      }
+    }
+  }
+}
+
+// Example usage - double values in the list in separate threads
+case class MyList(val list: List[Int]) extends Splittable[Int] {
+  def split = list.toArray
+  
+  def merge(other: Splittable[Int]): Splittable[Int] = (this, other) match {
+    case (t: MyList, o: MyList) => new MyList(t.list ::: o.list)
+  }
+}
+
+val splitList = MyList(List(2, 5, 7, 1))
+
+val doubledList = parallel (
+  splitList,
+  (i: Int) => {
+    Thread.sleep(100) // Slow things down a little
+    new MyList(List(i * 2))
+  }
+).asInstanceOf[MyList]
+  \end{lstlisting}
+  \caption{A general parallel mechanism based on
+    futures.\label{fig:futureipex}}
+\end{figure}
 
 \subsubsection{OpenCL with ScalaCL}
 \label{sec:opencl}
