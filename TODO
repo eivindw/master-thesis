@@ -1,17 +1,21 @@
 TODO/idea list for master
 ========== ========== ==========
-- Build proper ScalaCL example
+- Parallelization:
+  * Build proper ScalaCL example
+  * Build example using Swarm
+  * ForkJoin vs futures
+  * SIMD operations?
 - Add new features to Scala
 - Pruning:
   * Find features in use
   * Remove features from Scala
   * Only retain features in use!
 - Search/read more theory on embedded DSLs
-- Build example using Swarm
 - Read on method/structure from INF5500
 - More DSL examples using Actor API:
   * Mashup example (XML avinor, yr.no ++ combined)
   * Chess DSL (Moves f4-h2+, multithreaded "brain")
+  * Charting DSL (based on JFreechart or similar?)
 - Learn more about partial functions vs. partially applied functions
 - JVM options (-XX:+UseConcMarkSweepGC -XX:+UseCompressedOops ++)
   * http://blog.juma.me.uk/2009/10/26/new-jvm-options-and-scala-iteration-performance/
@@ -25,3 +29,4 @@ TODO/idea list for master
   * Are there more powerful ways than traits?
   * Composition without specific order - "real" traits?
 - Change example pictures to make sure they are not trademarked
+- Configure REPL with classpath and imports
