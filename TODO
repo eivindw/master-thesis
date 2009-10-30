@@ -5,6 +5,7 @@ TODO/idea list for master
   * Build example using Swarm
   * ForkJoin vs futures
   * SIMD operations?
+  * JCuda vs ScalaCL?
 - Add new features to Scala
 - Pruning:
   * Find features in use
@@ -30,3 +31,8 @@ TODO/idea list for master
   * Composition without specific order - "real" traits?
 - Change example pictures to make sure they are not trademarked
 - Configure REPL with classpath and imports
+- Tools to look at bytecode/java:
+  * scalac -print Test.scala -- print corresponding java
+  * scalap -classpath . Test -- output Scala declarations
+  * javap -classpath . Test -- output Java declarations
+  * jad -p Test.class -- decompile class to Java

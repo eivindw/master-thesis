@@ -750,9 +750,52 @@ val doubledList = parallel (
 \subsubsection{OpenCL with ScalaCL}
 \label{sec:opencl}
 
-Brief description of OpenCL\cite{opencl} and ScalaCL\cite{scalacl}.
+Recent years manufacturers of graphics cards and GPUs (Graphics
+Processing Unit) have made libraries available to run general code
+(not just graphics processing) on their hardware. This is typically
+hardware optimized for matrices and image processing, so it should be
+very interesting to utilize this possibility to speed up the
+operations in a Image Processing library.
 
-Description of DSL example using ScalaCL.
+OpenCL\texttrademark\cite{opencl} is an open standard for parallel
+programming that utilizes the power of the GPU to perform
+calculations. OpenCL is being created by the Khronos Group with the
+participation of many industry-leading companies and institutions. A
+Scala API exists which enables Scala programs to make use of the
+possibilities offered by OpenCL -- ScalaCL\cite{scalacl}.
+
+A simple example using ScalaCL to add two arrays of integers is shown
+in figure \vref{fig:scalacl}.
+
+\begin{figure}
+  \begin{lstlisting}
+import scalacl.{Dim, Program}
+import scalacl.ScalaCL._
+
+class SeOpOCL(i: Dim) extends Program(i) {
+  val iarr = IntsVar
+  val iarr2 = IntsVar
+  
+  var output = IntsVar
+  
+  content = output := iarr + iarr2
+}
+
+val arr1 = Array(1, 2, 3, 4, 5)
+val arr2 = Array(5, 4, 3, 2, 1)
+
+val prog = new SeOpOCL(new Dim(arr1.size))
+
+prog.iarr.write(arr1)
+prog.iarr2.write(arr2)
+
+prog !
+
+println("First: " + prog.output.get(0)) // Print 6
+  \end{lstlisting}
+  \caption{Add two arrays of integers using
+    ScalaCL\label{fig:scalacl}}
+\end{figure}
 
 \subsection{Efficient Implementation Tips}
 \label{sec:effimpl}
