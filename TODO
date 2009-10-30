@@ -17,7 +17,6 @@ TODO/idea list for master
   * Mashup example (XML avinor, yr.no ++ combined)
   * Chess DSL (Moves f4-h2+, multithreaded "brain")
   * Charting DSL (based on JFreechart or similar?)
-- Learn more about partial functions vs. partially applied functions
 - JVM options (-XX:+UseConcMarkSweepGC -XX:+UseCompressedOops ++)
   * http://blog.juma.me.uk/2009/10/26/new-jvm-options-and-scala-iteration-performance/
 - Create proper benchmark suite to test/compare performance:
@@ -31,8 +30,10 @@ TODO/idea list for master
   * Composition without specific order - "real" traits?
 - Change example pictures to make sure they are not trademarked
 - Configure REPL with classpath and imports
-- Tools to look at bytecode/java:
-  * scalac -print Test.scala -- print corresponding java
-  * scalap -classpath . Test -- output Scala declarations
-  * javap -classpath . Test -- output Java declarations
-  * jad -p Test.class -- decompile class to Java
+  + Copy + modify 'scala' command
+  * Specify SImage CP + Imports
++ Tools to look at bytecode/java:
+  + scalac -print Test.scala -- print corresponding java
+  + scalap -classpath . Test -- output Scala declarations
+  + javap -classpath . Test -- output Java declarations
+  + jad -p Test.class -- decompile class to Java
