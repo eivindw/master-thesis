@@ -29,9 +29,9 @@ TODO/idea list for master
   * Are there more powerful ways than traits?
   * Composition without specific order - "real" traits?
 - Change example pictures to make sure they are not trademarked
-- Configure REPL with classpath and imports
++ Configure REPL with classpath and imports
   + Copy + modify 'scala' command
-  * Specify SImage CP + Imports
+  + Specify SImage CP + Imports (scala -i Predef.scala -classpath simage.jar)
 + Tools to look at bytecode/java:
   + scalac -print Test.scala -- print corresponding java
   + scalap -classpath . Test -- output Scala declarations
