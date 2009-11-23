@@ -25,8 +25,9 @@ TODO/idea list for master
   * JVM tuning
   * ScalaCL vs parallel vs single-thread vs Swarm(?)
 - Composition - traits
-  * Compare with other languages (Groovy, Python, Ruby, Java, C# ++)
+  + Compare with other languages (Groovy, Python, Ruby, Java, C# ++)
   * Are there more powerful ways than traits?
+    * Qi4j / AOP in Java
   * Composition without specific order - "real" traits?
 - Change example pictures to make sure they are not trademarked
 + Configure REPL with classpath and imports
