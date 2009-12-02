@@ -66,7 +66,7 @@
 
 \newcommand{\matlab}{\textsc{Matlab}\textregistered}
 
-\title{Creating high performance DSLs in Scala}
+\title{Embedding Efficient DSLs on the Java Virtual Machine}
 \author{Eivind Barstad Waaler (\emph{eivindwa})}
 
 \begin{document}
@@ -188,7 +188,7 @@ thesis:
   improve the overall quality of the thesis deliverance.
 \end{enumerate}
 
-\chapter{Domain Specific Languages}
+\section{Domain Specific Languages}
 \label{sec:dsls}
 
 \textit{``Domain-specific languages (DSLs) are languages tailored to a
@@ -206,7 +206,7 @@ requires you to write a full parser to process them.
 Scala has features to support development of both internal and
 external DSLs. They will be described in the following sections.
 
-\chapter{Scala}
+\chapter{DSL Syntax}
 \label{sec:scala}
 
 \textit{``Scala is a general purpose programming language designed to
@@ -336,7 +336,7 @@ implicit def fromInt(i: Int) = new MyInt(i)
 \subsection{Method Names and Operator Notation}
 
 Scala has two features regarding method names and syntax that are
-interesting with regards to DSL development:
+interesting with regards to DSL development\cite{dub06}:
 
 \begin{itemize}
 \item Arbitrary method names - Scala methods can have special
@@ -492,7 +492,41 @@ instead. However it is implemented this allows for using the
 combinator parsing framework to embed an external DSL directly in the
 language.
 
-\chapter{Results}
+\chapter{DSL Composition}
+
+\section{Modular DSL Composition}
+
+\section{Combining DSLs}
+
+\chapter{Advanced DSL Techniques}
+
+\section{Removing from Host Language -- Pruning}
+
+\section{Extending Host Language}
+
+\chapter{Using the DSL}
+
+\section{Scripting}
+
+\section{API/Library}
+
+\section{Interactive Console -- Interpreter}
+
+\section{Embedded Interpreter}
+
+\chapter{DSL Performance}
+
+\section{Host Language -- Dynamic vs. Static Typing}
+
+\section{Code Efficiency}
+
+\section{Multithreading -- Parallel Computing}
+
+\section{Distributed DSL}
+
+\section{Secondary Processors -- GPU}
+
+\chapter{Examples}
 
 \section{DSL for Image Processing}
 
@@ -1006,7 +1040,11 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
 
 \chapter{Summary}
 
+\section{Conclusion}
+
 Summary.. $\ddot\smile$
+
+\section{Future Work}
 
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{master}
