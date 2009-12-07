@@ -206,8 +206,9 @@ requires you to write a full parser to process them.
 Scala has features to support development of both internal and
 external DSLs. They will be described in the following sections.
 
-\chapter{DSL Syntax}
-\label{sec:scala}
+\section{Main Programming Languages}
+
+\section{Scala}
 
 \textit{``Scala is a general purpose programming language designed to
   express common programming patterns in a concise, elegant, and
@@ -299,41 +300,113 @@ There are also disadvantages with such a tight coupling to the JVM:
   Java has regarding erasure\cite{emi06}.
 \end{itemize}
 
-\section{DSL capabilities in Scala}
-\label{scaladsl}
+\chapter{DSL Syntax}
+\label{sec:dslsyntax}
 
-This section describes some features and properties of Scala with
-regard to DSL creation. The first sub sections describe properties
-related to internal DSL building, while section \vref{sec:combparse}
-describes <<Combinator Parsers>> which is a feature used to create
-external DSLs.
+The syntax of a language defines its surface form\cite{fri08}. It is
+the set of rules that define the combinations of symbols that are
+considered to be correctly structured programs in that language. So a
+DSL is defined in terms of its syntax. For an embedded DSL its syntax
+describes special ways to use the host language. This chapter
+described various programming language concepts that can be useful
+when designing an embedded DSL. The final section concludes on some
+major differences between various classes of host languages and what
+these mean to the construction of embedded DSLs.
 
-\subsection{Type Inference and Implicits}
+\section{Function Chaining}
 
-The Scala compiler will try to infer the types used. So if the type is
-obvious there is no need to specify it:
+One of the simplest ways to create a DSL-like syntax is to allow
+chaining several function calls together. As an example consider the
+following Java-code (from\cite{fow06}), where the construction of a
+\texttt{HardDrive} object is shown with and without method chaining:
 
-\begin{lstlisting}
-val i = 42 // Type Int is infered
-val d = i + 2.1 // Type Double is infered
+\begin{lstlisting}[language=java]
+// Construct with setter methods
+HardDrive hd = new HardDrive();
+hd.setCapacity(150);
+hd.setExternal(true);
+hd.setSpeed(7200);
+
+// Construct with method chaining
+HardDrive hd = new HardDrive().capacity(150).external().speed(7200);
 \end{lstlisting}
 
-The language also supports implicit type conversions. So if an object
-does not have the method being called on it, the compiler will try to
-convert it to a type that contains the method:
+Function chaining is available in most programming languages. In
+functional programming it is a fundamental concept, while in
+object-oriented langauges more a design choice (as in the example
+above).
+
+\section{Static Methods/Singleton Objects}
+
+In object-oriented languages functions are nested inside classes. In
+order to be able to call functions without instantiating objects we
+have static methods. The following example shows how to sort a list of
+strings in Java, using the static method \texttt{sort} in the
+\texttt{Collections} class:
+
+\begin{lstlisting}[language=java]
+// Create a list of strings
+List<String> names = ...
+
+// Sort the list
+Collections.sort(names);
+\end{lstlisting}
+
+A different approach to static methods are the singleton objects found
+in Scala. Instead of having methods defined as static there is a
+notion of an object, as in the following example defining sorting
+similar to the Java-example above:
 
 \begin{lstlisting}
-// Wrapper class for int
-class MyInt(val i: Int) {
-  def doubleIt = i * 2 // Method
+// Define ListSorter object
+object ListSorter {
+  def sort(list: List) { ... }
 }
-// Implicit conversion
-implicit def fromInt(i: Int) = new MyInt(i)
-// Convert Int to MyInt and call method
-4.doubleIt
+
+// Use object
+var names = List("name1", "name2")
+ListSorter.sort(names)
 \end{lstlisting}
 
-\subsection{Method Names and Operator Notation}
+Static methods may play a central role in an embedded DSL, especially
+combined with \texttt{Member Imports} (next section). They are
+typically used for object creation through patterns like
+\texttt{Factory method} and \texttt{Builder}, or other utility
+operations like the sorting shown in the examples above.
+
+\section{Member Imports}
+
+Member imports is a very useful mechanism in object-oriented languages
+in creating concise syntax, and thus in the embedding of DSLs. Using
+static member import the Java sorting example from previous section
+could have been written like this:
+
+\begin{lstlisting}[language=java]
+import static java.util.Collections.*; // Import all static members of the Collections class
+...
+
+// Create a list of strings
+List<String> names = ...
+
+// Sort the list
+sort(names);
+\end{lstlisting}
+
+In Scala member imports are less restricted than in Java. They can be
+used anywhere in the code (not just at the start of the file), and are
+not restricted to static members.
+
+\begin{lstlisting}
+class Fruit(val name: String, val color: String) // Define class Fruit with two members
+
+val apple = new Fruit("apple", "red") // Create apple as instance of Fruit
+
+import apple._ // Import all members from object apple
+
+println(name + " is " + color) // Access members 'name' and 'color' directly
+\end{lstlisting}
+
+\section{Method Names and Operator Notation}
 
 Scala has two features regarding method names and syntax that are
 interesting with regards to DSL development\cite{dub06}:
@@ -362,6 +435,8 @@ val m3 = m1 + m2
 val m3 = m1 add m2
 \end{lstlisting}
 
+\section{Special Syntax Constructs}
+
 \subsection{The ``magic'' \texttt{apply} Method}
 \label{sec:applymethod}
 
@@ -379,7 +454,54 @@ val intMatrix = ... // Matrix[Int]
 val intVal = intMatrix(2, 4)
 \end{lstlisting}
 
-\subsection{Traits - Polymorphic Abilities}
+\subsection{Query Syntax}
+
+\section{Type Inference}
+
+The Scala compiler will try to infer the types used. So if the type is
+obvious there is no need to specify it:
+
+\begin{lstlisting}
+val i = 42 // Type Int is infered
+val d = i + 2.1 // Type Double is infered
+\end{lstlisting}
+
+\section{Implicit Type Conversion}
+
+The language also supports implicit type conversions. So if an object
+does not have the method being called on it, the compiler will try to
+convert it to a type that contains the method:
+
+\begin{lstlisting}
+// Wrapper class for int
+class MyInt(val i: Int) {
+  def doubleIt = i * 2 // Method
+}
+// Implicit conversion
+implicit def fromInt(i: Int) = new MyInt(i)
+// Convert Int to MyInt and call method
+4.doubleIt
+\end{lstlisting}
+
+\section{Lambda Expressions/Anonymous Functions}
+
+\section{Anonymous Types}
+
+\section{Object Initializer}
+
+\section{Metaprogramming}
+
+\section{Open Classes/Monkey Patching}
+
+\section{Dynamic Dispatch}
+
+\section{Conclusion}
+
+\chapter{DSL Composition}
+
+\section{Modular DSL Composition}
+
+\section{Traits - Polymorphic Abilities}
 
 Scala has support for virtual types (abstract type members) and
 familiy polymorphism\cite{ode03}, mixin composition\cite{ode05} and
@@ -417,84 +539,6 @@ val m2 = new Matrix with MorphMtx
 // Matrix with "all" methods
 val m3 = new Matrix with AvgMtx with MorphMtx
 \end{lstlisting}
-
-\subsection{Combinator Parsing}
-\label{sec:combparse}
-
-Scala includes a library for building parser combinators - functions
-and operators defined in Scala that will serve as building blocks for
-parsers. The mechanism is described in detail in chapter 31 in the
-``Programming in Scala'' book\cite{ode08}.
-
-Simply explained this allows a developer to specify a grammar with
-actions directly in Scala, thus building support for an internal
-DSL. The example below show a simple grammar for arithmetic
-expressions:
-
-\begin{lstlisting}
-import scala.util.parsing.combinator._ 
-
-// Simple arithmetic parser
-class Arith extends JavaTokenParsers { 
-  def expr: Parser[Any] =
-    term~rep("+"~term | "-"~term) 
-  def term: Parser[Any] =
-    factor~rep("*"~factor | "/"~factor) 
-  def factor: Parser[Any] =
-    floatingPointNumber | "("~expr~")" 
-}
-
-// Testing the parser
-val parser = new Arith
-val input = "2 * (4 + 5)" // OK input
-println(parser.parseAll(parser.expr, input))
-val bad = "2 * ((4 + 5)" // Bad parenthesis
-println(parser.parseAll(parser.expr, bad))
-\end{lstlisting}
-
-The example does not perform any actions, but still shows how the
-mechanism works. The first example passes ok and the second one yields
-an error as it is missing a parenthesis:
-
-\begin{lstlisting}[language=tex]
-parser.parseAll(parser.expr, bad)
-
-[1.13] failure: `)' expected but `' found
-
-2 * ((4 + 5)
-            ^
-\end{lstlisting}
-
-A simplified version of the above example implemented with actions
-could look as follows:
-
-\begin{lstlisting}
-import scala.util.parsing.combinator._
-
-class Arith extends JavaTokenParsers {
-  def expr: Parser[Double] =
-    factor~"+"~factor ^^ 
-      { case f1~"+"~f2 => f1 + f2 }
-  def factor: Parser[Double] =
-    floatingPointNumber ^^ (_.toDouble)
-}
-
-// Testing
-val p = new Arith
-val parse = p.parseAll(p.expr, _: String).get
-println(parse("2 + 3")) // Output: 5.0
-println(parse("2.5 + 3.1")) // Output: 5.6
-\end{lstlisting}
-
-In this example the grammar is simple enough to evaluate directly in
-the actions. It would be easy to create a separate evaluation system
-instead. However it is implemented this allows for using the
-combinator parsing framework to embed an external DSL directly in the
-language.
-
-\chapter{DSL Composition}
-
-\section{Modular DSL Composition}
 
 \section{Combining DSLs}
 
