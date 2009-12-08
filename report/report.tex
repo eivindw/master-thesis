@@ -408,6 +408,10 @@ println(name + " is " + color) // Access members 'name' and 'color' directly
 
 \section{Method Names and Operator Notation}
 
+When constructing an embedded DSL we like to make the syntax reflect
+the actual domain as much as possible. Having flexible ways to name
+and call methods can be a very useful property of a host language.
+
 Scala has two features regarding method names and syntax that are
 interesting with regards to DSL development\cite{dub06}:
 
@@ -437,6 +441,12 @@ val m3 = m1 add m2
 
 \section{Special Syntax Constructs}
 
+Many programming languages have special constructs that are made
+specifically to enable the writing of concise statements. Typically
+constructs that only offer a different syntax that will be replaced by
+the compiler at early phases of compilation. The next sub-sections
+describe some examples of such mechanisms.
+
 \subsection{The ``magic'' \texttt{apply} Method}
 \label{sec:applymethod}
 
@@ -451,12 +461,58 @@ class Matrix[T] {
 }
 val intMatrix = ... // Matrix[Int]
 // Get Int at position 2, 4
-val intVal = intMatrix(2, 4)
+val intVal = intMatrix(2, 4) // Replaced by compiler: intMatrix.apply(2, 4)
 \end{lstlisting}
 
 \subsection{Query Syntax}
 
+In C\# 3.0 a DSL called LINQ (Language Integrated Query) was
+introduced. It is used to natively query data in the language. The
+implementation of the DSL relies on a number of language features
+(type inference, anonymous types, object initializer and lambda
+expressions -- see sections below) in addition to the query syntax
+itself.
+
+\begin{lstlisting}[language={[Sharp]C}]
+// Query syntax:
+var results = 
+  from c in SomeCollection
+  let x = someValue * 2
+  where c.SomeProperty < x
+  select new {c.SomeProperty, c.OtherProperty};
+
+// Resulting rewritten syntax:
+var results =
+  SomeCollection.Where(
+    c => c.SomeProperty < (SomeValue * 2)
+  ).Select( c => new {c.SomeProperty, c.OtherProperty} );
+\end{lstlisting}
+
+In Scala we have \texttt{for comprehensions} that can be viewed as a
+query syntax much like that of LINQ. Complex expressions using the
+mechanism will be rewritten to a combination of \texttt{filter},
+\texttt{flatMap} and \texttt{map}:
+
+\begin{lstlisting}
+// "Query syntax" - for comprehension:
+val results = for {
+  name <- listOfNames
+  if (name startsWith "E")
+} yield { name toUpperCase }
+
+// Resulting rewritten syntax:
+val results = listOfNames.filter(_ startsWith "E").map(_ toUpperCase)
+\end{lstlisting}
+
+Daniel Spiewak has written a paper investigating the possibility to
+extend the for comprehensions in Scala to support LINQ-style database
+queries\cite{spi09}.
+
 \section{Type Inference}
+
+With type inference the compiler will figure out the type of a value
+or function. This is useful when writing embedded DSLs. Some examples
+are given in the previous section about query syntax.
 
 The Scala compiler will try to infer the types used. So if the type is
 obvious there is no need to specify it:
@@ -464,13 +520,19 @@ obvious there is no need to specify it:
 \begin{lstlisting}
 val i = 42 // Type Int is infered
 val d = i + 2.1 // Type Double is infered
+val double = (i: Int) => i * 2 // Return value Int is infered from int parameter
+val double2 = (i: Double) => i * 2 // Return value Double is infered from int parameter
 \end{lstlisting}
 
 \section{Implicit Type Conversion}
 
-The language also supports implicit type conversions. So if an object
-does not have the method being called on it, the compiler will try to
-convert it to a type that contains the method:
+Implicit type conversions are used to allow the compiler to
+automatically convert one type to another where possible. From a DSL
+syntax perspective this is used to "add" new methods to existing
+types. This can be built-in types or user-defined types. In the
+following Scala example an implicit conversion is used to convert from
+\texttt{Int} to \texttt{MyInt}, and thus allowing the
+\texttt{doubleIt} method to be called directly on the integer value:
 
 \begin{lstlisting}
 // Wrapper class for int
@@ -483,13 +545,89 @@ implicit def fromInt(i: Int) = new MyInt(i)
 4.doubleIt
 \end{lstlisting}
 
+Implicit conversions are also very useful when combining DSLs. This is
+described in section\vref{sec:combining_dsls}.
+
 \section{Lambda Expressions/Anonymous Functions}
+
+Anonymous functions, or lambda expressions, can be used as parameters
+for higher-order function (functions using functions as parameters or
+return values). This is maybe not directly relevant for embedded DSL
+syntax, but is an important building block in query syntax (shown in a
+previous section). For example in the Scala for comprehensions
+anonymous functions play a role in allowing filtering (if-statements).
 
 \section{Anonymous Types}
 
+Anonymous types allow the construction of types without a name, based
+on fields. Combined with type inference this is a central feature in
+the implementation of LINQ (as described in an earlier section).
+
+Scala also supports anonymous types. An example of using anonymous
+types together with type inference:
+
+\begin{lstlisting}
+val person = new { val name = "John"; val age = 26 }
+
+println(person.name + " is " + person.age + " years old..")
+\end{lstlisting}
+
+In LINQ this is used to allow selection of fields from a database or
+other data structure:
+
+\begin{lstlisting}[language={[Sharp]C}]
+var results = 
+  ... // Some query
+  select new {c.SomeProperty, c.OtherProperty};
+\end{lstlisting}
+
 \section{Object Initializer}
 
+Object initializers provide the ability to give values to an object
+while instantiating it. In C\# this can look like the following, and
+is also used to select objects of given class instead of anonymous
+types from LINQ:
+
+\begin{lstlisting}[language={[Sharp]C}]
+val results =
+  ... // Some query
+  select new Person { Name = c.SomeProperty, Age = c.OtherProperty }
+\end{lstlisting}
+
+Scala also support object initializers, as in the following example:
+
+\begin{lstlisting}
+class Person {
+  var name = ""
+  var age = 0
+}
+
+val person = new Person { name = "John"; age = 26 }
+\end{lstlisting}
+
 \section{Metaprogramming}
+
+Metaprogramming is the writing of computer programs that write or
+manipulate other programs (or themselves) as their data, or that do
+part of the work at compile time that would otherwise be done at
+runtime. In terms of embedded DSL creation metaprogramming is used in
+some dynamically typed programming languages to provide interesting
+possibilities.
+
+A typical example of a DSL utilizing metaprogramming is the Rails
+framework and the \texttt{ActiveRecord} class. Here metaprogramming is
+used to specify relationships between the classes \texttt{Team} and
+\texttt{Player}:
+
+\begin{lstlisting}[language=Ruby]
+class Team < ActiveRecord::Base
+  has_many :players
+end
+
+class Player < ActiveRecord::Base
+  belongs_to :team
+end
+\end{lstlisting}
 
 \section{Open Classes/Monkey Patching}
 
@@ -501,7 +639,7 @@ implicit def fromInt(i: Int) = new MyInt(i)
 
 \section{Modular DSL Composition}
 
-\section{Traits - Polymorphic Abilities}
+\subsection{Traits - Polymorphic Abilities}
 
 Scala has support for virtual types (abstract type members) and
 familiy polymorphism\cite{ode03}, mixin composition\cite{ode05} and
@@ -541,6 +679,7 @@ val m3 = new Matrix with AvgMtx with MorphMtx
 \end{lstlisting}
 
 \section{Combining DSLs}
+\label{sec:combining_dsls}
 
 \chapter{Advanced DSL Techniques}
 
