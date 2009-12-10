@@ -39,7 +39,7 @@
     private,protected,requires,return,sealed,
     super,this,throw,trait,true,try,
     type,val,var,while,with,yield},
-  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  otherkeywords={=>,<-,<\%,<:,>:,@}, % Removed \#, because of Ruby comments error
   sensitive=true,
   morecomment=[l]{//},
   morecomment=[n]{/*}{*/},
@@ -439,6 +439,8 @@ val m3 = m1 + m2
 val m3 = m1 add m2
 \end{lstlisting}
 
+TODO: Ruby allows leaving parentheses out: "eivind".include? "e"
+
 \section{Special Syntax Constructs}
 
 Many programming languages have special constructs that are made
@@ -520,8 +522,8 @@ obvious there is no need to specify it:
 \begin{lstlisting}
 val i = 42 // Type Int is infered
 val d = i + 2.1 // Type Double is infered
-val double = (i: Int) => i * 2 // Return value Int is infered from int parameter
-val double2 = (i: Double) => i * 2 // Return value Double is infered from int parameter
+val iBy2 = (i: Int) => i * 2 // Return value Int is infered from int parameter
+val dBy2 = (i: Double) => i * 2 // Return value Double is infered from int parameter
 \end{lstlisting}
 
 \section{Implicit Type Conversion}
@@ -542,7 +544,7 @@ class MyInt(val i: Int) {
 // Implicit conversion
 implicit def fromInt(i: Int) = new MyInt(i)
 // Convert Int to MyInt and call method
-4.doubleIt
+val ten = 5.doubleIt
 \end{lstlisting}
 
 Implicit conversions are also very useful when combining DSLs. This is
@@ -631,7 +633,59 @@ end
 
 \section{Open Classes/Monkey Patching}
 
-\section{Dynamic Dispatch}
+A monkey patch is a way to extend or modify the runtime code of
+dynamic languages without altering the original source code. In DSL
+creation this can be used in much the same way as implicit
+conversions, by adding new functionality to built-in or other types.
+
+\begin{lstlisting}[language=Ruby]
+class Integer
+  def doubleIt
+    self * 2
+  end
+end
+
+ten = 5.doubleIt
+\end{lstlisting}
+
+\section{Dynamic Dispatch -- Method Missing}
+
+Dynamic programming languages use dynamic dispatch to determine what
+code to run when a message is received. This means that errors related
+to missing methods are postponed until runtime. Some languages provide
+interesting ways to handle these errors, that can be utilized in DSL
+creation.
+
+In Ruby there is a notion of custom dispatch behaviour that can be
+controlled by the programmer. The base class, that all other classes
+extend from, has a \texttt{method\_missing} method that is called by
+the dispatcher as a last resort when no other method is found to
+respond to a message. The default behaviour is to throw a
+\texttt{NoMethodError}, but this can be overridden by extending
+classes.
+
+To see how this can be used in a DSL we can look at a simplified
+version of the \texttt{ActiveRecord} class from the \texttt{Rails}
+framework. It maps objects to database tables and allows dynamic
+querying through the DSL syntax:
+
+\begin{lstlisting}[language=Ruby]
+class ActiveRecord
+  # ...
+  def self.method_missing(method_id, *arguments)
+    if match = /find_(all_by|by)_([_a-zA-Z]\w*)/.match(method_id.to_s)
+      # ... extract column names from match, generate and run SQL expression + map and return results
+    end
+  end
+end
+
+# Define class 'Person' as extension of 'ActiveRecord'
+class Person < ActiveRecord::Base
+end
+
+# Query the database for person with given username
+person = Person.find_by_username "eivindw"
+\end{lstlisting}
 
 \section{Conclusion}
 
