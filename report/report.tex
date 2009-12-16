@@ -308,7 +308,7 @@ the set of rules that define the combinations of symbols that are
 considered to be correctly structured programs in that language. So a
 DSL is defined in terms of its syntax. For an embedded DSL its syntax
 describes special ways to use the host language. This chapter
-described various programming language concepts that can be useful
+describes various programming language concepts that can be useful
 when designing an embedded DSL. The final section concludes on some
 major differences between various classes of host languages and what
 these mean to the construction of embedded DSLs.
@@ -334,15 +334,17 @@ HardDrive hd = new HardDrive().capacity(150).external().speed(7200);
 Function chaining is available in most programming languages. In
 functional programming it is a fundamental concept, while in
 object-oriented langauges more a design choice (as in the example
-above).
+above). In object-oriented languages using function chaining is often
+referred to as building \texttt{fluent interfaces}.
 
 \section{Static Methods/Singleton Objects}
 
 In object-oriented languages functions are nested inside classes. In
 order to be able to call functions without instantiating objects we
-have static methods. The following example shows how to sort a list of
-strings in Java, using the static method \texttt{sort} in the
-\texttt{Collections} class:
+have static methods, that are associated directly with the class
+instance and not with objects created from the class. The following
+example shows how to sort a list of strings in Java, using the static
+method \texttt{sort} in the \texttt{Collections} class:
 
 \begin{lstlisting}[language=java]
 // Create a list of strings
@@ -354,8 +356,8 @@ Collections.sort(names);
 
 A different approach to static methods are the singleton objects found
 in Scala. Instead of having methods defined as static there is a
-notion of an object, as in the following example defining sorting
-similar to the Java-example above:
+notion of a singleton object, as in the following example defining
+sorting similar to the Java-example above:
 
 \begin{lstlisting}
 // Define ListSorter object
@@ -429,9 +431,10 @@ abstract class Matrix {
   // Method names can be operators
   def +(other: Matrix) = add(other)
   // Regular method name
-  def add(other: Matrix): Matrix
+  def add(other: Matrix): Matrix // Abstract method
 }
-// Regular notation
+
+// Usage example - regular notation
 val m3 = m1.+(m2)
 val m3 = m1.add(m2)
 // Operator notation
@@ -439,8 +442,20 @@ val m3 = m1 + m2
 val m3 = m1 add m2
 \end{lstlisting}
 
-TODO: Ruby allows leaving parentheses out: "eivind".include? "e"
+In the dynamic language Ruby they have a similar mechanism as in
+Scala. Here you are allowed to leave the parentheses surrounding the
+parameter(s) out, but not the dot in front of the method name.
 
+\begin{lstlisting}[language=Ruby]
+name = "John"
+
+# Method without parameters
+name.empty?()
+name.empty?
+
+# Method with one parameter
+name.include?("e")
+name.include? "e"
 \section{Special Syntax Constructs}
 
 Many programming languages have special constructs that are made
@@ -453,9 +468,11 @@ describe some examples of such mechanisms.
 \label{sec:applymethod}
 
 Scala uses the \texttt{apply} method to let classes and object define
-functionality that appears to be native in the language. In the
-following example the \texttt{apply} method is used to index the
-\texttt{Matrix} class as if it was a native feature:
+functionality that appears to be native in the language. You can leave
+the method name out and simply write syntax that seems to pass
+parameters directly to an object. In the following example the
+\texttt{apply} method is used to index the \texttt{Matrix} class as if
+it was a native feature:
 
 \begin{lstlisting}
 class Matrix[T] {
@@ -508,13 +525,18 @@ val results = listOfNames.filter(_ startsWith "E").map(_ toUpperCase)
 
 Daniel Spiewak has written a paper investigating the possibility to
 extend the for comprehensions in Scala to support LINQ-style database
-queries\cite{spi09}.
+queries\cite{spi09}. Both mechanisms rely on monadic behaviour
+(concept from functional programming), where complex statements can be
+constructed by combining a set of basic functions (as shown in the
+examples above).
 
 \section{Type Inference}
 
 With type inference the compiler will figure out the type of a value
-or function. This is useful when writing embedded DSLs. Some examples
-are given in the previous section about query syntax.
+or function, so there is no need to explicitly specify it. This is
+useful when writing embedded DSLs, to give a less verbose and more
+concise syntax. Some examples are given in the previous section about
+query syntax.
 
 The Scala compiler will try to infer the types used. So if the type is
 obvious there is no need to specify it:
@@ -547,8 +569,11 @@ implicit def fromInt(i: Int) = new MyInt(i)
 val ten = 5.doubleIt
 \end{lstlisting}
 
-Implicit conversions are also very useful when combining DSLs. This is
-described in section\vref{sec:combining_dsls}.
+In dynamic languages a mechanism that can give much the same results
+is Monkey Patching described in section
+\vref{sec:monkey_patching}. Implicit conversions are also very useful
+when combining DSLs. This is described in
+section\vref{sec:combining_dsls}.
 
 \section{Lambda Expressions/Anonymous Functions}
 
@@ -556,8 +581,9 @@ Anonymous functions, or lambda expressions, can be used as parameters
 for higher-order function (functions using functions as parameters or
 return values). This is maybe not directly relevant for embedded DSL
 syntax, but is an important building block in query syntax (shown in a
-previous section). For example in the Scala for comprehensions
-anonymous functions play a role in allowing filtering (if-statements).
+previous section). For example in the Scala for comprehensions and the
+LINQ statements show in an earlier section anonymous functions play a
+role in allowing filtering (if-statements).
 
 \section{Anonymous Types}
 
@@ -613,7 +639,7 @@ Metaprogramming is the writing of computer programs that write or
 manipulate other programs (or themselves) as their data, or that do
 part of the work at compile time that would otherwise be done at
 runtime. In terms of embedded DSL creation metaprogramming is used in
-some dynamically typed programming languages to provide interesting
+some dynamically typed programming languages to create interesting
 possibilities.
 
 A typical example of a DSL utilizing metaprogramming is the Rails
@@ -629,14 +655,24 @@ end
 class Player < ActiveRecord::Base
   belongs_to :team
 end
+
+# Now a player will have a 'team' method returning the team
+player.team
+
+# And a team will have a 'players' method returning a collection of players
+team.players.each { |team| ... }
 \end{lstlisting}
 
 \section{Open Classes/Monkey Patching}
+\label{sec:monkey_patching}
 
 A monkey patch is a way to extend or modify the runtime code of
 dynamic languages without altering the original source code. In DSL
 creation this can be used in much the same way as implicit
-conversions, by adding new functionality to built-in or other types.
+conversions, by adding new functionality to built-in or other
+types. In the following code we re-implement with open classes/monkey
+patching the same example shown earlier with implicit type
+conversions:
 
 \begin{lstlisting}[language=Ruby]
 class Integer
@@ -688,6 +724,23 @@ person = Person.find_by_username "eivindw"
 \end{lstlisting}
 
 \section{Conclusion}
+
+Modern statically typed languages like Scala offer some very powerful
+features for building embedded DSLs, combining concepts from
+object-oriented and functional programming languages. Advanced type
+systems offering type interference, implicit conversions and anonymous
+types provide powerful mechanisms when constructing DSLs, removing
+much of the verbosity often associated with statically typed
+languages.
+
+When comparing various classes of programming languages the biggest
+difference with regards to DSL syntax seems to be that between static
+and dynamic languages. Even with feature rich static programming
+languages like Scala there exist a series of concepts from dynamic
+languages which does not have a natural counterpart in the statically
+typed domain. Most notebly are the powerful metaprogramming features
+found in many dynamic languages and the dynamic dispatch mechanism
+allowing custom handling of missing methods.
 
 \chapter{DSL Composition}
 
