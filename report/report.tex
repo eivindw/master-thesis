@@ -206,9 +206,25 @@ requires you to write a full parser to process them.
 Scala has features to support development of both internal and
 external DSLs. They will be described in the following sections.
 
-\section{Main Programming Languages}
+\section{Programming Languages}
 
-\section{Scala}
+\subsection{Categories of Languages}
+
+\subsubsection{Typing -- Static/Dynamic}
+
+\subsubsection{Paradigm -- OO/FP}
+
+\subsection{Ruby}
+
+\subsection{Groovy}
+
+\subsection{Java}
+
+\subsection{Clojure}
+
+\subsection{C\#}
+
+\subsection{Scala}
 
 \textit{``Scala is a general purpose programming language designed to
   express common programming patterns in a concise, elegant, and
@@ -232,7 +248,7 @@ suited for building <<high performance DLSs>> on the JVM. For more
 detailed information about Scala please refer
 to\cite{ode08},\cite{scala} or\cite{scalatour}.
 
-\section{Scala and Java}
+\subsubsection{Scala and Java}
 \label{sec:scalajava}
 
 Scala code (.scala files) compiles to Java bytecode (.class files)
@@ -549,6 +565,7 @@ val dBy2 = (i: Double) => i * 2 // Return value Double is infered from int param
 \end{lstlisting}
 
 \section{Implicit Type Conversion}
+\label{sec:implicit_type_conversion}
 
 Implicit type conversions are used to allow the compiler to
 automatically convert one type to another where possible. From a DSL
@@ -788,6 +805,13 @@ val m3 = new Matrix with AvgMtx with MorphMtx
 \section{Combining DSLs}
 \label{sec:combining_dsls}
 
+\subsection{Implicit Conversion}
+
+Implicit type conversions where described in
+section\vref{sec:implicit_type_conversion}, in terms of DSL syntax. In
+this section we will look at how implicits can be used to combine
+functionality from two different DSLs.
+
 \chapter{Advanced DSL Techniques}
 
 \section{Removing from Host Language -- Pruning}
@@ -803,6 +827,8 @@ val m3 = new Matrix with AvgMtx with MorphMtx
 \section{Interactive Console -- Interpreter}
 
 \section{Embedded Interpreter}
+
+\section{Tool Support}
 
 \chapter{DSL Performance}
 
