@@ -370,7 +370,7 @@ List<String> names = ...
 Collections.sort(names);
 \end{lstlisting}
 
-A different approach to static methods are the singleton objects found
+A different approach to static methods is the singleton objects found
 in Scala. Instead of having methods defined as static there is a
 notion of a singleton object, as in the following example defining
 sorting similar to the Java-example above:
@@ -395,7 +395,7 @@ operations like the sorting shown in the examples above.
 \section{Member Imports}
 
 Member imports is a very useful mechanism in object-oriented languages
-in creating concise syntax, and thus in the embedding of DSLs. Using
+for creating concise syntax, and thus in the embedding of DSLs. Using
 static member import the Java sorting example from previous section
 could have been written like this:
 
@@ -472,6 +472,8 @@ name.empty?
 # Method with one parameter
 name.include?("e")
 name.include? "e"
+\end{lstlisting}
+
 \section{Special Syntax Constructs}
 
 Many programming languages have special constructs that are made
@@ -551,7 +553,7 @@ examples above).
 With type inference the compiler will figure out the type of a value
 or function, so there is no need to explicitly specify it. This is
 useful when writing embedded DSLs, to give a less verbose and more
-concise syntax. Some examples are given in the previous section about
+concise syntax. Some examples were given in the previous section about
 query syntax.
 
 The Scala compiler will try to infer the types used. So if the type is
@@ -599,7 +601,7 @@ for higher-order function (functions using functions as parameters or
 return values). This is maybe not directly relevant for embedded DSL
 syntax, but is an important building block in query syntax (shown in a
 previous section). For example in the Scala for comprehensions and the
-LINQ statements show in an earlier section anonymous functions play a
+LINQ statements shown in an earlier section, anonymous functions play a
 role in allowing filtering (if-statements).
 
 \section{Anonymous Types}
@@ -655,7 +657,7 @@ val person = new Person { name = "John"; age = 26 }
 Metaprogramming is the writing of computer programs that write or
 manipulate other programs (or themselves) as their data, or that do
 part of the work at compile time that would otherwise be done at
-runtime. In terms of embedded DSL creation metaprogramming is used in
+runtime. In terms of embedded DSL creation, metaprogramming is used in
 some dynamically typed programming languages to create interesting
 possibilities.
 
@@ -753,7 +755,7 @@ languages.
 When comparing various classes of programming languages the biggest
 difference with regards to DSL syntax seems to be that between static
 and dynamic languages. Even with feature rich static programming
-languages like Scala there exist a series of concepts from dynamic
+languages like Scala there are a series of concepts from dynamic
 languages which does not have a natural counterpart in the statically
 typed domain. Most notebly are the powerful metaprogramming features
 found in many dynamic languages and the dynamic dispatch mechanism
@@ -811,6 +813,41 @@ Implicit type conversions where described in
 section\vref{sec:implicit_type_conversion}, in terms of DSL syntax. In
 this section we will look at how implicits can be used to combine
 functionality from two different DSLs.
+
+\begin{lstlisting}
+val ds = DataSet(1, 2, 3, 4, 5, 6, 7, 8, 9)
+
+assert(5.0 === ds.average)
+assert(1 === ds.min)
+assert(9 === ds.max)
+\end{lstlisting}
+
+\begin{lstlisting}
+val words = Array("eivind", "test", "oslo", "bekk", "scala", "elephant", "cat")
+
+implicit def str2DS(str: Array[String]) = {
+  DataSet(str.map(_.length): _*)
+}
+
+assert(5 === words.average.round)
+assert(3 === words.min)
+assert(8 === words.max)
+\end{lstlisting}
+
+\begin{lstlisting}
+val img = Image(Matrix(3, List(
+  9, 8, 7,
+  6, 5, 6,
+  7, 8, 9)))
+
+implicit def img2DS(img: GrayScaleImage) = {
+  DataSet(img.data.toArray: _*)
+}
+
+assert(7 === img.average.round)
+assert(5 === img.min)
+assert(9 === img.max)
+\end{lstlisting}
 
 \chapter{Advanced DSL Techniques}
 
