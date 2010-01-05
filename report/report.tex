@@ -329,7 +329,9 @@ when designing an embedded DSL. The final section concludes on some
 major differences between various classes of host languages and what
 these mean to the construction of embedded DSLs.
 
-\section{Function Chaining}
+\section{Function Chaining/Nesting}
+
+TODO: Rewrite to summarize fluent interfaces (Fowler + Evans). Example use\cite{fre06}.
 
 One of the simplest ways to create a DSL-like syntax is to allow
 chaining several function calls together. As an example consider the
@@ -345,6 +347,26 @@ hd.setSpeed(7200);
 
 // Construct with method chaining
 HardDrive hd = new HardDrive().capacity(150).external().speed(7200);
+\end{lstlisting}
+
+The chaining of methods can also be combined with method nesting,
+grouping methods that belong together (also from\cite{fow06}):
+
+\begin{lstlisting}[language=java]
+computer(
+  processor(
+    cores(2),
+    Processor.Type.i386
+  ),
+  disk(
+    size(150)
+  ),
+  disk(
+    size(75),
+    speed(7200),
+    Disk.Interface.SATA
+  )
+);
 \end{lstlisting}
 
 Function chaining is available in most programming languages. In
