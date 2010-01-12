@@ -126,67 +126,21 @@ May 2010
 \chapter{Introduction}
 \label{sec:introduction}
 
-\section{Problem Description}
-\label{sec:problemdesc}
+The goal of this chapter is to describe the problem at hand as
+detailed as possible. It has taken me a long time to clarify and
+understand the problem, and as such I think it is justified to spend
+quite a lot of time and space describing the background and why I
+think it is important. The last part of the chapter describes the
+methods used, and explains the structure of the rest of the document.
 
-Domain Specific Languages (DSLs) are languages written to support the
-implementation of problems in a specific domain or area of
-interest\cite{mer05}. Scala is a relatively new programming language
-being claimed to have good support for writing DSLs\cite{scala}, with
-syntax that is easy to adjust and extend\cite{ode08}. Scala is also
-claimed to contain powerful constructs for concurrent or parallel
-programming, taking advantage of the multi-processor architectures
-that are common in modern computers.
+\section{Problem Formulation}
+\label{sec:problemformulation}
 
-The goal of this thesis is to evaluate Scala with regards to both DSL
-capabilities and parallel programming. Is it possible to combine the
-scalable syntax with powerful concurrency mechanisms to create ``High
-Performance DSLs in Scala''?
-
-\section{Method}
-\label{sec:method}
-
-This section describes the research methods applied in this
-thesis. In\cite{dyb08} the concept ``Evidence-Based Software
-Engineering'' (EBSE) is introduced. Although this article is mainly
-targeted towards practicioners looking to support decision-making I
-feel that it gives a good foundation for evaluating research methods
-related to Software Engineering. The main steps of EBSE are as
-follows:
-
-\begin{enumerate}
-\item Convert a relevant problem or need for information into an
-  answerable question.
-\item Search the literature for the best available evidence to answer
-  the question.
-\item Critically appraise the evidence for its validity, impact, and
-  applicability.
-\item Integrate the appraised evidence with practical experience and
-  the client's values and circumstances to make decisions about
-  practice.
-\item Evaluate performance in comparison with previous performance and
-  seek ways to improve it.
-\end{enumerate}
-
-With this list as basis I ended up with the following steps for this
-thesis:
-
-\begin{enumerate}
-\item Create answerable questions -- Make sure the questions to
-  research are sound and possible to answer.
-\item Search existing literature -- Find literature to provide direct
-  answers to the questions, or to support assumptions needed to
-  sustain experiments.
-\item Critically appraise the literature evidence -- Make sure the
-  chosen literature actually provide valid evidence for its claims.
-\item Conduct experiments -- The major part of the thesis work is of
-  course related to the experiments conducted. The first three steps
-  are important to make sure the experiments are based on sound
-  evidence and former knowledge.
-\item Critical evaluation -- The experiments and results found must be
-  carefully evaluated. By being critical to my own results I hope to
-  improve the overall quality of the thesis deliverance.
-\end{enumerate}
+\textit{Evaluate some major alternative programming languages on the
+  Java Virtual Machine with regards to embedding Domain Specific
+  Languages. Identify important aspects when working with embedded
+  Domain Specific Languages and show what programming languages are
+  suited and how they solve the problems.}
 
 \section{Domain Specific Languages}
 \label{sec:dsls}
@@ -196,33 +150,59 @@ thesis:
   expressiveness and ease of use compared with general-purpose
   programming languages.''}\cite{mer05}
 
-We have two main types of DSLs; internal and external DSLs. Internal
-DSLs uses the host language so that it gets the feel of a particular
-language. They are compiled and run together with the host
-language. Internal DSLs are also referred to as embedded DSLs or
-Fluent Interfaces. Internal DSLs have custom syntax and typically
-requires you to write a full parser to process them.
+DSLs are often categorized in two major types; external and embedded
+(or internal) DSLs. An external DSL is a separate programming language
+with custom syntax and a full parser, like SQL (domain of database
+queries), CSS (domain of HTML styles) and XML (domain of data
+exchange). An embedded DSL on the other hand, is created in a host
+language. Various capabilities in the host language are exploited to
+create interfaces that look and behave almost like a particular
+programming language.
 
-Scala has features to support development of both internal and
-external DSLs. They will be described in the following sections.
+In this thesis I have identified different requirements of embedded
+DLSs running on the Java Virtual Machine (JVM), and looked at how
+various programming languages (described in section
+\vref{sec:programminglanguages}) solve these aspects. As described in
+the next section the exact definition of an embedded DLS is hard to
+find, and as such this thesis is just as much a study of different
+programming languages and what capabilities they provide.
 
-\section{Programming Languages}
+\subsection{Embedded DSL or just Advanced Library Design?}
+\label{sec:embeddeddsl}
+
+Embedded DSL -> fluent interfaces -> advanced library design/DDD.
+
+\subsection{Requirements of an Embedded DSL}
+\label{sec:requirements}
+
+Conciseness/``fluency'' -- syntax
+
+Use/reuse -- composition + use
+
+Tool support
+
+Error handling/reporting
+
+Performance
+
+\section{JVM Programming Languages}
+\label{sec:programminglanguages}
 
 \subsection{Categories of Languages}
 
-\subsubsection{Typing -- Static/Dynamic}
+Typing -- static/dynamic.
 
-\subsubsection{Paradigm -- OO/FP}
+Paradigm -- OO/FP
 
-\subsection{Ruby}
-
-\subsection{Groovy}
+Execution -- interpreted/compiled
 
 \subsection{Java}
 
-\subsection{Clojure}
+\subsection{Ruby/JRuby}
 
-\subsection{C\#}
+\subsection{Groovy}
+
+\subsection{Clojure}
 
 \subsection{Scala}
 
@@ -315,6 +295,53 @@ There are also disadvantages with such a tight coupling to the JVM:
   (\texttt{scalac}) has some advanced solution to many of the problems
   Java has regarding erasure\cite{emi06}.
 \end{itemize}
+
+\section{Method}
+\label{sec:method}
+
+This section describes the research methods applied in this
+thesis. In\cite{dyb08} the concept ``Evidence-Based Software
+Engineering'' (EBSE) is introduced. Although this article is mainly
+targeted towards practicioners looking to support decision-making I
+feel that it gives a good foundation for evaluating research methods
+related to Software Engineering. The main steps of EBSE are as
+follows:
+
+\begin{enumerate}
+\item Convert a relevant problem or need for information into an
+  answerable question.
+\item Search the literature for the best available evidence to answer
+  the question.
+\item Critically appraise the evidence for its validity, impact, and
+  applicability.
+\item Integrate the appraised evidence with practical experience and
+  the client's values and circumstances to make decisions about
+  practice.
+\item Evaluate performance in comparison with previous performance and
+  seek ways to improve it.
+\end{enumerate}
+
+With this list as basis I ended up with the following steps for this
+thesis:
+
+\begin{enumerate}
+\item Create answerable questions -- Make sure the questions to
+  research are sound and possible to answer.
+\item Search existing literature -- Find literature to provide direct
+  answers to the questions, or to support assumptions needed to
+  sustain experiments.
+\item Critically appraise the literature evidence -- Make sure the
+  chosen literature actually provide valid evidence for its claims.
+\item Conduct experiments -- The major part of the thesis work is of
+  course related to the experiments conducted. The first three steps
+  are important to make sure the experiments are based on sound
+  evidence and former knowledge.
+\item Critical evaluation -- The experiments and results found must be
+  carefully evaluated. By being critical to my own results I hope to
+  improve the overall quality of the thesis deliverance.
+\end{enumerate}
+
+\subsection{Report Structure}
 
 \chapter{DSL Syntax}
 \label{sec:dslsyntax}
