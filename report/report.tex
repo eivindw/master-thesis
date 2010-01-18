@@ -111,7 +111,7 @@ reminders when my geeky interests go out of bounds are invaluable.
 At last, but not least, I would like to thank my supervisor Professor
 Birger Møller-Pedersen at the Department of Informatics, UiO. His
 unique experience from projects such as the \textsc{beta} programming
-language \cite{beta} and the \textsc{swat} project \cite{swat} has
+language \cite{beta} and the \textsc{swat} project\cite{swat} has
 proven extremely valuable for me. Through many good discussions at his
 office I've learned much about current and historic programming
 language concepts. His enthusiasm has motivated me from beginning to
@@ -170,31 +170,93 @@ programming languages and what capabilities they provide.
 \subsection{Embedded DSL or just Advanced Library Design?}
 \label{sec:embeddeddsl}
 
-Embedded DSL -> fluent interfaces -> advanced library design/DDD.
+It is difficult to draw a precise line between an embedded DSL and a
+regular library. If you have a library specialized to solve problems
+in a given domain, is that enough to call it an embedded DSL? How much
+``special syntax'' do you need to include in the library to make it a
+DSL? What kind of syntax qualifies for DSL use? Answering questions
+like these is difficult, and in my opinion not contributing to a
+fruitful discussion. I have tried to turn my focus toward interesting
+capabilities different languages have, and the problems they solve. As
+such some of the examples I will be using might not qualify as
+embedded DLSs, but merely as libraries/interfaces with untraditional,
+or in other ways interesting, use of the host language.
+
+Martin Fowler and Eric Evans have defined the name ``fluent
+interface''\cite{fow05} to describe interfaces which provide a more
+readable and ``flowing'' syntax. Many of the examples given of fluent
+interfaces are small libraries solving tasks in a specific domain, and
+as such are also good examples of embedded DSLs. Eric Evans has also
+written a book\cite{eva04} and held a number of talks on the subject
+of Domain-Driven Design (DDD), a way of thinking and prioritizing when
+working with software projects that deal with complicated domains. DDD
+hardly covers the subject of embedding DSLs, but I feel that a lot of
+the DSL design is focused on understanding and expressing a particular
+domain and as such has a lot in common with the thoughts behind DDD.
+
+The reason I include the section with this discussion is to briefly
+try to demonstrate that the area of embedded DSLs is a complex and
+maybe not precicely defined. The activity of building an embedded DSL
+is tightly connected to the understanding of the domain at hand, and
+the capabilities required from the host language will vary strongly
+with that understanding. The next section gives a list of such
+requirements.
 
 \subsection{Requirements of an Embedded DSL}
 \label{sec:requirements}
 
-Conciseness/``fluency'' -- syntax
+The following lists the different requirements/capabilities that might
+be important when building embedded DSLs. The list provides a
+foundation for structuring the rest of this report:
 
-Use/reuse -- composition + use
-
-Tool support
-
-Error handling/reporting
-
-Performance
+\begin{itemize}
+\item Conciseness/``fluency'' -- What capabilities does the different
+  languages provide in building fluent interfaces?
+\item Use/reuse -- How can the DSL be used? How can several DSLs be
+  combined?
+\item Tool support -- What is the level of tool support provided for
+  the DSL?
+\item Error handling/reporting -- How are errors and exceptional
+  situations handled in the different languages?
+\item Performance -- How does the different languages facilitate
+  building DSLs with high requirement regarding
+  throughput/performance?
+\end{itemize}
 
 \section{JVM Programming Languages}
 \label{sec:programminglanguages}
 
+The goal platform of this thesis is the Java Virtual Machine
+(JVM). The reason for this is that the enormous popularity of the Java
+programming language has made the JVM one of the most widespread
+multi-language platforms in the world. At the same time the Java
+language itself is getting old, and many other languages have been
+written (or ported) for the JVM. So this thesis looks at how some of
+these languages provide various capabilities when building embedded
+DSLs. I have tried to look at languages that differ in many
+categories, as typing, paradigm or execution model. The languages I
+have studied are described and categorized in the next sections.
+
 \subsection{Categories of Languages}
 
-Typing -- static/dynamic.
+I have chosen to categorize the languages in three different ways:
 
-Paradigm -- OO/FP
-
-Execution -- interpreted/compiled
+\begin{itemize}
+\item Typing (static/dynamic) -- Static typing means that the majority
+  of its type checking is enforced during compile-time, as opposed to
+  run-time. The opposite is dynamic typing which performs most of its
+  type checking during run-time.
+\item Paradigm (OO/FP) -- There are many different programming
+  paradigms. I have looked at object-oriented and functional
+  programming languages. One of the languages (Scala) is a
+  multi-paradigm language, combining object-orientation and functional
+  programming techniques.
+\item Execution (compiled/interpreted) -- On the JVM an interesting
+  way to categorize programming languages is wether they are compiled
+  to byte-code and run directly on the virtual machine, or if the
+  language is interpreted and run by some extra layer on top of the
+  JVM.
+\end{itemize}
 
 \subsection{Java}
 
