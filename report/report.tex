@@ -260,11 +260,65 @@ I have chosen to categorize the languages in three different ways:
 
 \subsection{Java}
 
-\subsection{Ruby/JRuby}
+Java is naturally the most common programming language used on the
+JVM. It is a statically typed and compiled language supporting the
+object-oriented paradigm. It provides the baseline for my work, and
+will be used as example language where applicable. Much of my work
+however has gone in showing how other languages provide features
+useful when building DSLs, features not currently found in the Java
+language itself. So Java will also be used quite heavily for reference
+and comparison to the other languages.
 
 \subsection{Groovy}
 
+Groovy is a dynamically typed and compiled language supporting the
+object-oriented paradigm. It is tightly integrated with Java and can
+leverage existing Java libraries directly. An example of a simple
+object-oriented ``Hello World!'' program is shown in the following
+example:
+
+\begin{lstlisting}[language=java]
+class Greet {
+  def name
+
+  Greet(who) { name = who[0].toUpperCase() + who[1..-1] }
+
+  def salute() { println "Hello \$name!" }
+}
+
+new Greet('world').salute()
+\end{lstlisting}
+
+I have included Groovy in this thesis as it provides an interesting
+dynamically typed alternative to the Java language. I has some
+interesting syntax-capabilities making it well suited for building
+embedded DSLs.
+
+\subsection{Ruby/JRuby}
+
+Ruby is a dynamically typed and interpreted language supporting the
+object-oriented paradigm. JRuby is a Java implementation of the Ruby
+language on the JVM, thus acting as an interpreter for Ruby on the
+JVM. The latest versions of JRuby also support some notions of
+just-in-time compilation, as well as regular ahead-of-time
+compilation.
+
+The main reason for my inclusion of Ruby in this thesis is the ``Ruby
+on Rails'' framework\cite{rails}, an extraordinary DSL running on the
+JVM with the help of the JRuby interpreter.
+
 \subsection{Clojure}
+
+Clojure is a dynamically typed and compiled language supporting the
+functional programming paradigm. It is a modern dialect of the Lisp
+programming language compiling to Java bytecode. It is the only
+language not supporting object-orientation directly, and it also the
+youngest and least mature language included in my work.
+
+The reason I have looked at Clojure is the amount of embedded DSL
+papers written using functional programming languages (for
+example\cite{hud96}), making Clojure an interesting language with
+respect to embedding DSLs on the JVM.
 
 \subsection{Scala}
 
@@ -404,6 +458,21 @@ thesis:
 \end{enumerate}
 
 \subsection{Report Structure}
+
+The rest of this report is structured around the requirements listed
+in section \vref{sec:requirements}. Each of the requirements are
+treated in separate chapters, with suggested techniques for solving
+them given in different programming languages. Chapter
+\vref{sec:dslsyntax} looks at techniques for creating concise and
+``fluent'' syntax, chapter \vref{sec:dslcomposition} handles
+composition of DSLs and chapter \vref{sec:dsladvanced} describes
+advanced DSL techniques like pruning and extending the host
+language. Chapter \vref{sec:dsluse} handles different ways to utilize
+and run the DSLs, and chapter \vref{sec:dslperformance} discusses
+various aspects regarding DSL performance. Chapter \vref{sec:examples}
+describes the example DSLs created in this thesis, while chapter
+\vref{sec:summary} provides a summary containing the conclusion as
+well as some suggestions to further work.
 
 \chapter{DSL Syntax}
 \label{sec:dslsyntax}
@@ -873,6 +942,7 @@ found in many dynamic languages and the dynamic dispatch mechanism
 allowing custom handling of missing methods.
 
 \chapter{DSL Composition}
+\label{sec:dslcomposition}
 
 \section{Modular DSL Composition}
 
@@ -961,12 +1031,14 @@ assert(9 === img.max)
 \end{lstlisting}
 
 \chapter{Advanced DSL Techniques}
+\label{sec:dsladvanced}
 
 \section{Removing from Host Language -- Pruning}
 
 \section{Extending Host Language}
 
 \chapter{Using the DSL}
+\label{sec:dsluse}
 
 \section{Scripting}
 
@@ -979,6 +1051,7 @@ assert(9 === img.max)
 \section{Tool Support}
 
 \chapter{DSL Performance}
+\label{sec:dslperformance}
 
 \section{Host Language -- Dynamic vs. Static Typing}
 
@@ -991,6 +1064,7 @@ assert(9 === img.max)
 \section{Secondary Processors -- GPU}
 
 \chapter{Examples}
+\label{sec:examples}
 
 \section{DSL for Image Processing}
 
@@ -1503,6 +1577,7 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
 \end{table}
 
 \chapter{Summary}
+\label{sec:summary}
 
 \section{Conclusion}
 
