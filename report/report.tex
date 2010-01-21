@@ -1035,33 +1035,90 @@ assert(9 === img.max)
 
 \section{Removing from Host Language -- Pruning}
 
+\begin{itemize}
+\item Scala compiler plugin
+\item Ruby open classes - remove\_method/undef\_method
+\item Clojure?
+\end{itemize}
+
 \section{Extending Host Language}
+
+\begin{itemize}
+\item Scala (compiler plugin + functions/continuations)
+\item Ruby open classes - adding methods
+\item Clojure macros
+\end{itemize}
 
 \chapter{Using the DSL}
 \label{sec:dsluse}
 
-\section{Scripting}
+So far the focus has been on the creation of embedded DSLs. This
+chapter discusses various ways to use the DSLs created. There are
+quite many ways to take advantage of the DSLs, depending on what kind
+of language it has been written in. The next sections describe some of
+the usages I have found, and how they are supported by the different
+languages.
 
 \section{API/Library}
 
+Most common use. All languages.
+
+\section{Scripting}
+
+Run as a script. All except Java?
+
 \section{Interactive Console -- Interpreter}
+
+Scripting console with DSL preloaded. All except Java?
 
 \section{Embedded Interpreter}
 
+DSL preloaded interpreter (as previous section) embedded in another
+application. Supported in Scala.
+
 \section{Tool Support}
+
+Comparison of tools support for the various languages?
 
 \chapter{DSL Performance}
 \label{sec:dslperformance}
 
 \section{Host Language -- Dynamic vs. Static Typing}
 
+Performance benchmarks dynamic vs static, interpreted vs compiled,
+functional vs object-oriented/imperative.
+
 \section{Code Efficiency}
+
+\begin{itemize}
+\item Scala for comprehensions --> while loops - functional
+  programming problem on the JVM?
+\item Primitives - byte, int and double support - contrast to objects
+  on everything (autoboxing)
+\item Data structures - Scala list of lists vs 2D-array
+\end{itemize}
 
 \section{Multithreading -- Parallel Computing}
 
+\begin{itemize}
+\item Java multithreading
+\item Java futures
+\item Scala actors
+\item Scala futures
+\end{itemize}
+
 \section{Distributed DSL}
 
+Distributed cache or similar. Akka distributed actors on Scala?
+
 \section{Secondary Processors -- GPU}
+
+OpenCL on Java/Scala. Cuda or similar?
+
+\section{JVM Tuning -- JVM Arguments}
+
+General JVM tuning tips? Or specific for languages/language
+categories?
 
 \chapter{Examples}
 \label{sec:examples}
