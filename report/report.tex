@@ -1061,9 +1061,53 @@ languages.
 
 \section{API/Library}
 
-Most common use. All languages.
+The most common way to use an embedded DSL seems to be as a library
+integrated in other application code. On the JVM this will typically
+involve archiving compiled class files, or script + interpreter, in
+one or more jar (Java Archive) files. These files will be included in
+the classpath of the application that needs access to the library
+API. The application programmer will then be able to import the
+classes and use in the program code. An example is the JMock framework
+in Java. It allows programmers writing unit tests to specify with an
+internal DSL syntax how they want to mock dependencies to the code
+they are testing. Example written in Java (DSL syntax mostly found in
+the expectations declarations):
+
+\begin{lstlisting}[language=java]
+import org.jmock.Mockery;
+import org.jmock.Expectations;
+
+public class PublisherTest extends TestCase {
+
+  Mockery context = new Mockery();
+
+  public void testSimplePublish() {
+    Subscriber subscriber = context.mock(Subscriber.class);
+
+    Publisher publisher = new Publisher();
+    publisher.add(subscriber)
+
+    String message = "message";
+
+    context.checking(new Expectations() {{
+      oneOf(subscriber).receive(message);
+
+      allowing(subscriber).isAlive(); will(returnValue(true);
+    }});
+
+    publisher.publish(message);
+
+    context.assertIsSatisfied();
+  }
+}
+\end{lstlisting}
 
 \section{Scripting}
+
+A different approach to the use-as-a-library approach shown above is
+to allow code written in the DSL to be run as a standalone
+script. That is without the need to wrap it in some class or module
+written in the host language.
 
 Run as a script. All except Java?
 
