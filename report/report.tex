@@ -77,7 +77,7 @@
 
 Scala is an increasingly popular programming language running on the
 JVM (Java Virtual Machine). One of its pronounced goals is to simplify
-the creation of DSLs (Domain-Specific Languages) with extensible
+the creation of DSLs (Domain-specific languages) with extensible
 syntax and combination of Object-Oriented and Functional
 Programming. This thesis examines these possibilities with regard to
 performance. It is demonstrated how you can use Scala to create
@@ -130,19 +130,103 @@ The goal of this chapter is to describe the problem at hand as
 detailed as possible. It has taken me a long time to clarify and
 understand the problem, and as such I think it is justified to spend
 quite a lot of time and space describing the background and why I
-think it is important. The last part of the chapter describes the
-methods used, and explains the structure of the rest of the document.
+think it is important. First the problem formulation is given, with a
+brief background and motivational description. The rest of the chapter
+describes the method followed and gives more detailed explanations of
+the programming languages used. The final section gives a brief
+outline of how the rest of the report is structured.
 
-\section{Problem Formulation}
+\section{Problem Description}
+\label{sec:problemdescription}
+
+\subsection{Problem Formulation}
 \label{sec:problemformulation}
 
 \textit{Evaluate some major alternative programming languages on the
-  Java Virtual Machine with regards to embedding Domain Specific
-  Languages. Identify important aspects when working with embedded
-  Domain Specific Languages and show what programming languages are
+  Java Virtual Machine with regards to embedding domain-specific
+  languages. Identify important aspects when working with embedded
+  domain-specific languages and show what programming languages are
   suited and how they solve the problems.}
 
-\section{Domain Specific Languages}
+\subsection{Background}
+\label{sec:background}
+
+A domain-specific language (DSL\footnote{Also known as
+  problem-oriented or special-purpose programming language in computer
+  literature.}) is a programming language dedicated to a particular
+problem domain. This thesis looks at embedding such DSLs into existing
+general-purpose programming languages, with a focus on several
+categories of languages with different features, and how these
+features are used. The scope is limited to the platform offered by the
+Java Virtual Machine, and the languages given in section
+\vref{sec:programminglanguages}. A more detailed definition of
+domain-specific languages, with my discussion, is given in section
+\vref{sec:dsls}.
+
+\subsection{Motivation}
+\label{sec:motivation}
+
+I have 10 years experience using the Java programming language,
+working as a professional consultant for BEKK\footnote{Bekk Consulting
+  AS (\url{http://www.bekk.no})}. I have always been facinated by
+various programming languages, and how they can be used to approach
+problems and solutions. When starting on a master thesis it is natural
+for me to focus on programming language capabilities. I feel that the
+embedded DSL domain provides a good basis for exploring different
+categories of programming languages, and by limiting the focus to the
+Java Virtual Machine I can control the scope and draw on my experience
+working with the Java platform.
+
+\section{Method}
+\label{sec:method}
+
+This section describes the research method applied in the
+thesis. In\cite{dyb08} the concept ``Evidence-Based Software
+Engineering'' (EBSE) is introduced. It describes a method that can be
+used when making decisions in Software Engineering, combining evidence
+found in literature with practical experience and conducted
+experiments. Although the method is mainly targeted towards
+practicioners looking to support decision-making it can easily be
+adapted to support an evaluative thesis as this one. The main steps of
+EBSE are as follows:
+
+\begin{enumerate}
+\item Convert a relevant problem or need for information into an
+  answerable question.
+\item Search the literature for the best available evidence to answer
+  the question.
+\item Critically appraise the evidence for its validity, impact, and
+  applicability.
+\item Integrate the appraised evidence with practical experience and
+  the client's values and circumstances to make decisions about
+  practice.
+\item Evaluate performance in comparison with previous performance and
+  seek ways to improve it.
+\end{enumerate}
+
+With this list as basis I have built a list of steps that I will
+follow in the thesis work. To summarize I will use existing literature
+extensively to build a solid base for the experiments conducted, and
+try to critically conclude the work at the end:
+
+\begin{enumerate}
+\item Create answerable questions -- Make sure the questions to
+  research are sound and possible to answer.
+\item Search existing literature -- Find literature to provide direct
+  answers to the questions, or to support assumptions needed to
+  sustain experiments.
+\item Critically appraise the literature evidence -- Make sure the
+  chosen literature actually provide valid evidence for its claims.
+\item Conduct experiments -- The major part of the thesis work is of
+  course related to the experiments conducted. The first three steps
+  are important to make sure the experiments are based on sound
+  evidence and former knowledge.
+\item Critical evaluation -- The experiments and results found must be
+  carefully evaluated. By being critical to my own results I hope to
+  improve the overall quality of the thesis deliverance.
+\end{enumerate}
+
+\section{Domain-Specific Languages}
 \label{sec:dsls}
 
 \textit{``Domain-specific languages (DSLs) are languages tailored to a
@@ -205,15 +289,18 @@ requirements.
 \subsection{Requirements of an Embedded DSL}
 \label{sec:requirements}
 
-The following lists the different requirements/capabilities that might
-be important when building embedded DSLs. The list provides a
-foundation for structuring the rest of this report:
+The following lists the different requirements/capabilities that I
+have considered in this work. The list provides a foundation for
+structuring the rest of this report:
 
 \begin{itemize}
 \item Conciseness/``fluency'' -- What capabilities does the different
   languages provide in building fluent interfaces?
 \item Use/reuse -- How can the DSL be used? How can several DSLs be
-  combined?
+  combined/reused into new ones?
+\item Isolation/uniqueness -- How can unwanted features of the host
+  language be deprecated/removed? How can the host language be
+  extended to provide unique functionality?
 \item Tool support -- What is the level of tool support provided for
   the DSL?
 \item Error handling/reporting -- How are errors and exceptional
@@ -412,70 +499,34 @@ There are also disadvantages with such a tight coupling to the JVM:
   Java has regarding erasure\cite{emi06}.
 \end{itemize}
 
-\section{Method}
-\label{sec:method}
-
-This section describes the research methods applied in this
-thesis. In\cite{dyb08} the concept ``Evidence-Based Software
-Engineering'' (EBSE) is introduced. Although this article is mainly
-targeted towards practicioners looking to support decision-making I
-feel that it gives a good foundation for evaluating research methods
-related to Software Engineering. The main steps of EBSE are as
-follows:
-
-\begin{enumerate}
-\item Convert a relevant problem or need for information into an
-  answerable question.
-\item Search the literature for the best available evidence to answer
-  the question.
-\item Critically appraise the evidence for its validity, impact, and
-  applicability.
-\item Integrate the appraised evidence with practical experience and
-  the client's values and circumstances to make decisions about
-  practice.
-\item Evaluate performance in comparison with previous performance and
-  seek ways to improve it.
-\end{enumerate}
-
-With this list as basis I ended up with the following steps for this
-thesis:
-
-\begin{enumerate}
-\item Create answerable questions -- Make sure the questions to
-  research are sound and possible to answer.
-\item Search existing literature -- Find literature to provide direct
-  answers to the questions, or to support assumptions needed to
-  sustain experiments.
-\item Critically appraise the literature evidence -- Make sure the
-  chosen literature actually provide valid evidence for its claims.
-\item Conduct experiments -- The major part of the thesis work is of
-  course related to the experiments conducted. The first three steps
-  are important to make sure the experiments are based on sound
-  evidence and former knowledge.
-\item Critical evaluation -- The experiments and results found must be
-  carefully evaluated. By being critical to my own results I hope to
-  improve the overall quality of the thesis deliverance.
-\end{enumerate}
-
-\subsection{Report Structure}
+\section{Report Structure}
 
 The rest of this report is structured around the requirements listed
 in section \vref{sec:requirements}. Each of the requirements are
 treated in separate chapters, with suggested techniques for solving
-them given in different programming languages. Chapter
-\vref{sec:dslsyntax} looks at techniques for creating concise and
-``fluent'' syntax, chapter \vref{sec:dslcomposition} handles
-composition of DSLs and chapter \vref{sec:dsladvanced} describes
-advanced DSL techniques like pruning and extending the host
-language. Chapter \vref{sec:dsluse} handles different ways to utilize
-and run the DSLs, and chapter \vref{sec:dslperformance} discusses
-various aspects regarding DSL performance. Chapter \vref{sec:examples}
-describes the example DSLs created in this thesis, while chapter
-\vref{sec:summary} provides a summary containing the conclusion as
-well as some suggestions to further work.
+them given in different programming languages:
 
-\chapter{DSL Syntax}
-\label{sec:dslsyntax}
+\begin{itemize}
+\item Chapter \ref{sec:syntax} (Syntax) looks at techniques for
+  creating concise and ``fluent'' syntax.
+\item Chapter \ref{sec:composition} (Composition) handles composition
+  of DSLs.
+\item Chapter \ref{sec:advancedtechniques} (Advanced Techniques) describes
+  advanced DSL techniques like pruning (removing features from) and
+  extending the host language.
+\item Chapter \ref{sec:dsluse} (Using the DSL) handles different ways
+  to utilize and run the DSLs.
+\item Chapter \ref{sec:performance} (Performance) discusses various
+  aspects regarding DSL performance.
+\item Chapter \ref{sec:examples} (Examples) describes the
+  example DSLs created in this thesis.
+\item Chapter \ref{sec:summary} (Summary) provides a summary
+  containing the conclusion as well as some suggestions to further
+  work.
+\end{itemize}
+
+\chapter{Syntax}
+\label{sec:syntax}
 
 The syntax of a language defines its surface form\cite{fri08}. It is
 the set of rules that define the combinations of symbols that are
@@ -941,8 +992,8 @@ typed domain. Most notebly are the powerful metaprogramming features
 found in many dynamic languages and the dynamic dispatch mechanism
 allowing custom handling of missing methods.
 
-\chapter{DSL Composition}
-\label{sec:dslcomposition}
+\chapter{Composition}
+\label{sec:composition}
 
 \section{Modular DSL Composition}
 
@@ -1030,8 +1081,8 @@ assert(5 === img.min)
 assert(9 === img.max)
 \end{lstlisting}
 
-\chapter{Advanced DSL Techniques}
-\label{sec:dsladvanced}
+\chapter{Advanced Techniques}
+\label{sec:advancedtechniques}
 
 \section{Removing from Host Language -- Pruning}
 
@@ -1129,8 +1180,8 @@ Comparison of tools support for the various languages?
 How well does the different host languages support custom error
 handling on the DSL level? Separate/different chapter?
 
-\chapter{DSL Performance}
-\label{sec:dslperformance}
+\chapter{Performance}
+\label{sec:performance}
 
 \section{Host Language -- Dynamic vs. Static Typing}
 
