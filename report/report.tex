@@ -1125,30 +1125,57 @@ they are testing. Example written in Java (DSL syntax mostly found in
 the expectations declarations):
 
 \begin{lstlisting}[language=java]
+import junit.framework.TestCase;
+
 import org.jmock.Mockery;
 import org.jmock.Expectations;
 
 public class PublisherTest extends TestCase {
 
-  Mockery context = new Mockery();
-
   public void testSimplePublish() {
+    Mockery context = new Mockery();
     Subscriber subscriber = context.mock(Subscriber.class);
-
     Publisher publisher = new Publisher();
     publisher.add(subscriber)
-
     String message = "message";
-
     context.checking(new Expectations() {{
       oneOf(subscriber).receive(message);
-
       allowing(subscriber).isAlive(); will(returnValue(true);
     }});
-
     publisher.publish(message);
-
     context.assertIsSatisfied();
+  }
+}
+\end{lstlisting}
+
+Another interesting thing when using the DSL as a library, is that the
+language using the DSL not necessarily needs to be the same as the
+host language the DSL was written in. If the DSL is compiled to
+bytecode (\texttt{.class} files), it can be used from most of the
+other languages running on the JVM. The example above could just as
+well have been written in any of the languages used in this thesis, as
+here in Scala (looking quite similar to the original Java example
+above):
+
+\begin{lstlisting}
+import junit.framework.TestCase
+
+import org.jmock.{Mockery, Expectations}
+
+class PublisherTest extends TestCase {
+
+  def testSimplePublish {
+    val context = new Mockery
+    val subscriber = (context.mock(classOf[Subscriber])).asInstanceOf[Subscriber]
+    val publisher = new Publisher
+    publisher.add(subscriber)
+    val message = "message"
+    context.checking(new Expectations {
+      oneOf(subscriber).receive(message)
+      allowing(subscriber).isAlive; will(returnValue(true)
+    })
+    publisher.publish(message)
+    context.assertIsSatisfied
   }
 }
 \end{lstlisting}
@@ -1158,9 +1185,48 @@ public class PublisherTest extends TestCase {
 A different approach to the use-as-a-library approach shown above is
 to allow code written in the DSL to be run as a standalone
 script. That is without the need to wrap it in some class or module
-written in the host language.
+written in the host language. All the dynamic and interpreted
+languages support this kind of usage. Scala, although it is a static
+and compiled language, has a kind of interactive interpreter called
+REPL (Read-Evaluate-Print Loop) that typically can be used to test
+code on the fly. It can also be used to run Scala-code in a more
+script-like way. The following script can be run demonstrating this
+functionality, using the image analysis DSL from chapter
+\vref{sec:examples} as example (loading an image and saving a blurred
+copy to a new file):
 
-Run as a script. All except Java?
+\begin{lstlisting}
+import simage.io.SImageIO._
+import simage.structs._
+import simage.structs.StrElType._
+
+val img = loadImageFile("cell.jpg")
+val se = StrEl(Square, 3)
+
+val blurredImg = img.avg(se)
+saveImage(blurredImg, "cell_blurred.jpg")
+\end{lstlisting}
+
+The script can then be run from the commandline using the scala
+interpreter (called with the \texttt{scala} command), assuming the
+script is in a file named \texttt{ImageScript.scala} and that the
+image analysis DSL has it's classes packed in the jar
+\texttt{simage.jar}:
+
+\begin{lstlisting}[language=bash]
+scala -classpath simage.jar ImageScript.scala
+\end{lstlisting}
+
+For users of the image analysis DSL this means a great simplification
+in the way it is run. They do not have to learn how to make classes,
+objects and methods in Scala, as they would if they wanted to run the
+DSL as a regular library in a Scala file (requiring at a minimum
+creating an application object with a main method). As image analysis
+experts are not necessarily computer programmers this might be a good
+idea.
+
+Similar examples can be given for other DSLs and using other host
+languages supporting running code as a script.
 
 \section{Interactive Console -- Interpreter}
 
