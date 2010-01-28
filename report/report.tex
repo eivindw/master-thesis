@@ -1297,8 +1297,27 @@ scala>
 
 \section{Embedded Interpreter}
 
-DSL preloaded interpreter (as previous section) embedded in another
-application. Supported in Scala.
+If we want to take the interactive interpreter in Scala a step further
+it is actually possible to embed it in your own
+application\footnote{See\cite{sur09} and\cite{dic09} (internet blog
+  posts) for examples of how to embed the Scala REPL.}. This could be
+a very powerful way to create a standalone application having a
+console or similar being able to run DSL commands directly. For the
+image analysis example shown in chapter \vref{sec:examples} it would
+be possible to create some kind of application combining such a
+console with an image viewer window showing the results of the
+operations directly on an image. This is similar to how \matlab works,
+a proven environment for image analysis and other mathematical
+calculations.
+
+I think this technique could be very useful for a number of cases. All
+kinds of DSLs where you might want to see some immediate results of
+your commands could be candidates. Examples could typically be
+statistical, financial or graphical DSLs. A generic application might
+even be reused for several different DSLs, thus being a powerful base
+for building custom running environments for any embedded DSL written
+in Scala (or any other language that compiles to regular Java
+bytecode).
 
 \section{Tool Support}
 
