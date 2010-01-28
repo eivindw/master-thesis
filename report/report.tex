@@ -11,6 +11,7 @@
 \usepackage{varioref}
 \usepackage{cite}
 \usepackage[color]{uiosloforside}
+\usepackage[bottom]{footmisc}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
 
@@ -1230,7 +1231,69 @@ languages supporting running code as a script.
 
 \section{Interactive Console -- Interpreter}
 
-Scripting console with DSL preloaded. All except Java?
+Many of the programming languages studied have some sort of
+interactive interpreter (like the Scala REPL mentioned in the previous
+section). This can in many cases be configured to be used with a
+specific library pre-loaded, which means it is possible to create a
+custom version for working interactively with a DSL. Similar to the
+scripting example shown above this opens possibilities to work with
+the DSL without wrapping it in any host language code. But the main
+advantage of using the DSL in an interactive console is the unique
+ability it offers in issuing commands that are run directly.
+
+The Scala REPL has an option to pre-load a file with commands on
+startup. Typically this can be used to include imports, implicit
+definitions, type aliases or function definitions. Taking the example
+from the previous section on scripting we can put all the import
+statements into a file called PreDef.scala:
+
+\begin{lstlisting}
+import simage.io.SImageIO._
+import simage.structs._
+import simage.structs.StrElType._
+\end{lstlisting}
+
+The interactive interpreter can then be started using the option
+\texttt{-i PreDef.scala} as in the following example:
+
+\begin{lstlisting}[language=bash]
+scala -classpath simage.jar -i PreDef.scala
+
+Loading Predef.scala...
+import simage.io.SImageIO._
+import simage.structs._
+import simage.structs.StrElType._
+
+Welcome to Scala version 2.7.7.final (Java HotSpot(TM) 64-Bit Server VM, Java 1.6.0_17).
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala> 
+\end{lstlisting}
+
+We can the issue the same commands used in the script example one by
+one (notice the output for every line wich is simply the interpreter
+calling the \texttt{toString} method after printing the type on the
+newly created object -- very useful for debugging purposes):
+
+\begin{lstlisting}[language=bash]
+scala> val img = loadImageFile("cell.jpg")
+img: simage.structs.GrayScaleImage with simage.operations.Standard with simage.operations.Morphology =
+Image 512x512
+
+scala> val se = StrEl(Square, 3)
+se: simage.structs.StrEl[Int] = 
+Array2D rows:3 cols:3
+Array(1, 1, 1, 1, 1, 1, 1, 1, 1)
+
+scala> val blurredImg = img.avg(se)
+blurredImg: simage.structs.GrayScaleImage with simage.operations.Standard with simage.operations.Morphology =
+Image 512x512
+
+scala> saveImage(blurredImg, "cell_blurred.jpg")
+
+scala>
+\end{lstlisting}
 
 \section{Embedded Interpreter}
 
