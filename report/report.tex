@@ -14,6 +14,9 @@
 \usepackage[bottom]{footmisc}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
+\usepackage[compact]{titlesec}
+\usepackage{chngcntr}
+\counterwithout*{footnote}{chapter}
 
 \setlength\topmargin{0in}
 \setlength\headheight{0in}
@@ -22,8 +25,8 @@
 \setlength\textwidth{6.5in}
 \setlength\oddsidemargin{0in}
 \setlength\evensidemargin{0in}
-\setlength\parindent{0.25in}
-\setlength\parskip{0.15in}
+\setlength\parindent{0in}
+\setlength\parskip{0.10in}
 \setlength\columnsep{0.25in}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
@@ -76,14 +79,22 @@
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-Scala is an increasingly popular programming language running on the
-JVM (Java Virtual Machine). One of its pronounced goals is to simplify
-the creation of DSLs (Domain-specific languages) with extensible
-syntax and combination of Object-Oriented and Functional
-Programming. This thesis examines these possibilities with regard to
-performance. It is demonstrated how you can use Scala to create
-efficient DSLs on the JVM, utilizing parallel and concurrent
-mechanisms found in modern computers.
+The Java Virtual Machine is an extremely popular software
+platform\footnote{According to Sun there are over 4.5 billion
+  JVM-enabled devices in the world --
+  \url{http://www.java.com/en/about/}} capable of running programs in
+the intermediate language called Java bytecode. The JVM supports a
+wide range of languages\footnote{Wikipedia: List of JVM languages --
+  \url{http://en.wikipedia.org/wiki/List_of_JVM_languages}} with
+different typing, programming paradigm and compilation approach. This
+thesis examines some of the most popular of these languages, with a
+focus on embedding domain-specific languages. It is demonstrated how
+various languages provide radically different possibilities, with
+regard to syntax, composition, usage and performance. Examples are
+given showing what programming languages are suited to particular
+domain-specific tasks, and further research is suggested in the form
+of new language features and new ways to utilize existing language
+features.
 
 \tableofcontents
 
@@ -97,26 +108,28 @@ mechanisms found in modern computers.
 This is a master-thesis of 60 credits\footnote{Prescribed to one year
   of full time study} in the field of Informatics. It was written for
 the Object-orientation, Modelling, and Languages research
-group\cite{oms} at the Department of Informatics, Faculty of
-Mathematics and Natural Sciences, University of Oslo.
+group\footnote{OMS research group website --
+  \url{http://www.ifi.uio.no/research/groups/oms/}} at the Department
+of Informatics, Faculty of Mathematics and Natural Sciences,
+University of Oslo.
 
-I would like to dedicate this work to the memory of my grandfather
-Bjarne A. Waaler. His constant search for knowledge and truth has been
-an enormous inspiration. I am proud to make a contribution to the same
-university where he spent so many of his years working.
+I want to thank my wonderful wife Anniken for the support and
+understanding she has shown during this process. Her polite reminders
+when my geeky interests go out of bounds are invaluable.
 
-I would also like to thank my wonderful wife Anniken for the support
-and understanding she has shown during this process. Her polite
-reminders when my geeky interests go out of bounds are invaluable.
+My thanks and thoughts also go to the memory of my grandfather Bjarne
+A. Waaler. His constant search for knowledge and truth has been an
+enormous inspiration all my life. I am proud to make a contribution to
+the same university where he spent so many of his years working, both
+in research and administration.
 
 At last, but not least, I would like to thank my supervisor Professor
 Birger Møller-Pedersen at the Department of Informatics, UiO. His
 unique experience from projects such as the \textsc{beta} programming
-language \cite{beta} and the \textsc{swat} project\cite{swat} has
-proven extremely valuable for me. Through many good discussions at his
-office I've learned much about current and historic programming
-language concepts. His enthusiasm has motivated me from beginning to
-end.
+language and the \textsc{swat} project has proven extremely valuable
+for me. Through many good discussions at his office I've learned much
+about current and historic programming language concepts. His
+enthusiasm has motivated me from beginning to end.
 
 \begin{flushright}
 \textsc{Eivind Barstad Waaler}\\
@@ -996,6 +1009,12 @@ allowing custom handling of missing methods.
 \chapter{Composition}
 \label{sec:composition}
 
+This chapter looks at various composition techniques used when working
+with DSLs. It is divided into two main sections; the first one
+describing how modular composition can be useful when constructing a
+single DSL, and the second showing how to combine multiple DSLs to
+create new ones.
+
 \section{Modular DSL Composition}
 
 \subsection{Traits - Polymorphic Abilities}
@@ -1082,8 +1101,21 @@ assert(5 === img.min)
 assert(9 === img.max)
 \end{lstlisting}
 
+\section{Conclusion}
+
+TODO: Write conclusion.
+
 \chapter{Advanced Techniques}
 \label{sec:advancedtechniques}
+
+This chapter describes some advanced techniques that can be used in
+DSL construction. More specifically it deals with operations that
+remove functionality from the host language (pruning), and various
+ways to extends the host language. One could discuss how relevant this
+is when talking about embedding DSLs, as using these techniques widely
+can alter the host languages radically. As such an embedded DSL in a
+host language can be rendered to act as an external DSL, tweaking the
+programming language to suit our needs.
 
 \section{Removing from Host Language -- Pruning}
 
@@ -1100,6 +1132,10 @@ assert(9 === img.max)
 \item Ruby open classes - adding methods
 \item Clojure macros
 \end{itemize}
+
+\section{Conclusion}
+
+TODO: Write conclusion.
 
 \chapter{Using the DSL}
 \label{sec:dsluse}
@@ -1306,8 +1342,8 @@ console or similar being able to run DSL commands directly. For the
 image analysis example shown in chapter \vref{sec:examples} it would
 be possible to create some kind of application combining such a
 console with an image viewer window showing the results of the
-operations directly on an image. This is similar to how \matlab works,
-a proven environment for image analysis and other mathematical
+operations directly on an image. This is similar to how \matlab{}
+works, a proven environment for image analysis and other mathematical
 calculations.
 
 I think this technique could be very useful for a number of cases. All
@@ -1328,8 +1364,19 @@ Comparison of tools support for the various languages?
 How well does the different host languages support custom error
 handling on the DSL level? Separate/different chapter?
 
+\section{Conclusion}
+
+TODO: Write conclusion.
+
 \chapter{Performance}
 \label{sec:performance}
+
+This chapter looks at the performance aspects of the various DSLs and
+host languages. The categories of languages are compared with regards
+to performance, and some example DSLs that depend on high throughput
+are implemented and analyzed. The chapter concludes with some key
+points to consider when dealing with DSLs that need to run as fast as
+possible on the JVM.
 
 \section{Host Language -- Dynamic vs. Static Typing}
 
@@ -1368,8 +1415,20 @@ OpenCL on Java/Scala. Cuda or similar?
 General JVM tuning tips? Or specific for languages/language
 categories?
 
+\section{Conclusion}
+
+TODO: Write conclusion.
+
 \chapter{Examples}
 \label{sec:examples}
+
+This chapter describes the main examples written and researched in
+this thesis. The DSLs are described, and details about implementation
+and key features given. Some source code being central in the
+implementation is shown in the text. Full source code for all the
+examples can be downloaded from my repositories at
+GitHub\footnote{GitHub repositories website --
+  \url{http://github.com/eivindw}}.
 
 \section{DSL for Image Processing}
 
@@ -1381,7 +1440,7 @@ more mathematical than computer science oriented background. This
 leads to the need for DSLs where complicated and computationally heavy
 operations can be performed with a simple and straightforward syntax.
 
-A major actor in the art of Image Processing is the product \matlab
+A major actor in the art of Image Processing is the product \matlab{}
 from the company MathWorks\texttrademark. They provide the user with a
 DSL for doing advanced Image Processing operations. I have tried to
 create a similar DSL (with limited functionality) in Scala.
@@ -1887,6 +1946,19 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
 \section{Conclusion}
 
 Summary.. $\ddot\smile$
+
+\subsection{Research Contributions}
+
+\begin{itemize}
+\item Using package template mechanism from \textsc{swat} project in
+  embedding DSLs (using DSL/combining DSLs).
+\item ``New'' object-oriented features from \textsc{beta} (virtual
+  classes/extending methods).
+\item AOP features integrated in language (qi4j, Ioke?).
+\item More dynamic-like features in static languages (metaprogramming,
+  dynamic dispatch).
+\item Embedding high-performance DSLs on JVM with Scala.
+\end{itemize}
 
 \section{Future Work}
 
