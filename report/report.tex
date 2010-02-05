@@ -71,6 +71,7 @@
 \newcommand{\matlab}{\textsc{Matlab}\textregistered}
 
 \title{Embedding Efficient DSLs on the Java Virtual Machine}
+\subtitle{A review of alternative languages}
 \author{Eivind Barstad Waaler (\emph{eivindwa})}
 
 \begin{document}
@@ -370,6 +371,15 @@ useful when building DSLs, features not currently found in the Java
 language itself. So Java will also be used quite heavily for reference
 and comparison to the other languages.
 
+\begin{lstlisting}[language=java]
+public class HelloWorld {
+  public static void main(String[] args) {
+    // A Java comment
+    System.out.println("Hello world!");
+  }
+}
+\end{lstlisting}
+
 \subsection{Groovy}
 
 Groovy is a dynamically typed and compiled language supporting the
@@ -382,11 +392,12 @@ example:
 class Greet {
   def name
 
-  Greet(who) { name = who[0].toUpperCase() + who[1..-1] }
+  Greet(who) { name = who }
 
   def salute() { println "Hello \$name!" }
 }
 
+// Groovy comments are the same as in Java
 new Greet('world').salute()
 \end{lstlisting}
 
@@ -406,7 +417,26 @@ compilation.
 
 The main reason for my inclusion of Ruby in this thesis is the ``Ruby
 on Rails'' framework\cite{rails}, an extraordinary DSL running on the
-JVM with the help of the JRuby interpreter.
+JVM with the help of the JRuby interpreter. Below is a Ruby
+implementation of the same ``hello world'' program that was shown in
+Groovy in the previous section.
+
+\begin{lstlisting}[language=ruby]
+class Greet
+  @name
+
+  def initialize(name)
+    @name = name
+  end
+
+  def salute()
+    puts "Hello #@name!"
+  end
+end
+
+# A Ruby comment
+Greet.new("world").salute()
+\end{lstlisting}
 
 \subsection{Clojure}
 
@@ -419,7 +449,23 @@ youngest and least mature language included in my work.
 The reason I have looked at Clojure is the amount of embedded DSL
 papers written using functional programming languages (for
 example\cite{hud96}), making Clojure an interesting language with
-respect to embedding DSLs on the JVM.
+respect to embedding DSLs on the JVM. Below is an example of the
+``hello world'' function in Clojure, as well as an example
+implementation of the Fibonacci function (a more common ``hello
+world'' in the functional world).
+
+\begin{lstlisting}[language=lisp]
+; A kind of hello world function
+(def hello (fn [] "Hello world"))
+
+; The fibonacci function
+(defn fib [n] 
+  (if (<= n 1) 
+    1
+    (+ (fib (- n 1)) (fib (- n 2)))
+  )
+)
+\end{lstlisting}
 
 \subsection{Scala}
 
@@ -1330,6 +1376,11 @@ scala> saveImage(blurredImg, "cell_blurred.jpg")
 
 scala>
 \end{lstlisting}
+
+From Scala version 2.8\footnote{To be released in the first part of
+  2010, available as a first Beta version as of this writing.} the
+REPL will have many improvements such as code completion (of
+package/class/member names) and interactive debugging.
 
 \section{Embedded Interpreter}
 
