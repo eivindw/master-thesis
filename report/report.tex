@@ -973,6 +973,9 @@ player.team
 team.players.each { |team| ... }
 \end{lstlisting}
 
+TODO: Write about metaprogramming in static languages, using
+annotations or other concepts.
+
 \section{Open Classes/Monkey Patching}
 \label{sec:monkey_patching}
 
@@ -1101,6 +1104,72 @@ val m2 = new Matrix with MorphMtx
 // Matrix with "all" methods
 val m3 = new Matrix with AvgMtx with MorphMtx
 \end{lstlisting}
+
+Mixin composition is also available in Groovy and Ruby. In Groovy
+there is a general mixin meta-class function available:
+
+\begin{lstlisting}[language=java]
+class Base {
+  String name;
+}
+
+class StdOp {
+  def std() {
+    println("std() running.." + name);
+  }
+}
+
+class ExtraOp {
+  def extra() {
+    println("extra() running.." + name);
+  }
+}
+
+Base.class.mixin(StdOp, ExtraOp);
+
+base = new Base(name: 'Test!');
+base.std();
+base.extra();
+\end{lstlisting}
+
+In Ruby there is a \texttt{module} concept that provides the mixin
+composition functionality:
+
+\begin{lstlisting}[language=ruby]
+class Base
+  @name
+  
+  def initialize(name)
+    @name = name
+  end
+end
+
+module StdOp
+  def std
+    puts "std() running.." + @name
+  end
+end
+
+module ExtraOp
+  def extra
+    puts "extra() running.." + @name
+  end
+end
+
+class MyBase < Base
+  include StdOp, ExtraOp
+end
+
+base = MyBase.new("Test!")
+base.std()
+base.extra()
+\end{lstlisting}
+
+Using the modular composition techniques it is possible to extract
+parts of a DSL as a new one, by only including the traits (or modules)
+wanted. An optimizing compiler could also utilize this composition to
+only include the parts of a DSL that are actually used, this
+optimizing the size of the bytecode produced.
 
 \section{Combining DSLs}
 \label{sec:combining_dsls}
