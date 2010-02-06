@@ -948,14 +948,80 @@ val person = new Person { name = "John"; age = 26 }
 Metaprogramming is the writing of computer programs that write or
 manipulate other programs (or themselves) as their data, or that do
 part of the work at compile time that would otherwise be done at
-runtime. In terms of embedded DSL creation, metaprogramming is used in
-some dynamically typed programming languages to create interesting
-possibilities.
+runtime. In terms of embedded DSL creation, metaprogramming can be an
+extremely useful mechanism. There are quite drastic differences
+between the different programming paradigms how they solve
+metaprogramming, how it is used and what you can do with it. The next
+sub-sections describe some of these differences with examples.
 
-A typical example of a DSL utilizing metaprogramming is the Rails
-framework and the \texttt{ActiveRecord} class. Here metaprogramming is
-used to specify relationships between the classes \texttt{Team} and
-\texttt{Player}:
+\subsection{Metaprogramming in Static Languages}
+
+Java has a wide range of mechanisms associated with metaprogramming:
+
+\begin{itemize}
+\item Annotations -- Annotations were introduced to Java with version
+  5 (JDK 1.5). They are used to add metadata about a program. These
+  data are not part of the program itself, and can be used both at
+  compile-time/deployment-time and at runtime. Deployment-time
+  annotations can be used for code generation, and can be used when
+  embedding DSLs.
+\item Reflection
+\item AOP eller lignende?
+\end{itemize}
+
+TODO: Example from Hibernate? To compare with the Rails examples?
+
+\begin{lstlisting}[language=java]
+@Named @SessionScoped
+public class SpecialService() {
+
+  @Random @Inject int randomNumber;
+
+  @Inject DataSource dataSource;
+
+  @Transactional
+  public void doDatabaseStuff() { ... }
+}
+\end{lstlisting}
+
+Scala has no special mechanism for metaprogramming yet.
+
+\subsection{Dynamic Metaprogramming}
+
+Dynamically typed languages are able to use metaprogramming in a more
+dynamic way, to add or alter method definitions at runtime. Both
+Groovy and Ruby have powerful support for this kind of dynamic
+metaprogramming.
+
+This first example shows how the mechanism can be used. In this case a
+new method is added to the Java \texttt{String} class\footnote{Note
+  that the \texttt{String} class is final in Java, but still
+  modifiable with dynamic metaprogramming in Groovy.}, and the static
+\texttt{random} method of the \texttt{Math} class is changed to a
+not-so-random implementation useful for unit testing or other
+environments where you want to have full control of returned values:
+
+\begin{lstlisting}[language=java]
+// Add a "shout" method to the Java String class
+String.metaClass.shout = {
+  println delegate.toUpperCase()
+}
+"hello".shout() // prints "HELLO"
+
+// Handy when you want to do controlled unit testing?
+Math.metaClass.static.random = {
+  return 42
+}
+\end{lstlisting}
+
+The implementation is roughly the same in Ruby. A typical example of a
+DSL utilizing metaprogramming is the Rails framework and the
+\texttt{ActiveRecord} class. Here metaprogramming is used to specify
+relationships between the classes \texttt{Team} and
+\texttt{Player}. The methods \texttt{has\_many} and \texttt{belongs\_to}
+are typically implemented in a manner similar to the Groovy examples
+above, adding methods \texttt{team} and \texttt{players} with database
+extraction logic to the classes in use:
 
 \begin{lstlisting}[language=Ruby]
 class Team < ActiveRecord::Base
@@ -973,8 +1039,28 @@ player.team
 team.players.each { |team| ... }
 \end{lstlisting}
 
-TODO: Write about metaprogramming in static languages, using
-annotations or other concepts.
+\subsection{Functional Metaprogramming}
+
+\begin{itemize}
+\item Lisp makroer + innebygget metadata-støtte
+\item Egen syntax -- \texttt{meta} og \texttt{with-meta}
+\item Vanskelig å skjønne uten FP/Lisp bakgrunn
+\end{itemize}
+
+\begin{lstlisting}[language=lisp]
+(def my-user {:login "test" :password "secret"})      
+; #'user/my-user
+my-user
+; {:login "test", :password "secret"}
+(meta my-user)
+; nil
+(def my-cached-user (with-meta my-user {:cached-at (java.util.Date. )}))
+; #'user/my-cached-user
+my-cached-user
+; {:login "test", :password "secret"}
+(meta my-cached-user)
+; {:cached-at #<Date Sat Feb 06 20:38:28 CET 2010>}
+\end{lstlisting}
 
 \section{Open Classes/Monkey Patching}
 \label{sec:monkey_patching}
