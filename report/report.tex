@@ -599,8 +599,13 @@ major differences between various classes of host languages and what
 these mean to the construction of embedded DSLs.
 
 \section{Function Chaining/Nesting}
+\label{sec:functionchaining}
 
-TODO: Rewrite to summarize fluent interfaces (Fowler + Evans). Example use\cite{fre06}.
+As mentioned in section \vref{sec:embeddeddsl}, Fowler and Evans have
+used the term \texttt{fluent interfaces} to describe libraries that
+can be used in a certain way. A key functionality when creating such
+fluent interfaces in Java is the ability to chain/nest functions
+together.
 
 One of the simplest ways to create a DSL-like syntax is to allow
 chaining several function calls together. As an example consider the
@@ -638,11 +643,31 @@ computer(
 );
 \end{lstlisting}
 
+In\cite{fre06}, this technique is described in detail. In the testing
+framework \texttt{jMock}\footnote{jMock -- A Lightweight Mock Object
+  Library for Java: \url{http://www.jmock.org/}} a carefully designed
+set of interfaces and factory builder objects allow method chaining
+maintaining the wanted order of method calls. The referred paper is a
+very good read demonstrating how to design and build a library as an
+embedded DSL in Java. The following example is from the paper, showing
+the DSL syntax of mock object expectations used in a mock
+\texttt{Offer} class:
+
+\begin{lstlisting}[language=java]
+void testAcceptsOfferIfLowPrice() {
+  offer = mock(Offer.class);
+  offer.expects( once() )
+       .method( "buy" )
+       .with( eq(QUANTITY) )
+       .will( returnValue(receipt) );
+  ...
+}
+\end{lstlisting}
+
 Function chaining is available in most programming languages. In
 functional programming it is a fundamental concept, while in
 object-oriented langauges more a design choice (as in the example
-above). In object-oriented languages using function chaining is often
-referred to as building \texttt{fluent interfaces}.
+above).
 
 \section{Static Methods/Singleton Objects}
 
@@ -680,8 +705,22 @@ ListSorter.sort(names)
 Static methods may play a central role in an embedded DSL, especially
 combined with \texttt{Member Imports} (next section). They are
 typically used for object creation through patterns like
-\texttt{Factory method} and \texttt{Builder}, or other utility
-operations like the sorting shown in the examples above.
+\texttt{Factory method}\footnote{TODO: Describe Factory method
+  pattern} and \texttt{Builder}\footnote{TODO: Describe Builder
+  pattern}, or other utility operations like the sorting shown in the
+examples above. In my image analysis DSL (described in section
+\vref{sec:dslimageprocessing}), singleton objects are used to
+construct objects:
+
+\begin{lstlisting}
+// Using singleton object:
+val squareElement = StrEl(Square, 3) // 3x3 square element
+val lineElement = StrEl(HLine, 5) // 5x1 line element
+
+// Without singleton object, using new:
+val squareElement = new StrEl(Square, 3)
+val lineElement = new StrEl(HLine, 5)
+\end{lstlisting}
 
 \section{Member Imports}
 
@@ -715,6 +754,23 @@ import apple._ // Import all members from object apple
 println(name + " is " + color) // Access members 'name' and 'color' directly
 \end{lstlisting}
 
+My image processing DSL uses a number of member imports to enable a
+concise syntax when working with the DSL, allowing the user of the DSL
+to use the method/type names directly (such as the
+\texttt{loadImageFile} method and the \texttt{Square} type in the
+example below):
+
+\begin{lstlisting}
+import simage.io.SImageIO._
+import simage.structs._
+import simage.structs.StrElType._
+
+val img = loadImageFile("cell.jpg") // Would be SImageIO.loadImageFile without member import
+val se = StrEl(Square, 3) // Would be ...StrElType.Square
+
+saveImage(img.avg(se), "cell_avg.jpg") // Would be SImageIO.saveImage without member imports
+\end{lstlisting}
+
 \section{Method Names and Operator Notation}
 
 When constructing an embedded DSL we like to make the syntax reflect
@@ -730,8 +786,13 @@ interesting with regards to DSL development\cite{dub06}:
   overloading, as operators are just regular methods with special
   names. For example \texttt{+}, \texttt{!=} and \texttt{<=}.
 \item Operator notation - Methods in Scala can be called without the
-  dot and parentheses, as shown in the examples below.
+  dot and parentheses.
 \end{itemize}
+
+The following example shows how the operator notation is used together
+with the \texttt{+} method name in a simple matrix DSL (being an
+important part of the larger image processing DSL shown in section
+\vref{sec:dslimageprocessing}):
 
 \begin{lstlisting}
 abstract class Matrix {
@@ -749,9 +810,39 @@ val m3 = m1 + m2
 val m3 = m1 add m2
 \end{lstlisting}
 
+Combining the method naming in Scala with method chaining can give
+``fluent interfaces'' with even more concise syntax than what was
+shown in previous sections. The following example is used from the
+website of ScalaTest, as testing framework supporting Behaviour Driven
+Development\footnote{TODO: Describe BDD} in a very fluent style:
+
+\begin{lstlisting}
+import org.scalatest.FlatSpec
+import org.scalatest.matchers.ShouldMatchers
+
+class StackSpec extends FlatSpec with ShouldMatchers {
+
+  "A Stack" should "pop values in last-in-first-out order" in {
+    val stack = new Stack[Int]
+    stack.push(1)
+    stack.push(2)
+    stack.pop() should equal (2)
+    stack.pop() should equal (1)
+  }
+
+  it should "throw NoSuchElementException if an empty stack is popped" in {
+    val emptyStack = new Stack[String]
+    evaluating { emptyStack.pop() } should produce [NoSuchElementException]
+  }
+}
+\end{lstlisting}
+
 In the dynamic language Ruby they have a similar mechanism as in
 Scala. Here you are allowed to leave the parentheses surrounding the
-parameter(s) out, but not the dot in front of the method name.
+parameter(s) out, but not the dot in front of the method name. In
+addition it is a common idiom in Ruby to append method names with a
+questionmark if the method returns a boolean value. As shown in the
+following example demonstrating how parentheses are optional:
 
 \begin{lstlisting}[language=Ruby]
 name = "John"
@@ -965,26 +1056,45 @@ Java has a wide range of mechanisms associated with metaprogramming:
   compile-time/deployment-time and at runtime. Deployment-time
   annotations can be used for code generation, and can be used when
   embedding DSLs.
-\item Reflection
-\item AOP eller lignende?
+\item Reflection -- TODO: describe
+\item AOP -- TODO: describe
 \end{itemize}
 
-TODO: Example from Hibernate? To compare with the Rails examples?
+As an example of an embedded DSL in Java relying heavily on
+annotations is the Hibernate framework, providing an object-relational
+mapping between Java domain objects and database tables. The following
+example shows Hibernate in work mapping the classes \texttt{Person}
+and \texttt{Address} to database tables. A person has one address, but
+many persons can live on the same address. This relationship is mapped
+using annotations. With these annotations in place, Hibernate will
+generate the mapping (SQL-code) needed to extract correct data from
+the database:
 
 \begin{lstlisting}[language=java]
-@Named @SessionScoped
-public class SpecialService() {
+@Entity
+public class Person {
+  @Column(name="person_name", length=100)
+  public String getName() { ... }
 
-  @Random @Inject int randomNumber;
-
-  @Inject DataSource dataSource;
-
-  @Transactional
-  public void doDatabaseStuff() { ... }
+  @ManyToOne
+  public Address getAddress() { ... }
 }
+
+@Entity
+public class Address {
+  ...
+  @OneToMany
+  public List<Person> getPersons() { ... }
+}
+
+// Example of use
+Address adr = ... // obtain some address object
+// The getPersons() method will actually run some SQL in the background fetching correct persons
+for(Person person : adr.getPersons()) { ... }
 \end{lstlisting}
 
-Scala has no special mechanism for metaprogramming yet.
+Scala has no special mechanism for metaprogramming yet, and has not
+been considered in this section.
 
 \subsection{Dynamic Metaprogramming}
 
@@ -1039,13 +1149,21 @@ player.team
 team.players.each { |team| ... }
 \end{lstlisting}
 
+This dynamic style metaprogramming is one of the biggest advantages
+dynamic languages have when it comes to designing embedded DSLs. Using
+annotations or other metaprogramming techniques could be used in Java
+or other static languages to generate code similar to the one
+generated by the rails framework. However, the client would not know
+about the methods until after compiling. So programming in this
+fashion in a static language would require some intermediate step of
+explicit code-generation or compiling before calling the generated
+methods. I think this is an extremely big differenciator when it comes
+to certain kind of DSLs and programming language paradigms. A DSL like
+Rails could never have been written in a static language.
+
 \subsection{Functional Metaprogramming}
 
-\begin{itemize}
-\item Lisp makroer + innebygget metadata-støtte
-\item Egen syntax -- \texttt{meta} og \texttt{with-meta}
-\item Vanskelig å skjønne uten FP/Lisp bakgrunn
-\end{itemize}
+TODO: describe -- Lisp macroes + built-in metadata support
 
 \begin{lstlisting}[language=lisp]
 (def my-user {:login "test" :password "secret"})      
@@ -1357,10 +1475,11 @@ one or more jar (Java Archive) files. These files will be included in
 the classpath of the application that needs access to the library
 API. The application programmer will then be able to import the
 classes and use in the program code. An example is the JMock framework
-in Java. It allows programmers writing unit tests to specify with an
-internal DSL syntax how they want to mock dependencies to the code
-they are testing. Example written in Java (DSL syntax mostly found in
-the expectations declarations):
+in Java (also mentioned in section \vref{sec:functionchaining}). It
+allows programmers writing unit tests to specify with an internal DSL
+syntax how they want to mock dependencies to the code they are
+testing. Example written in Java (DSL syntax mostly found in the
+expectations declarations):
 
 \begin{lstlisting}[language=java]
 import junit.framework.TestCase;
@@ -2025,6 +2144,7 @@ GitHub\footnote{GitHub repositories website --
   \url{http://github.com/eivindw}}.
 
 \section{DSL for Image Processing}
+\label{sec:dslimageprocessing}
 
 \subsection{Description}
 
