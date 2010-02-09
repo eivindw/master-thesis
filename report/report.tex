@@ -438,6 +438,24 @@ end
 Greet.new("world").salute()
 \end{lstlisting}
 
+JRuby can use classes from the standard Java API directly using the
+\texttt{include Java} statement. It can also import Java classes
+directly from jar files. So most Java libraries and APIs can be reused
+when working with JRuby on the JVM, as in the following little example
+(creating a Java Swing application):
+
+\begin{lstlisting}[language=ruby]
+# Special include to make standard Java API available
+include Java
+
+frame = javax.swing.JFrame.new("Main Window")
+frame.getContentPane.add(javax.swing.JLabel("Press button:"))
+frame.getContentPane.add(javax.swing.JButton("OK"))
+frame.setDefaultCloseOperation(javax.swing.JFrame::EXIT_ON_CLOSE)
+frame.pack
+frame.setVisible(true)
+\end{lstlisting}
+
 \subsection{Clojure}
 
 Clojure is a dynamically typed and compiled language supporting the
@@ -452,7 +470,7 @@ example\cite{hud96}), making Clojure an interesting language with
 respect to embedding DSLs on the JVM. Below is an example of the
 ``hello world'' function in Clojure, as well as an example
 implementation of the Fibonacci function (a more common ``hello
-world'' in the functional world).
+world'' in the functional world):
 
 \begin{lstlisting}[language=lisp]
 ; A kind of hello world function
@@ -466,6 +484,28 @@ world'' in the functional world).
   )
 )
 \end{lstlisting}
+
+Clojure integrates with Java using macros and the dot operator, as in
+the following examples:
+
+\begin{lstlisting}[language=lisp]
+; Get a system property
+(System/getProperty "java.vm.version")
+; Call "toUpperCase" on the String "clojure"
+(.toUpperCase "clojure")
+; Import java.util.Date, make a new instance and print the class name
+(import java.util.Date)
+(new Date) ; New instance of Date
+(.getName Date) ; Call "getName" on the Date class
+\end{lstlisting}
+
+In addition all Clojure data structures implement standard Java
+interfaces, making it easy to run code implemented in Clojure from
+Java. The very good interoperability between Clojure and Java is a bit
+surprising looking at the extreme differences in syntax and
+programming paradigm, but is a powerful addition to the Lisp
+world. Combining the macros of a Lisp language with all the available
+libraries on the Java platform seems to be a very good idea.
 
 \subsection{Scala}
 
@@ -705,12 +745,15 @@ ListSorter.sort(names)
 Static methods may play a central role in an embedded DSL, especially
 combined with \texttt{Member Imports} (next section). They are
 typically used for object creation through patterns like
-\texttt{Factory method}\footnote{TODO: Describe Factory method
-  pattern} and \texttt{Builder}\footnote{TODO: Describe Builder
-  pattern}, or other utility operations like the sorting shown in the
-examples above. In my image analysis DSL (described in section
-\vref{sec:dslimageprocessing}), singleton objects are used to
-construct objects:
+\texttt{Factory method}\footnote{The factory method is an
+  object-oriented pattern that handles the creation of objects without
+  specifying the exact class of the object\cite{gam95}} and
+\texttt{Builder}\footnote{The builder pattern is an object-oriented
+  pattern that assists the creation of variations of objects through a
+  series of abstract method calls\cite{gam95}}, or other utility operations
+like the sorting shown in the examples above. In my image analysis DSL
+(described in section \vref{sec:dslimageprocessing}), singleton
+objects are used to construct objects:
 
 \begin{lstlisting}
 // Using singleton object:
@@ -814,7 +857,10 @@ Combining the method naming in Scala with method chaining can give
 ``fluent interfaces'' with even more concise syntax than what was
 shown in previous sections. The following example is used from the
 website of ScalaTest, as testing framework supporting Behaviour Driven
-Development\footnote{TODO: Describe BDD} in a very fluent style:
+Development\footnote{BDD is a software development technique first
+  introduced in\cite{nor06}. It aims at writing automated tests in a
+  natural language, and has been implemented as embedded DSLs in a
+  number of different languages.} in a very fluent style:
 
 \begin{lstlisting}
 import org.scalatest.FlatSpec
@@ -883,6 +929,37 @@ val intMatrix = ... // Matrix[Int]
 val intVal = intMatrix(2, 4) // Replaced by compiler: intMatrix.apply(2, 4)
 \end{lstlisting}
 
+The \texttt{apply} method can also be used for object construction
+without using the \texttt{new} keyword, and without exposing the
+actual class being used to create the object. This makes it possible
+to create code according to the factory method pattern\cite{gam95}, as
+in the following example (simplified version of Matrix structure):
+
+\begin{lstlisting}
+abstract class Array2DMatrix[T](elements: Array[T]) extends Matrix[T] {
+  ... // Some abstract specialization of the Matrix class
+}
+
+class IntArray2DMatrix(elements: Array[Int]) extends Array2DMatrix[Int](elements) {
+  ... // Concrete implementation of an int matrix
+}
+
+// Singleton object being used to create instances of IntArray2DMatrix
+object Matrix {
+  def apply(ints: Int*) = new IntArray2DMatrix(Array(elements: _*))
+}
+
+// Example use, create matrix from a number of integers - hiding details about the classes shown above
+val matrix = Matrix(1, 2, 3, 4, 5, 6, 7, 8)
+\end{lstlisting}
+
+As we can see from the above example, combining singleton objects with
+the \texttt{apply} method can effectively hide a complex
+object-oriented underlying structure. The user of the DSL can focus on
+only the details that are relevant (as the list of numbers making up
+the matrix in the example above, implementation details being
+irrelevant).
+
 \subsection{Query Syntax}
 
 In C\# 3.0 a DSL called LINQ (Language Integrated Query) was
@@ -946,6 +1023,27 @@ val i = 42 // Type Int is infered
 val d = i + 2.1 // Type Double is infered
 val iBy2 = (i: Int) => i * 2 // Return value Int is infered from int parameter
 val dBy2 = (i: Double) => i * 2 // Return value Double is infered from int parameter
+\end{lstlisting}
+
+In the image processing DSL I have made extensive use of the type
+inference mechanism. As we can see from the following example there is
+no explicit naming of the types involved, as opposed to the bottom
+part where the same code is given with the types. As the \texttt{avg}
+function is specified in the \texttt{Standard} trait being used with
+the \texttt{GrayScaleImage} the full type ``GrayScaleImage with
+Standard'' must be given, as well as the \texttt{Int} type parameter
+to the \texttt{StrEl}. The example also displays the power in hiding
+the implementation details from the user of the DSL:
+
+\begin{lstlisting}
+val img = loadImageFile("cell.jpg")
+val se = StrEl(Square, 3)
+val blurredImg = img.avg(se)
+
+// Without using type inference the code would look like this:
+val img: GrayScaleImage with Standard = loadImageFile("cell.jpg")
+val se: StrEl[Int] = StrEl(Square, 3)
+val blurredImg: Image = img.avg(se)
 \end{lstlisting}
 
 \section{Implicit Type Conversion}
