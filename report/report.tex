@@ -107,7 +107,7 @@ features.
 \addcontentsline{toc}{chapter}{Preface}
 
 This is a master-thesis of 60 credits\footnote{Prescribed to one year
-  of full time study} in the field of Informatics. It was written for
+  of full time study.} in the field of Informatics. It was written for
 the Object-orientation, Modelling, and Languages research
 group\footnote{OMS research group website --
   \url{http://www.ifi.uio.no/research/groups/oms/}} at the Department
@@ -183,7 +183,7 @@ domain-specific languages, with my discussion, is given in section
 
 I have 10 years experience using the Java programming language,
 working as a professional consultant for BEKK\footnote{Bekk Consulting
-  AS (\url{http://www.bekk.no})}. I have always been facinated by
+  AS (\url{http://www.bekk.no}).}. I have always been facinated by
 various programming languages, and how they can be used to approach
 problems and solutions. When starting on a master thesis it is natural
 for me to focus on programming language capabilities. I feel that the
@@ -747,10 +747,10 @@ combined with \texttt{Member Imports} (next section). They are
 typically used for object creation through patterns like
 \texttt{Factory method}\footnote{The factory method is an
   object-oriented pattern that handles the creation of objects without
-  specifying the exact class of the object\cite{gam95}} and
+  specifying the exact class of the object\cite{gam95}.} and
 \texttt{Builder}\footnote{The builder pattern is an object-oriented
   pattern that assists the creation of variations of objects through a
-  series of abstract method calls\cite{gam95}}, or other utility operations
+  series of abstract method calls\cite{gam95}.}, or other utility operations
 like the sorting shown in the examples above. In my image analysis DSL
 (described in section \vref{sec:dslimageprocessing}), singleton
 objects are used to construct objects:
@@ -815,6 +815,7 @@ saveImage(img.avg(se), "cell_avg.jpg") // Would be SImageIO.saveImage without me
 \end{lstlisting}
 
 \section{Method Names and Operator Notation}
+\label{sec:methodnames}
 
 When constructing an embedded DSL we like to make the syntax reflect
 the actual domain as much as possible. Having flexible ways to name
@@ -961,6 +962,7 @@ the matrix in the example above, implementation details being
 irrelevant).
 
 \subsection{Query Syntax}
+\label{sec:querysyntax}
 
 In C\# 3.0 a DSL called LINQ (Language Integrated Query) was
 introduced. It is used to natively query data in the language. The
@@ -1068,21 +1070,155 @@ implicit def fromInt(i: Int) = new MyInt(i)
 val ten = 5.doubleIt
 \end{lstlisting}
 
+Implicit conversions are commonly used when creating embedded DSLs in
+Scala. A good example if found in the ScalaTest example shown in
+section \vref{sec:methodnames}, where the \texttt{String} type is used
+as if it had defined the methods \texttt{should} and \texttt{in}. The
+value returned from the \texttt{pop} operation on the stack being
+tested is treated the same way:
+
+\begin{lstlisting}
+...
+"A Stack" should "pop values in last-in-first-out order" in {
+...
+  stack.pop() should equal (2)
+  stack.pop() should equal (1)
+}
+
+it should "throw NoSuchElementException if an empty stack is popped" in {
+...
+\end{lstlisting}
+
+What makes this possible is a some implicit conversions. For the
+\texttt{String} class the \texttt{should} method is defined in a class
+called \texttt{StringShouldWrapper}, which is implicitly available
+since there is defined a conversion from \texttt{String}. The value
+popped off the stack is converted to a \texttt{AnyShouldMatcher} with
+a similar implicit conversion, including a generic type parameter:
+
+\begin{lstlisting}
+implicit override def convertToStringShouldWrapper(o: String): StringShouldWrapper
+
+implicit def convertToAnyShouldWrapper[T](o: T): AnyShouldWrapper[T]
+\end{lstlisting}
+
 In dynamic languages a mechanism that can give much the same results
-is Monkey Patching described in section
-\vref{sec:monkey_patching}. Implicit conversions are also very useful
-when combining DSLs. This is described in
-section\vref{sec:combining_dsls}.
+is Monkey Patching described in
+section \vref{sec:monkey_patching}. Implicit conversions are also very
+useful when combining DSLs. This is described in
+section \vref{sec:combining_dsls}.
 
 \section{Lambda Expressions/Anonymous Functions}
 
 Anonymous functions, or lambda expressions, can be used as parameters
-for higher-order function (functions using functions as parameters or
-return values). This is maybe not directly relevant for embedded DSL
-syntax, but is an important building block in query syntax (shown in a
-previous section). For example in the Scala for comprehensions and the
-LINQ statements shown in an earlier section, anonymous functions play a
-role in allowing filtering (if-statements).
+for higher-order function\footnote{Higher-order functions are
+  functions that can take other functions as input parameters or
+  return a function as output value.}. They are useful to make concise
+code, and avoiding duplication. For example in the Scala for
+comprehensions and the LINQ statements shown in section
+\vref{sec:querysyntax}, anonymous functions play a role in allowing
+filtering (if-statements).
+
+To show how anonymous functions work consider the following
+example. The goal is to filter all even numbers from a list, typically
+done with the modulo operator (\%). Writing this code in Java, which
+does not support anonymous functions, would result in something
+similar to this using a \texttt{for-loop} combined with an
+\texttt{if-statement}:
+
+\begin{lstlisting}[language=java]
+List<Integer> numbers = ... // Make instance of list of integers
+List<Integer> evenNumbers = new ArrayList<Integer>();
+
+for(int number : numbers) {
+  if(number % 2 == 0) evenNumbers.add(number);
+}
+\end{lstlisting}
+
+In a language supporting anonymous functions, the \texttt{List} class
+could have a \texttt{filter} method taking a function as parameter
+which is used to decide what values should be returned in a new
+list. In Scala, for example, the above example could be implemented as
+follows:
+
+\begin{lstlisting}
+val numbers = ... // Make instance of list of integers
+val evenNumbers = numbers.filter(_ % 2 == 0)
+\end{lstlisting}
+
+It is quite clear that anonymous functions make the code much more
+to-the-point and concise. In the Scala example we could leave out both
+the loop and the if statement, only focusing on the actual operation
+being performed (the modulo 2 equal to 0). If several different
+similar operations were to be performed the example would be even
+clearer. In Java the loop would have to be repeated several times, or
+at least several if-statements would have to be included in the loop,
+while in Scala (or other languages supporting anonymous functions) the
+operations would occur in an ordered series of filter-statements.
+
+In my Matrix DSL I have used higher-order functions to create
+general-purpose functions to perform operations spanning a given
+structuring element. The signature looks like this:
+
+\begin{lstlisting}
+def seOp(se: StrEl[Int], op: (Seq[T]) => T): Matrix[T]
+\end{lstlisting}
+
+It might look cryptical at first, but is really quite simple. The
+first parameter is a structuring element (typically spanning a small
+3x3 section of the matrix), and the second is a function converting a
+sequence of values to one value. The structuring element is passed
+over the matrix as a window, and the operation is run for all values
+covered by the element. The yielded value is set as a new value in a
+new matrix, which is the final return value of the whole function. In
+the image processing DSL based on the Matrix DSL this functionality is
+used to implement a number of operations, using anonymous functions:
+
+\begin{lstlisting}
+val matrix: Matrix[Int] // Internal image representation as a matrix
+
+// Use average anonymous function to create blur effect
+def blur(se: StrEl[Int]) = {
+  Image(matrix.seOp(se, (seq) => seq.reduceLeft(_ + _) / seq.size))
+}
+
+// Use minimizing anonymous function to create morphological erosion effect
+def erode(se: StrEl[Int]) = {
+  Image(matrix.seOp(se, (seq) => seq.reduceLeft(_ min _)))
+}
+
+// Use maximizing anonymous function to create morphological dilation effect
+def dilate(se: StrEl[Int]) = {
+  Image(matrix.seOp(se, (seq) => seq.reduceLeft(_ max _)))
+}
+\end{lstlisting}
+
+These implementations should look familiar to anyone with a knowledge
+of image processing, which is the target user domain of the
+DSLs. Users of the image processing DSL would never have to see the
+anonymous functions, but could use the function \texttt{blur},
+\texttt{erode} and \texttt{dilate} directly:
+
+\begin{lstlisting}
+val image = ... // Obtain image instance
+val se = StrEl(Square, 3) // Create 3x3 structuring element
+val blurredImage = image.blur(se)
+val erodedImage = image.erode(se)
+\end{lstlisting}
+
+Anonymous functions are also available in Ruby, Groovy and
+Clojure. They are often referred to/intermixed with
+closures\footnote{Closures are actually anonymous functions binding a
+  variable defined in a surrounding scope, but the difference is not
+  important to the usages described here (or most other places,
+  really).} in Ruby and Groovy, and as lambda expressions in
+Clojure. Support for anonymous functions has also been discussed for
+the next version of Java\footnote{Several different proposals for
+  closures/anonymous functions in Java 7 have been discussed. The main
+  effort is now lead by Mark Reinhold, as stated on his blog
+  (\url{http://cr.openjdk.java.net/~mr/lambda/straw-man/}), and is
+  documented as ``Project Lambda'' at the OpenJDK:
+  \url{http://openjdk.java.net/projects/lambda/}.}.
 
 \section{Anonymous Types}
 
@@ -1478,9 +1614,9 @@ optimizing the size of the bytecode produced.
 
 \subsection{Implicit Conversion}
 
-Implicit type conversions where described in
-section\vref{sec:implicit_type_conversion}, in terms of DSL syntax. In
-this section we will look at how implicits can be used to combine
+Implicit type conversions where described in section
+\vref{sec:implicit_type_conversion}, in terms of DSL syntax. In this
+section we will look at how implicits can be used to combine
 functionality from two different DSLs.
 
 \begin{lstlisting}
@@ -1646,9 +1782,9 @@ and compiled language, has a kind of interactive interpreter called
 REPL (Read-Evaluate-Print Loop) that typically can be used to test
 code on the fly. It can also be used to run Scala-code in a more
 script-like way. The following script can be run demonstrating this
-functionality, using the image analysis DSL from chapter
-\vref{sec:examples} as example (loading an image and saving a blurred
-copy to a new file):
+functionality, using the image analysis DSL from
+chapter \vref{sec:examples} as example (loading an image and saving a
+blurred copy to a new file):
 
 \begin{lstlisting}
 import simage.io.SImageIO._
