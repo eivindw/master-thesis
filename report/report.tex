@@ -1290,8 +1290,22 @@ Java has a wide range of mechanisms associated with metaprogramming:
   compile-time/deployment-time and at runtime. Deployment-time
   annotations can be used for code generation, and can be used when
   embedding DSLs.
-\item Reflection -- TODO: describe
-\item AOP -- TODO: describe
+\item Reflection -- Reflection is a way to program with concepts such
+  as \texttt{class} and \texttt{method} in Java, and as such is
+  considered a form of metaprogramming. Extensive use of reflection
+  can have a negative effect on the performance of a Java application.
+\item Aspect Oriented Programming (AOP) -- AOP has become a popular
+  mechanism in many Java frameworks the last years. It is too big of a
+  concept to describe in detail here, but is worth mentioning in the
+  light of metaprogramming. With AOP it is possible to alter the
+  behaviour of Java-code dramatically. I have, however, not looked
+  detailed at AOP here as it is not really part of the Java
+  language\footnote{Aspect Oriented Programming is usually implemented
+    by pre-compilation, or extensive use of dynamic proxies in
+    Java. Some of the most popular AOP frameworks in Java are AspectJ
+    (\url{http://www.eclipse.org/aspectj/}), JBossAOP
+    (\url{http://www.jboss.org/jbossaop}) and Qi4j
+    (\url{http://www.qi4j.org/}).}.
 \end{itemize}
 
 As an example of an embedded DSL in Java relying heavily on
@@ -1397,7 +1411,15 @@ Rails could never have been written in a static language.
 
 \subsection{Functional Metaprogramming}
 
-TODO: describe -- Lisp macroes + built-in metadata support
+In Clojure, the only ``pure'' functional language used in this thesis,
+there is no big separation between code and data. As such the whole
+concept of metaprogramming is really just an integrated part of the
+language, and not necessarily seen as a ``different'' concept (as in
+the other languages). The macro mechanism in Clojure is the key to this.
+
+Clojure also has some explicit functions to work with metadata --
+\texttt{meta} and \texttt{with-meta}. Some examples of use are shown
+in the following code listing:
 
 \begin{lstlisting}[language=lisp]
 (def my-user {:login "test" :password "secret"})      
