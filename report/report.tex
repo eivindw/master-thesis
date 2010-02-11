@@ -1397,6 +1397,24 @@ player.team
 team.players.each { |team| ... }
 \end{lstlisting}
 
+TODO: show how has\_many is implemented, in a simplified manner.
+
+\begin{lstlisting}[language=Ruby]
+class Base
+  def self.has_many(arg)
+    send :define_method, arg.to_s do
+      puts "SQL: select * from #{arg.to_s} where #{self.class.name.downcase!}_id = #{self.object_id}"
+    end
+  end
+end
+
+class Actual < Base
+  has_many :things
+end
+
+Actual.new.things
+\end{lstlisting}
+
 This dynamic style metaprogramming is one of the biggest advantages
 dynamic languages have when it comes to designing embedded DSLs. Using
 annotations or other metaprogramming techniques could be used in Java
