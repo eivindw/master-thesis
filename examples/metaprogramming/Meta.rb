@@ -1,13 +1,21 @@
-class Base
+class ActiveRecord
   def self.has_many(arg)
-    send :define_method, arg.to_s do
-      puts "SQL: select * from #{arg.to_s} where #{self.class.name.downcase!}_id = #{self.object_id}"
+    name = arg.to_s
+    send :define_method, name do
+      sql = "select * from #{name} where #{self.class.name.downcase!}_id = #{self.object_id}"
+      puts "running sql: #{sql}"
+      puts "return new list of #{name} objects"
+      className = name.capitalize.chop
+      ["eivind", "ola"]
     end
   end
 end
 
-class Actual < Base
+class Actual < ActiveRecord
   has_many :things
 end
 
-Actual.new.things
+class Thing < ActiveRecord
+end
+
+Actual.new.things.each { thing | puts "Thing: #{thing}" }

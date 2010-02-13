@@ -1257,7 +1257,8 @@ val results =
   select new Person { Name = c.SomeProperty, Age = c.OtherProperty }
 \end{lstlisting}
 
-Scala also support object initializers, as in the following example:
+Scala also supports a form for object initializers, as in the
+following example:
 
 \begin{lstlisting}
 class Person {
@@ -1375,11 +1376,14 @@ Math.metaClass.static.random = {
 The implementation is roughly the same in Ruby. A typical example of a
 DSL utilizing metaprogramming is the Rails framework and the
 \texttt{ActiveRecord} class. Here metaprogramming is used to specify
-relationships between the classes \texttt{Team} and
-\texttt{Player}. The methods \texttt{has\_many} and \texttt{belongs\_to}
-are typically implemented in a manner similar to the Groovy examples
-above, adding methods \texttt{team} and \texttt{players} with database
-extraction logic to the classes in use:
+relationships between the classes, with respect to database
+relationships. The SQL code needed to fetch related objects will be
+generated as new methods. In the next example this technique is shown
+for the classes \texttt{Team} and \texttt{Player}. The methods
+\texttt{has\_many} and \texttt{belongs\_to} are implemented
+in a manner similar to the Groovy examples above, adding methods
+\texttt{team} and \texttt{players} with database extraction logic to
+the classes in use:
 
 \begin{lstlisting}[language=Ruby]
 class Team < ActiveRecord::Base
@@ -1397,22 +1401,24 @@ player.team
 team.players.each { |team| ... }
 \end{lstlisting}
 
-TODO: show how has\_many is implemented, in a simplified manner.
+A simplified example of how the \texttt{belongs\_to} method is
+implemented using dynamic metaprogramming is shown in the following
+lines of code, running some SQL and creating a collection of
+associated object dynamically:
 
 \begin{lstlisting}[language=Ruby]
-class Base
+class ActiveRecord
+  ...
   def self.has_many(arg)
-    send :define_method, arg.to_s do
-      puts "SQL: select * from #{arg.to_s} where #{self.class.name.downcase!}_id = #{self.object_id}"
+    name = arg.to_s
+    send :define_method, name do
+      sql = "select * from #{name} where #{self.class.name.downcase!}_id = #{self.object_id}"
+      # Run sql, and return new objects based on sql result
+      ...
     end
   end
+  ...
 end
-
-class Actual < Base
-  has_many :things
-end
-
-Actual.new.things
 \end{lstlisting}
 
 This dynamic style metaprogramming is one of the biggest advantages
@@ -2568,9 +2574,17 @@ Summary.. $\ddot\smile$
 \item More dynamic-like features in static languages (metaprogramming,
   dynamic dispatch).
 \item Embedding high-performance DSLs on JVM with Scala.
+\item Showing that an environment for image processing with an
+  embedded DSL based on Scala can be made.
 \end{itemize}
 
 \section{Future Work}
+
+\begin{itemize}
+\item Work on implementing package templates in Scala.
+\item Create similar image processing DSL in Clojure.
+\item Finish the image processing work as a usable library.
+\end{itemize}
 
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{master}
