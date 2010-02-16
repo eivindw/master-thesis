@@ -1553,6 +1553,16 @@ create new ones.
 
 \section{Modular DSL Composition}
 
+With modular composition I mean structuring a program such that the
+implementation is spread over several separate modules. A modular
+design can be useful when creating a DSL. With a loosely coupled
+modular implementation the DSL can easily be extended by implementing
+new modules, or customized by specifying a subset of modules to be
+included. In the following subsections two different ways to create a
+modular composition is shown and discussed. First an object-oriented
+technique involving mixin-composition using traits is shown, and
+secondly functional composition using decorators is shown.
+
 \subsection{Traits - Polymorphic Abilities}
 
 Scala has support for virtual types (abstract type members) and
@@ -1593,7 +1603,11 @@ val m3 = new Matrix with AvgMtx with MorphMtx
 \end{lstlisting}
 
 Mixin composition is also available in Groovy and Ruby. In Groovy
-there is a general mixin meta-class function available:
+there is a general mixin meta-class function available, making it
+possible to combine several classes into one. Because of the dynamic
+typing the \texttt{name} variable of the \texttt{Base} class is
+available in the mixin-classes, as if they were subclassing the base
+class:
 
 \begin{lstlisting}[language=java]
 class Base {
@@ -1615,12 +1629,18 @@ class ExtraOp {
 Base.class.mixin(StdOp, ExtraOp);
 
 base = new Base(name: 'Test!');
-base.std();
-base.extra();
+base.std(); // Base has a std() function
+base.extra(); // ..and an extra() function
 \end{lstlisting}
 
-In Ruby there is a \texttt{module} concept that provides the mixin
-composition functionality:
+In Ruby there is a \texttt{module} concept that provides dynamic mixin
+composition functionality similar to that shown above in
+Groovy. Modules are a way to logically group classes, functions or
+other definitions belonging together, as an advanced form of the
+packages found in Java and Scala. Modules cannot be instantiated like
+classes, but can be mixed in with a new or existing class to add
+functionality. Below is the same example as was shown for Groovy
+above, implemented using modules in Ruby:
 
 \begin{lstlisting}[language=ruby]
 class Base
@@ -1648,15 +1668,25 @@ class MyBase < Base
 end
 
 base = MyBase.new("Test!")
-base.std()
-base.extra()
+base.std() # MyBase has a std() function
+base.extra() # ..and an extra() function
 \end{lstlisting}
 
 Using the modular composition techniques it is possible to extract
 parts of a DSL as a new one, by only including the traits (or modules)
 wanted. An optimizing compiler could also utilize this composition to
-only include the parts of a DSL that are actually used, this
+only include the parts of a DSL that are actually used, thus
 optimizing the size of the bytecode produced.
+
+\subsection{Functional Composition}
+
+TODO: write with clojure examples
+
+\begin{itemize}
+\item Multimethods with \texttt{defmulti} and \texttt{defmethod}.
+\item Metaprogramming
+\item Macro decorators
+\end{itemize}
 
 \section{Combining DSLs}
 \label{sec:combining_dsls}
@@ -2001,6 +2031,8 @@ possible on the JVM.
 
 \section{Host Language -- Dynamic vs. Static Typing}
 
+TODO: finish section
+
 Performance benchmarks dynamic vs static, interpreted vs compiled,
 functional vs object-oriented/imperative.
 
@@ -2198,6 +2230,8 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
 \item Java futures
 \item Scala actors
 \item Scala futures
+\item Clojure concurrent programming. Clojure functions are
+  \texttt{java.util.concurrent.Callable}.
 \end{itemize}
 
 \subsection{Parallel Processing}
@@ -2467,6 +2501,8 @@ val se = StrEl(Square, 3)
 val imgAvg = img.avg(se)
 saveImage(imgAvg, "/cell_avg.jpg")
 \end{lstlisting}
+
+TODO: Replace image with something I have taken myself.
 
 \begin{figure}
   \subfigure[Original]{\includegraphics[width=0.49\textwidth]{images/cell}}
