@@ -1691,20 +1691,41 @@ TODO: write with clojure examples
 \section{Combining DSLs}
 \label{sec:combining_dsls}
 
+This section describes how to combine two DSLs into a new one, mixing
+the functionality of the two original DSLs.
+
 \subsection{Implicit Conversion}
 
-Implicit type conversions where described in section
+Implicit type conversions were described in section
 \vref{sec:implicit_type_conversion}, in terms of DSL syntax. In this
 section we will look at how implicits can be used to combine
-functionality from two different DSLs.
+functionality from two different DSLs. The concept is demonstrated
+with an example.
+
+The following code shows a simple DSL for statistics in use. Typically
+some kind of dataset is created with numeric values (in this example
+only integer values for simplicity). The dataset implements the
+methods \texttt{average}, \texttt{minValue} and \texttt{maxValue}. In
+the most basic form it can be used directly to compute the average,
+minimum and maximum values of a series of integers:
 
 \begin{lstlisting}
 val ds = DataSet(1, 2, 3, 4, 5, 6, 7, 8, 9)
 
-assert(5.0 === ds.average)
-assert(1 === ds.min)
-assert(9 === ds.max)
+println("Average: " + ds.average) // 5.0 (double value)
+println("Minimum value: " + ds.minValue) // 1 (int value)
+println("Maximum value: " + ds.maxValue) // 9 (int value)
 \end{lstlisting}
+
+As a first example of using implicit conversion to apply a DSL to new
+values, we want to compute statistic values for an array of words
+(strings) using the dataset DSL. In the following example an implicit
+conversion from string-array to dataset is utilized to find the
+average, minimum and maximum word lengths. The dataset is created
+using the length of the strings as input, in the implicit function
+\texttt{str2DS}. It is then possible to call dataset methods on the
+string-array as if it was an instance of a dataset (which in fact it
+is as the compiler implicitly converts it to one on demand):
 
 \begin{lstlisting}
 val words = Array("eivind", "test", "oslo", "bekk", "scala", "elephant", "cat")
@@ -1713,10 +1734,20 @@ implicit def str2DS(str: Array[String]) = {
   DataSet(str.map(_.length): _*)
 }
 
-assert(5 === words.average.round)
-assert(3 === words.min)
-assert(8 === words.max)
+println("Average: " + words.average) // 4.86 is the average word length
+println("Minimum value: " + words.minValue) // 3 is the length of the shortest word
+println("Maximum value: " + words.maxValue) // 8 is the length of the longest word
 \end{lstlisting}
+
+Finally we combine the image processing DSL with the statistics DSL
+using the same technique that was shown for the string-array above. An
+implicit conversion is defined converting instances of
+\texttt{GrayScaleImage} (image storing only one integer value per
+pixel) to a dataset, making it possible to call the statistics method
+to compute the average, minimum and maximum pixel values. In a way one
+could say that we have defined a new ``statistical image processing
+DSL'' combining the two existing DSL, all without writing any other
+code than the actual conversion. A simple example is shown below:
 
 \begin{lstlisting}
 val img = Image(Matrix(3, List(
@@ -1728,9 +1759,9 @@ implicit def img2DS(img: GrayScaleImage) = {
   DataSet(img.data.toArray: _*)
 }
 
-assert(7 === img.average.round)
-assert(5 === img.min)
-assert(9 === img.max)
+println("Average: " + img.average) // 7.22 is the average pixel value
+println("Minimum value: " + img.minValue) // 5 is the smallest pixel value
+println("Maximum value: " + img.maxValue) // 9 is the biggest pixel value
 \end{lstlisting}
 
 \section{Conclusion}
