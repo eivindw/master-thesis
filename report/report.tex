@@ -1969,6 +1969,11 @@ From Scala version 2.8\footnote{To be released in the first part of
 REPL will have many improvements such as code completion (of
 package/class/member names) and interactive debugging.
 
+TODO: Clojure REPL (with user.clj example). Ruby irb. Groovy groovysh
+(Groovy Shell).
+
+TODO: check JLine with interpreter (specially Clojure).
+
 \section{Embedded Interpreter}
 
 If we want to take the interactive interpreter in Scala a step further
@@ -1992,6 +1997,8 @@ even be reused for several different DSLs, thus being a powerful base
 for building custom running environments for any embedded DSL written
 in Scala (or any other language that compiles to regular Java
 bytecode).
+
+TODO: example embedding interpreter, with simple Swing gui or similar?
 
 \section{Tool Support}
 
@@ -2582,19 +2589,31 @@ val imgAvg = img.avg(se)
 val imgAvg = img avg se
 \end{lstlisting}
 
-\begin{table}[ht]
-  \centering
-  \begin{tabular}{c c c c}
-    \hline\hline
-    & find & addlast & delfirst \\ [0.5ex]
-    \hline\hline
-    find & OK & I & I \\
-    addlast & - & I & I \\
-    delfirst & - & - & I \\
-    \hline\hline
-  \end{tabular}
-  \caption{A pure example table.\label{tab:ex1}}
-\end{table}
+\section{Charting DSL}
+
+TODO: describe DSL utilizing a Java charting library (jfreechart) to
+create charting DSL.
+
+A DSL based on the Java library
+JFreeChart\footnote{\url{http://www.jfree.org/jfreechart} -- Open
+  source (LGPL licensed) charting library written in Java.}.
+
+An example pie chart created with the DSL is shown in figure
+\vref{fig:piechartex}.
+
+\begin{figure}
+  \includegraphics[width=1.0\textwidth]{images/piechart}
+  \caption{Example pie chart created with the JFreeChart based
+    charting DSL.\label{fig:piechartex}}
+\end{figure}
+
+\section{Statistics DSL}
+
+TODO: describe simple statistics DSL.
+
+\section{Chess DSL}
+
+TODO: describe chess DSL.
 
 \chapter{Summary}
 \label{sec:summary}
@@ -2625,6 +2644,20 @@ Summary.. $\ddot\smile$
 \item Create similar image processing DSL in Clojure.
 \item Finish the image processing work as a usable library.
 \end{itemize}
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{c c c c}
+    \hline\hline
+    & find & addlast & delfirst \\ [0.5ex]
+    \hline\hline
+    find & OK & I & I \\
+    addlast & - & I & I \\
+    delfirst & - & - & I \\
+    \hline\hline
+  \end{tabular}
+  \caption{A pure example table.\label{tab:ex1}}
+\end{table}
 
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{master}
