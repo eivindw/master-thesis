@@ -1764,6 +1764,13 @@ println("Minimum value: " + img.minValue) // 5 is the smallest pixel value
 println("Maximum value: " + img.maxValue) // 9 is the biggest pixel value
 \end{lstlisting}
 
+As with the string-array example shown previously we see how easy it
+is to mix in the functionality of one DSL with another. One could
+imagine a whole environment built from small DSLs, each describing a
+specialized part of the domain. For example an environment for various
+numeric analysis could be built combining DSLs for image processing,
+statistics, charting etc.
+
 \section{Conclusion}
 
 TODO: Write conclusion.
@@ -1782,19 +1789,35 @@ programming language to suit our needs.
 
 \section{Removing from Host Language -- Pruning}
 
-\begin{itemize}
-\item Scala compiler plugin
-\item Ruby open classes - remove\_method/undef\_method
-\item Clojure?
-\end{itemize}
+\subsection{Compiler Plugins}
+
+TODO: example Scala compiler plugin, removing for comprehension
+support or similar from the language.
+
+\subsection{Pruning in Dynamic Languages}
+
+TODO: describe how open classes in Ruby can be used
+(remove\_method/undef\_method). Groovy possibilities?
+
+\subsection{Pruning in Functional LISP}
+
+TODO: describe possibilities in Clojure.
 
 \section{Extending Host Language}
 
-\begin{itemize}
-\item Scala (compiler plugin + functions/continuations)
-\item Ruby open classes - adding methods
-\item Clojure macros
-\end{itemize}
+\subsection{Compiler Plugins}
+
+TODO: Scala compiler plugin example, again?
+
+\subsection{Dynamic Languages}
+
+TODO: Ruby open classes again.
+
+\subsection{Functional Languages}
+
+TODO: Scala functions that look like native/keywords.
+
+TODO: Clojure macro examples.
 
 \section{Conclusion}
 
