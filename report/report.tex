@@ -1816,7 +1816,35 @@ TODO: Ruby open classes again.
 
 \subsection{Functional Languages}
 
-TODO: Scala functions that look like native/keywords.
+With functional languages it is possible to create control structures
+that look like built-in keywords, but are simply first-class
+functions. In Scala functions can be defined with ``pass by name''
+parameter passing, and single parameter functions can be called using
+curly braces instead of parenthesis to specify the parameter. As an
+example consider the following definition of a new while construct:
+
+\begin{lstlisting}
+def mywhile(cond: => Boolean)(body: => Unit) {
+  if(cond) {
+    body
+    mywhile(cond)(body)
+  }
+}
+
+// Example use:
+var i = 0
+mywhile(i < 3) {
+  println("Num: " + i)
+  i = i + 1
+}
+\end{lstlisting}
+
+As we can see it is simple to define functions that act and look like
+built-in control structures. This is very useful designing DSLs where
+we want it to seem like the host language has been extended with new
+features supporting the DSL.
+
+TODO: DSL example using the technique shown above.
 
 TODO: Clojure macro examples.
 
