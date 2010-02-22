@@ -17,6 +17,7 @@
 \usepackage[compact]{titlesec}
 \usepackage{chngcntr}
 \counterwithout*{footnote}{chapter}
+\setcounter{tocdepth}{1}
 
 \setlength\topmargin{0in}
 \setlength\headheight{0in}
@@ -31,6 +32,7 @@
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{lightgray}{rgb}{0.8,0.8,0.8}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 \definecolor{matnat}{rgb}{0.004,0.47,0.44}
 
@@ -53,17 +55,25 @@
 }
 
 \lstset{basicstyle=\footnotesize,
+%  columns=spaceflexible,
   numbers=none,
   numberstyle=\tiny\color{gray},
-  keywordstyle=\color{blue},
+  keywordstyle=\color{blue}\bfseries,
   commentstyle=\color{dkgreen},
   stringstyle=\color{mauve},
   frame=single,
+  frameround=tttt,
+  rulecolor=\color{lightgray},
   showstringspaces=false,
   breaklines=true,
   breakatwhitespace=true,
   tabsize=3,
-  language=scala
+  language=scala,
+  captionpos=b,
+  floatplacement=h,
+%  aboveskip=0pt,
+%  belowskip=0pt
+%  linewidth=0.5\linewidth
 }
 
 \hypersetup{pdfborder={0 0 0},colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
@@ -102,6 +112,8 @@ features.
 \listoftables
 
 \listoffigures
+
+\lstlistoflistings
 
 \chapter*{Preface}
 \addcontentsline{toc}{chapter}{Preface}
@@ -417,11 +429,11 @@ compilation.
 
 The main reason for my inclusion of Ruby in this thesis is the ``Ruby
 on Rails'' framework\cite{rails}, an extraordinary DSL running on the
-JVM with the help of the JRuby interpreter. Below is a Ruby
-implementation of the same ``hello world'' program that was shown in
-Groovy in the previous section.
+JVM with the help of the JRuby interpreter. In listing
+\vref{fig:rubyhello} is a Ruby implementation of the same ``hello
+world'' program that was shown in Groovy in the previous section.
 
-\begin{lstlisting}[language=ruby]
+\begin{lstlisting}[float,caption=Ruby ``hello world'' example,label=fig:rubyhello,language=ruby]
 class Greet
   @name
 
@@ -485,10 +497,10 @@ world'' in the functional world):
 )
 \end{lstlisting}
 
-Clojure integrates with Java using macros and the dot operator, as in
-the following examples:
+Clojure integrates with Java using macros and the dot operator, as
+shown in the examples given in listing \vref{fig:clojurejava}.
 
-\begin{lstlisting}[language=lisp]
+\begin{lstlisting}[float,caption=Clojure -- Java integration,label=fig:clojurejava,language=lisp]
 ; Get a system property
 (System/getProperty "java.vm.version")
 ; Call "toUpperCase" on the String "clojure"
@@ -541,7 +553,7 @@ adition Scala provides a number of library classes that need to be
 included as a jar file. This relationship between Scala and Java is
 illustrated in figure \vref{fig:scalajava}.
 
-\begin{figure}
+\begin{figure}[h]
   \begin{center}
   \tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=5em, text centered, rounded corners, minimum height=4em]
   \tikzstyle{line} = [draw, -latex']
@@ -665,9 +677,10 @@ HardDrive hd = new HardDrive().capacity(150).external().speed(7200);
 \end{lstlisting}
 
 The chaining of methods can also be combined with method nesting,
-grouping methods that belong together (also from\cite{fow06}):
+grouping methods that belong together (also from\cite{fow06}). An
+example of this is shown in listing \vref{fig:javachaining}.
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[float,caption=Java method chaining and nesting,label=fig:javachaining,language=java]
 computer(
   processor(
     cores(2),
@@ -690,11 +703,11 @@ framework \texttt{jMock}\footnote{jMock -- A Lightweight Mock Object
 set of interfaces and factory builder objects allow method chaining
 maintaining the wanted order of method calls. The referred paper is a
 very good read demonstrating how to design and build a library as an
-embedded DSL in Java. The following example is from the paper, showing
-the DSL syntax of mock object expectations used in a mock
-\texttt{Offer} class:
+embedded DSL in Java. The example shown in listing \vref{fig:jmock} is
+from this paper, showing the DSL syntax of mock object expectations
+used in a mock \texttt{Offer} class.
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[float,caption=Java jMock example,label=fig:jmock,language=java]
 void testAcceptsOfferIfLowPrice() {
   offer = mock(Offer.class);
   offer.expects( once() )
@@ -1029,16 +1042,17 @@ val dBy2 = (i: Double) => i * 2 // Return value Double is infered from int param
 \end{lstlisting}
 
 In the image processing DSL I have made extensive use of the type
-inference mechanism. As we can see from the following example there is
-no explicit naming of the types involved, as opposed to the bottom
-part where the same code is given with the types. As the \texttt{avg}
-function is specified in the \texttt{Standard} trait being used with
-the \texttt{GrayScaleImage} the full type ``GrayScaleImage with
-Standard'' must be given, as well as the \texttt{Int} type parameter
-to the \texttt{StrEl}. The example also displays the power in hiding
-the implementation details from the user of the DSL:
+inference mechanism. As we can see from the example in listing
+\vref{fig:scalatypeinference} there is no explicit naming of the types
+involved, as opposed to the bottom part where the same code is given
+with the types. As the \texttt{avg} function is specified in the
+\texttt{Standard} trait being used with the \texttt{GrayScaleImage}
+the full type ``GrayScaleImage with Standard'' must be given, as well
+as the \texttt{Int} type parameter to the \texttt{StrEl}. The example
+also displays the power in hiding the implementation details from the
+user of the DSL.
 
-\begin{lstlisting}
+\begin{lstlisting}[float,caption=Scala type inference example,label=fig:scalatypeinference]
 val img = loadImageFile("cell.jpg")
 val se = StrEl(Square, 3)
 val blurredImg = img.avg(se)
@@ -1173,9 +1187,10 @@ over the matrix as a window, and the operation is run for all values
 covered by the element. The yielded value is set as a new value in a
 new matrix, which is the final return value of the whole function. In
 the image processing DSL based on the Matrix DSL this functionality is
-used to implement a number of operations, using anonymous functions:
+used to implement a number of operations, using anonymous
+functions. This is shown in listing \vref{fig:scalaanonfunc}.
 
-\begin{lstlisting}
+\begin{lstlisting}[float,caption=Scala anonymous function example,label=fig:scalaanonfunc]
 val matrix: Matrix[Int] // Internal image representation as a matrix
 
 // Use average anonymous function to create blur effect
@@ -1312,15 +1327,15 @@ Java has a wide range of mechanisms associated with metaprogramming:
 
 As an example of an embedded DSL in Java relying heavily on
 annotations is the Hibernate framework, providing an object-relational
-mapping between Java domain objects and database tables. The following
-example shows Hibernate in work mapping the classes \texttt{Person}
-and \texttt{Address} to database tables. A person has one address, but
-many persons can live on the same address. This relationship is mapped
-using annotations. With these annotations in place, Hibernate will
-generate the mapping (SQL-code) needed to extract correct data from
-the database:
+mapping between Java domain objects and database tables. The example
+in listing \vref{fig:javameta} shows Hibernate in work mapping the
+classes \texttt{Person} and \texttt{Address} to database tables. A
+person has one address, but many persons can live on the same
+address. This relationship is mapped using annotations. With these
+annotations in place, Hibernate will generate the mapping (SQL-code)
+needed to extract correct data from the database.
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[float,caption=Java metaprogramming with annotations,label=fig:javameta,language=java]
 @Entity
 public class Person {
   @Column(name="person_name", length=100)
@@ -1353,15 +1368,16 @@ dynamic way, to add or alter method definitions at runtime. Both
 Groovy and Ruby have powerful support for this kind of dynamic
 metaprogramming.
 
-This first example shows how the mechanism can be used. In this case a
-new method is added to the Java \texttt{String} class\footnote{Note
-  that the \texttt{String} class is final in Java, but still
-  modifiable with dynamic metaprogramming in Groovy.}, and the static
-\texttt{random} method of the \texttt{Math} class is changed to a
-not-so-random implementation useful for unit testing or other
-environments where you want to have full control of returned values:
+The example in listing \vref{fig:groovymeta} shows how the mechanism
+can be used. In this case a new method is added to the Java
+\texttt{String} class\footnote{Note that the \texttt{String} class is
+  final in Java, but still modifiable with dynamic metaprogramming in
+  Groovy.}, and the static \texttt{random} method of the \texttt{Math}
+class is changed to a not-so-random implementation useful for unit
+testing or other environments where you want to have full control of
+returned values:
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[float,caption=Groovy metaprogramming example,label=fig:groovymeta,language=java]
 // Add a "shout" method to the Java String class
 String.metaClass.shout = {
   println delegate.toUpperCase()
@@ -1379,14 +1395,14 @@ DSL utilizing metaprogramming is the Rails framework and the
 \texttt{ActiveRecord} class. Here metaprogramming is used to specify
 relationships between the classes, with respect to database
 relationships. The SQL code needed to fetch related objects will be
-generated as new methods. In the next example this technique is shown
-for the classes \texttt{Team} and \texttt{Player}. The methods
-\texttt{has\_many} and \texttt{belongs\_to} are implemented
-in a manner similar to the Groovy examples above, adding methods
-\texttt{team} and \texttt{players} with database extraction logic to
-the classes in use:
+generated as new methods. In the example in listing
+\vref{fig:railsmeta} this technique is shown for the classes
+\texttt{Team} and \texttt{Player}. The methods \texttt{has\_many} and
+\texttt{belongs\_to} are implemented in a manner similar to the Groovy
+examples above, adding methods \texttt{team} and \texttt{players} with
+database extraction logic to the classes in use.
 
-\begin{lstlisting}[language=Ruby]
+\begin{lstlisting}[float,caption=Ruby on Rails example showing dynamic metaprogramming,label=fig:railsmeta,language=Ruby]
 class Team < ActiveRecord::Base
   has_many :players
 end
@@ -1403,11 +1419,11 @@ team.players.each { |team| ... }
 \end{lstlisting}
 
 A simplified example of how the \texttt{belongs\_to} method is
-implemented using dynamic metaprogramming is shown in the following
-lines of code, running some SQL and creating a collection of
-associated object dynamically:
+implemented using dynamic metaprogramming is shown in listing
+\vref{fig:rubydynmeta}, running some SQL and creating a collection of
+associated object dynamically.
 
-\begin{lstlisting}[language=Ruby]
+\begin{lstlisting}[float,caption=Ruby dynamic metaprogramming example,label=fig:rubydynmeta,language=Ruby]
 class ActiveRecord
   ...
   def self.has_many(arg)
@@ -1447,9 +1463,9 @@ unquote.
 
 Clojure also has some explicit functions to work with metadata --
 \texttt{meta} and \texttt{with-meta}. Some examples of use are shown
-in the following code listing:
+in code listing \vref{fig:clojuremeta}.
 
-\begin{lstlisting}[language=lisp]
+\begin{lstlisting}[float,caption=Clojure metaprogramming example,label=fig:clojuremeta,language=lisp]
 (def my-user {:login "test" :password "secret"})      
 ; #'user/my-user
 my-user
@@ -1524,7 +1540,7 @@ end
 person = Person.find_by_username "eivindw"
 \end{lstlisting}
 
-\section{Conclusion}
+\section{Summary}
 
 Modern statically typed languages like Scala offer some very powerful
 features for building embedded DSLs, combining concepts from
@@ -1579,11 +1595,11 @@ with examples.
 
 A use of traits can be to split functionality in several traits and
 create classes/objects with only the methods that we need. In the
-following example the \texttt{Matrix} class does not have any methods,
-but instances of the class can be mixed in with traits containing
-various methods:
+example given in listing \vref{fig:scalatraits} the \texttt{Matrix}
+class does not have any methods, but instances of the class can be
+mixed in with traits containing various methods.
 
-\begin{lstlisting}
+\begin{lstlisting}[float,caption=Scala traits example,label=fig:scalatraits]
 class Matrix {} // No methods
 
 trait AvgMtx { this: Matrix =>
@@ -1608,9 +1624,9 @@ there is a general mixin meta-class function available, making it
 possible to combine several classes into one. Because of the dynamic
 typing the \texttt{name} variable of the \texttt{Base} class is
 available in the mixin-classes, as if they were subclassing the base
-class:
+class. This is shown in listing \vref{fig:groovymixins}.
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[float,caption=Groovy mixing composition example,label=fig:groovymixins,language=java]
 class Base {
   String name;
 }
@@ -1640,10 +1656,11 @@ Groovy. Modules are a way to logically group classes, functions or
 other definitions belonging together, as an advanced form of the
 packages found in Java and Scala. Modules cannot be instantiated like
 classes, but can be mixed in with a new or existing class to add
-functionality. Below is the same example as was shown for Groovy
-above, implemented using modules in Ruby:
+functionality. Given in listing \vref{fig:rubymodules} is the same
+example as was shown for Groovy above, implemented using modules in
+Ruby.
 
-\begin{lstlisting}[language=ruby]
+\begin{lstlisting}[float,caption=Ruby mixin composition using modules,label=fig:rubymodules,language=ruby]
 class Base
   @name
   
@@ -1772,7 +1789,7 @@ specialized part of the domain. For example an environment for various
 numeric analysis could be built combining DSLs for image processing,
 statistics, charting etc.
 
-\section{Conclusion}
+\section{Summary}
 
 TODO: Write conclusion.
 
@@ -1848,7 +1865,7 @@ TODO: DSL example using the technique shown above.
 
 TODO: Clojure macro examples.
 
-\section{Conclusion}
+\section{Summary}
 
 TODO: Write conclusion.
 
@@ -1874,10 +1891,10 @@ classes and use in the program code. An example is the JMock framework
 in Java (also mentioned in section \vref{sec:functionchaining}). It
 allows programmers writing unit tests to specify with an internal DSL
 syntax how they want to mock dependencies to the code they are
-testing. Example written in Java (DSL syntax mostly found in the
-expectations declarations):
+testing. An example written in Java (DSL syntax mostly found in the
+expectations declarations) is shown in listing \vref{fig:javaapi}.
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[float,caption=Java example using jMock as an API,label=fig:javaapi,language=java]
 import junit.framework.TestCase;
 
 import org.jmock.Mockery;
@@ -1906,11 +1923,11 @@ language using the DSL not necessarily needs to be the same as the
 host language the DSL was written in. If the DSL is compiled to
 bytecode (\texttt{.class} files), it can be used from most of the
 other languages running on the JVM. The example above could just as
-well have been written in any of the languages used in this thesis, as
-here in Scala (looking quite similar to the original Java example
-above):
+well have been written in any of the languages used in this thesis,
+for example in Scala as shown in listing \vref{fig:scalaapi} (looking
+quite similar to the original Java example above).
 
-\begin{lstlisting}
+\begin{lstlisting}[float,caption=Scala example using jMock as an API,label=fig:scalaapi]
 import junit.framework.TestCase
 
 import org.jmock.{Mockery, Expectations}
@@ -1966,7 +1983,7 @@ script is in a file named \texttt{ImageScript.scala} and that the
 image analysis DSL has it's classes packed in the jar
 \texttt{simage.jar}:
 
-\begin{lstlisting}[language=bash]
+\begin{lstlisting}[language=]
 scala -classpath simage.jar ImageScript.scala
 \end{lstlisting}
 
@@ -2008,7 +2025,7 @@ import simage.structs.StrElType._
 The interactive interpreter can then be started using the option
 \texttt{-i PreDef.scala} as in the following example:
 
-\begin{lstlisting}[language=bash]
+\begin{lstlisting}[language=]
 scala -classpath simage.jar -i PreDef.scala
 
 Loading Predef.scala...
@@ -2105,7 +2122,7 @@ How well does the different host languages support custom error
 handling on the DSL level? Separate/different chapter? Compile-time
 error handling. Dynamic versus static typing (type-safety).
 
-\section{Conclusion}
+\section{Summary}
 
 TODO: Write conclusion.
 
@@ -2169,8 +2186,7 @@ matrix I ended up testing a few different variants:
   \vref{fig:2darray}.
 \end{itemize}
 
-\begin{figure}
-  \begin{lstlisting}
+\begin{lstlisting}[float,caption=Matrix implementation based on List of Lists.,label=fig:listoflist]
 class Matrix[T](val elements: List[List[T]]) {
   val nRows = elements.size
   val nCols = if(elements.isEmpty) 0
@@ -2182,13 +2198,9 @@ class Matrix[T](val elements: List[List[T]]) {
 }
 
 val m = new Matrix(List(List(1, 2), List(3, 4)))
-  \end{lstlisting}
-  \caption{Matrix implementation based on List of
-    Lists.\label{fig:listoflist}}
-\end{figure}
+\end{lstlisting}
 
-\begin{figure}
-  \begin{lstlisting}
+\begin{lstlisting}[float,caption=Matrix implementation based on 2D Array.,label=fig:2darray]
 class Matrix[T](cols: Int, val elements: Array[T]) {
   require(elements.size % cols == 0)
 
@@ -2199,10 +2211,7 @@ class Matrix[T](cols: Int, val elements: Array[T]) {
 }
 
 val m = new Matrix(2, Array(1, 2, 3, 4))
-  \end{lstlisting}
-  \caption{Matrix implementation based on 2D
-    Array.\label{fig:2darray}}
-\end{figure}
+\end{lstlisting}
 
 \subsubsection{Iterations -- \texttt{for} comprehensions vs \texttt{while} loops}
 
@@ -2229,8 +2238,7 @@ matrix is essential. Scala provides two basic forms of iterating;
   \vref{fig:whileloop}.
 \end{itemize}
 
-\begin{figure}
-  \begin{lstlisting}
+\begin{lstlisting}[float,caption=Implementing matrix neighbour average using a general structuring-element operation.,label=fig:strelavg]
 class Matrix ... {
   def seOp(se: Matrix, op: (Seq[Int]) => Int) = { ... }
 }
@@ -2238,13 +2246,9 @@ class Matrix ... {
 val matrix = ... // Create matrix - load image or similar
 val se = new Matrix(3, Array.make(9, 1))
 val avgMatrix = matrix.seOp(se, (seq) => seq.reduceLeft(_ + _) / seq.size)
-  \end{lstlisting}
-  \caption{Implementing matrix neighbour average using a general
-    structuring-element operation.\label{fig:strelavg}}
-\end{figure}
+\end{lstlisting}
 
-\begin{figure}
-  \begin{lstlisting}
+\begin{lstlisting}[float,caption=Implementation of a structuring element operation on a matrix using \texttt{for comprehensions}.,label=fig:forcomp]
 def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
   val w = se.nCols / 2
   val h = se.nRows / 2
@@ -2265,13 +2269,9 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
   }
   new Matrix(nCols, range.toArray)
 }
-  \end{lstlisting}
-  \caption{Implementation of a structuring element operation on a
-    matrix using \texttt{for comprehensions}.\label{fig:forcomp}}
-\end{figure}
+\end{lstlisting}
 
-\begin{figure}
-  \begin{lstlisting}
+\begin{lstlisting}[float,caption=Implementation of a structuring element operation on a matrix using \texttt{while loops}.,label=fig:whileloop]
 def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
   val w = se.nCols / 2
   val h = se.nRows / 2
@@ -2303,10 +2303,7 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
   }
   new Matrix(nCols, newArr)
 }
-  \end{lstlisting}
-  \caption{Implementation of a structuring element operation on a
-    matrix using \texttt{while loops}.\label{fig:whileloop}}
-\end{figure}
+\end{lstlisting}
 
 \begin{itemize}
   \item Scala and primitives
@@ -2357,8 +2354,7 @@ result to be ready. This is of course not a big problem, but the next
 section describes another technique that is better suited for parallel
 computing.
 
-\begin{figure}
-  \begin{lstlisting}
+\begin{lstlisting}[float,caption=A generic \texttt{Executor} based on the Scala Actors API.,label=fig:actorexecutor]
 import actors.Actor
 import actors.Actor._
 
@@ -2388,10 +2384,7 @@ exec.start // Start running - ready to receive messages
 exec ! ExecMsg("scala", (s: String) => s.toUpperCase) // Send data and function
 while(!exec.hasResult) {} // Busy waiting..
 println("Result: " + exec.getResult.get) // Prints "SCALA"
-  \end{lstlisting}
-  \caption{A generic \texttt{Executor} based on the Scala Actors
-    API.\label{fig:actorexecutor}}
-\end{figure}
+\end{lstlisting}
 
 \subsubsection{Futures API}
 \label{sec:futures}
@@ -2403,8 +2396,7 @@ we are trying to achieve. An example similar to the pure actor example
 in the previous section using futures is shown in figure
 \vref{fig:futureex}.
 
-\begin{figure}
-  \begin{lstlisting}
+\begin{lstlisting}[float,caption=An example using \texttt{Futures} to execute a function in a separate thread.,label=fig:futureex]
 import actors.Futures._
 
 // Define function - could also be done directly in the future-block below
@@ -2415,10 +2407,7 @@ val fut = future { func("scala" }
 
 // Wait for and return the result
 println("Result: " + fut())
-  \end{lstlisting}
-  \caption{An example using \texttt{Futures} to execute a function in
-    a separate thread.\label{fig:futureex}}
-\end{figure}
+\end{lstlisting}
 
 Futures also support waiting for an array of functions to
 complete. This is the mechanism used in the Image Processing DSL. See
@@ -2431,8 +2420,7 @@ function. Notice how the futures are yielded to a sequence directly
 from the for comprehension and awaited completion using the
 \texttt{awaitAll} function.
 
-\begin{figure}
-  \begin{lstlisting}
+\begin{lstlisting}[float,caption=A general parallel mechanism based on futures.,label=fig:futureipex]
 import actors.Futures._
 
 object Operations {
@@ -2470,10 +2458,7 @@ val doubledList = parallel (
     new MyList(List(i * 2))
   }
 ).asInstanceOf[MyList]
-  \end{lstlisting}
-  \caption{A general parallel mechanism based on
-    futures.\label{fig:futureipex}}
-\end{figure}
+\end{lstlisting}
 
 \section{Distributed DSL}
 
@@ -2501,8 +2486,7 @@ possibilities offered by OpenCL -- ScalaCL\cite{scalacl}.
 A simple example using ScalaCL to add two arrays of integers is shown
 in figure \vref{fig:scalacl}.
 
-\begin{figure}
-  \begin{lstlisting}
+\begin{lstlisting}[float,caption=Add two arrays of integers using ScalaCL,label=fig:scalacl]
 import scalacl.{Dim, Program}
 import scalacl.ScalaCL._
 
@@ -2526,17 +2510,14 @@ prog.iarr2.write(arr2)
 prog !
 
 println("First: " + prog.output.get(0)) // Print 6
-  \end{lstlisting}
-  \caption{Add two arrays of integers using
-    ScalaCL\label{fig:scalacl}}
-\end{figure}
+\end{lstlisting}
 
 \section{JVM Tuning -- JVM Arguments}
 
 General JVM tuning tips? Or specific for languages/language
 categories?
 
-\section{Conclusion}
+\section{Summary}
 
 TODO: Write conclusion.
 
@@ -2574,6 +2555,7 @@ example of using the DSLs.
 
 The \matlab{} code to perform the operation could
 typically look like this:
+
 \begin{lstlisting}[language=matlab]
 img = imread('cell.jpg');
 % 3x3 neighborhood default
