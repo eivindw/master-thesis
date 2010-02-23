@@ -22,7 +22,7 @@
 \setlength\topmargin{0in}
 \setlength\headheight{0in}
 \setlength\headsep{0in}
-\setlength\textheight{8.7in}
+\setlength\textheight{9.0in}
 \setlength\textwidth{6.5in}
 \setlength\oddsidemargin{0in}
 \setlength\evensidemargin{0in}
@@ -321,21 +321,56 @@ have considered in this work. The list provides a foundation for
 structuring the rest of this report:
 
 \begin{itemize}
-\item Conciseness/``fluency'' -- What capabilities does the different
-  languages provide in building fluent interfaces?
-\item Use/reuse -- How can the DSL be used? How can several DSLs be
+\item Syntax Conciseness/``fluency'' -- What capabilities does the
+  different languages provide in building fluent interfaces?
+\item Modularity/composition -- How can several DSLs be
   combined/reused into new ones?
 \item Isolation/uniqueness -- How can unwanted features of the host
   language be deprecated/removed? How can the host language be
   extended to provide unique functionality?
-\item Tool support -- What is the level of tool support provided for
-  the DSL?
-\item Error handling/reporting -- How are errors and exceptional
-  situations handled in the different languages?
+\item Use -- How can the DSL be used? What is the level of tool support
+  provided for the DSL? How are errors and exceptional situations
+  handled in the different languages?
 \item Performance -- How does the different languages facilitate
   building DSLs with high requirement regarding
   throughput/performance?
 \end{itemize}
+
+\section{Report Structure}
+
+The rest of this report is structured around the requirements listed
+in section \vref{sec:requirements}. Each of the requirements are
+treated in separate chapters, with suggested techniques for solving
+them given in different programming languages:
+
+\begin{itemize}
+\item Chapter \ref{sec:examples} <<Programming Languages and
+  Examples>> describes the programming languages used and the example
+  DSLs created in this thesis.
+\item Chapter \ref{sec:syntax} <<Syntax>> looks at techniques for
+  creating concise and ``fluent'' syntax.
+\item Chapter \ref{sec:composition} <<Composition>> handles composition
+  of DSLs.
+\item Chapter \ref{sec:advancedtechniques} <<Advanced Techniques>> describes
+  advanced DSL techniques like pruning (removing features from) and
+  extending the host language.
+\item Chapter \ref{sec:dsluse} <<Using the DSL>> handles different ways
+  to utilize and run the DSLs.
+\item Chapter \ref{sec:performance} <<Performance>> discusses various
+  aspects regarding DSL performance.
+\item Chapter \ref{sec:summary} <<Summary>> provides a summary
+  containing the conclusion as well as some suggestions to further
+  work.
+\end{itemize}
+
+\chapter{Programming Languages and Examples}
+\label{sec:examples}
+
+This chapter introduces the alternative programming languages used in
+the thesis, and the DSL examples implemented. As described in the
+introduction the main focus has been on capabilities provided by a set
+of different programming languages, and how these capabilities sustain
+the development of various types of domain-specific languages.
 
 \section{JVM Programming Languages}
 \label{sec:programminglanguages}
@@ -414,7 +449,7 @@ new Greet('world').salute()
 \end{lstlisting}
 
 I have included Groovy in this thesis as it provides an interesting
-dynamically typed alternative to the Java language. I has some
+dynamically typed alternative to the Java language. It has some
 interesting syntax-capabilities making it well suited for building
 embedded DSLs.
 
@@ -611,31 +646,181 @@ There are also disadvantages with such a tight coupling to the JVM:
   Java has regarding erasure\cite{emi06}.
 \end{itemize}
 
-\section{Report Structure}
+\section{Examples Implemented}
 
-The rest of this report is structured around the requirements listed
-in section \vref{sec:requirements}. Each of the requirements are
-treated in separate chapters, with suggested techniques for solving
-them given in different programming languages:
+This section describes the main examples written and researched in the
+thesis. The DSLs are described, and details about implementation and
+key features given. Some source code being central in the
+implementation is shown in the text. Full source code for all the
+examples can be downloaded from my repositories at
+GitHub\footnote{GitHub repositories website --
+  \url{http://github.com/eivindw}}.
 
-\begin{itemize}
-\item Chapter \ref{sec:syntax} (Syntax) looks at techniques for
-  creating concise and ``fluent'' syntax.
-\item Chapter \ref{sec:composition} (Composition) handles composition
-  of DSLs.
-\item Chapter \ref{sec:advancedtechniques} (Advanced Techniques) describes
-  advanced DSL techniques like pruning (removing features from) and
-  extending the host language.
-\item Chapter \ref{sec:dsluse} (Using the DSL) handles different ways
-  to utilize and run the DSLs.
-\item Chapter \ref{sec:performance} (Performance) discusses various
-  aspects regarding DSL performance.
-\item Chapter \ref{sec:examples} (Examples) describes the
-  example DSLs created in this thesis.
-\item Chapter \ref{sec:summary} (Summary) provides a summary
-  containing the conclusion as well as some suggestions to further
-  work.
-\end{itemize}
+\subsection{DSL for Image Processing}
+\label{sec:dslimageprocessing}
+
+\subsubsection{Description}
+
+Image Processing is an area involving series of computationally heavy
+operations performed on images. Many practicioners in the area have
+more mathematical than computer science oriented background. This
+leads to the need for DSLs where complicated and computationally heavy
+operations can be performed with a simple and straightforward syntax.
+
+A major actor in the art of Image Processing is the product \matlab{}
+from the company MathWorks\texttrademark. They provide the user with a
+DSL for doing advanced Image Processing operations. I have tried to
+create a similar DSL (with limited functionality) in Scala.
+
+As an example consider the operation of blurring an image using an
+average filter mask show in figures \vref{fig:eximg} and
+\vref{fig:exavg}. This is a basic operation, but serves good as an
+example of using the DSLs.
+
+The \matlab{} code to perform the operation could
+typically look like this:
+
+\begin{lstlisting}[language=matlab]
+img = imread('cell.jpg');
+% 3x3 neighborhood default
+imgAvg = medfilt2(img);
+imwrite(imgAvg, 'cell_avg.jpg');
+\end{lstlisting}
+
+My goal is to create a Scala DSL to achieve the same result. A
+suggested Scala-solution to the problem will look something like this:
+
+\begin{lstlisting}
+// Imports...
+val img = loadImageCP("/cell.jpg")
+val se = StrEl(Square, 3)
+val imgAvg = img.avg(se)
+saveImage(imgAvg, "/cell_avg.jpg")
+\end{lstlisting}
+
+TODO: Replace image with something I have taken myself.
+
+\begin{figure}
+  \subfigure[Original]{\includegraphics[width=0.49\textwidth]{images/cell}}
+  \hfill
+  \subfigure[Blurred]{\includegraphics[width=0.49\textwidth]{images/cell_avg}}
+  \caption{Example image before and after blurring with average
+    filter.\label{fig:eximg}}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=1.0\textwidth]{images/avg_process}
+  \caption{Visualising the process of blurring an image using average
+    filtering with a 3x3 neighbourhood.\label{fig:exavg}}
+\end{figure}
+
+The rest of this section describes how I implemented this, and what
+the results where with regards to the performance (how efficient the
+implementation is).
+
+\subsubsection{Syntax}
+
+The methods to load and save the image, as well as the \texttt{Square}
+definition of structuring element, are all member functions in classes
+\texttt{SImageIO} and \texttt{StrElType}. These can be imported with
+the \texttt{.\_} notation in Scala, and are then available directly:
+
+\begin{lstlisting}
+import io.SImageIO._
+import structs.StrElType._
+
+// SImageIO.loadImageCP("/cell.jpg")
+val img = loadImageCP("/cell.jpg")
+...
+saveImage(imgAvg, "/cell_avg.jpg")
+
+// StrElType.Square
+val se = StrEl(Square, 3)
+\end{lstlisting}
+
+To create the structuring element, the \texttt{StrEl} trait has a
+<<companion object>> with an \texttt{apply} method (described in
+section \vref{sec:applymethod}. This gives a very compact syntax,
+combined with the import of the available structuring element types as
+shown above:
+
+\begin{lstlisting}
+object StrEl {
+  import StrElType._
+  def apply(t: StrElType, num: Int) = Array2DStrEl(t, num)
+}
+
+val se = StrEl(Square, 3)
+\end{lstlisting}
+
+Using traits, we are able to compose image objects with the operations
+we want. The operations are implemented in separate traits which are
+mixed in with the image on creation. This is using self-type
+annotations to specify that the trait can only be mixed in with
+classes of type \texttt{GrayScaleImage}:
+
+\begin{lstlisting}
+trait Standard { this: GrayScaleImage =>
+  def avg(se: StrEl[Int]) = { ... }
+}
+
+object Image {
+  import operations.{Morphology, Standard}
+
+  def apply(d: Matrix[Int]) = {
+    new GrayScaleImage(d) with Standard with Morphology
+  }
+}
+
+val imgAvg = img.avg(se)
+
+// Equivalent - operator notation
+val imgAvg = img avg se
+\end{lstlisting}
+
+\subsection{Charting DSL}
+
+TODO: describe DSL utilizing a Java charting library (jfreechart) to
+create charting DSL.
+
+A DSL based on the Java library
+JFreeChart\footnote{\url{http://www.jfree.org/jfreechart} -- Open
+  source (LGPL licensed) charting library written in Java.}.
+
+An example pie chart created with the DSL is shown in figure
+\vref{fig:piechartex}.
+
+\begin{figure}
+  \includegraphics[width=1.0\textwidth]{images/piechart}
+  \caption{Example pie chart created with the JFreeChart based
+    charting DSL.\label{fig:piechartex}}
+\end{figure}
+
+\subsection{Statistics DSL}
+
+TODO: describe simple statistics DSL.
+
+\subsection{Chess DSL}
+
+TODO: describe chess DSL.
+
+\section{Other Examples Used}
+
+This section describes some other DSLs used as examples. They have not
+been written as part of the work, but are used as examples as they are
+popular DSLs being used.
+
+\subsection{Ruby on Rails}
+
+TODO: describe ruby on rails.
+
+\subsection{Testing Frameworks}
+
+TODO: describe jMock and ScalaTest.
+
+\subsection{Query Languages}
+
+TODO: describe LINQ and related projects on Scala/JVM.
 
 \chapter{Syntax}
 \label{sec:syntax}
@@ -2520,165 +2705,6 @@ categories?
 \section{Summary}
 
 TODO: Write conclusion.
-
-\chapter{Examples}
-\label{sec:examples}
-
-This chapter describes the main examples written and researched in
-this thesis. The DSLs are described, and details about implementation
-and key features given. Some source code being central in the
-implementation is shown in the text. Full source code for all the
-examples can be downloaded from my repositories at
-GitHub\footnote{GitHub repositories website --
-  \url{http://github.com/eivindw}}.
-
-\section{DSL for Image Processing}
-\label{sec:dslimageprocessing}
-
-\subsection{Description}
-
-Image Processing is an area involving series of computationally heavy
-operations performed on images. Many practicioners in the area have
-more mathematical than computer science oriented background. This
-leads to the need for DSLs where complicated and computationally heavy
-operations can be performed with a simple and straightforward syntax.
-
-A major actor in the art of Image Processing is the product \matlab{}
-from the company MathWorks\texttrademark. They provide the user with a
-DSL for doing advanced Image Processing operations. I have tried to
-create a similar DSL (with limited functionality) in Scala.
-
-As an example consider the operation of blurring an image using an
-average filter mask show in figures \vref{fig:eximg} and
-\vref{fig:exavg}. This is a basic operation, but serves good as an
-example of using the DSLs.
-
-The \matlab{} code to perform the operation could
-typically look like this:
-
-\begin{lstlisting}[language=matlab]
-img = imread('cell.jpg');
-% 3x3 neighborhood default
-imgAvg = medfilt2(img);
-imwrite(imgAvg, 'cell_avg.jpg');
-\end{lstlisting}
-
-My goal is to create a Scala DSL to achieve the same result. A
-suggested Scala-solution to the problem will look something like this:
-
-\begin{lstlisting}
-// Imports...
-val img = loadImageCP("/cell.jpg")
-val se = StrEl(Square, 3)
-val imgAvg = img.avg(se)
-saveImage(imgAvg, "/cell_avg.jpg")
-\end{lstlisting}
-
-TODO: Replace image with something I have taken myself.
-
-\begin{figure}
-  \subfigure[Original]{\includegraphics[width=0.49\textwidth]{images/cell}}
-  \hfill
-  \subfigure[Blurred]{\includegraphics[width=0.49\textwidth]{images/cell_avg}}
-  \caption{Example image before and after blurring with average
-    filter.\label{fig:eximg}}
-\end{figure}
-
-\begin{figure}
-  \includegraphics[width=1.0\textwidth]{images/avg_process}
-  \caption{Visualising the process of blurring an image using average
-    filtering with a 3x3 neighbourhood.\label{fig:exavg}}
-\end{figure}
-
-The rest of this section describes how I implemented this, and what
-the results where with regards to the performance (how efficient the
-implementation is).
-
-\subsection{Syntax}
-
-The methods to load and save the image, as well as the \texttt{Square}
-definition of structuring element, are all member functions in classes
-\texttt{SImageIO} and \texttt{StrElType}. These can be imported with
-the \texttt{.\_} notation in Scala, and are then available directly:
-
-\begin{lstlisting}
-import io.SImageIO._
-import structs.StrElType._
-
-// SImageIO.loadImageCP("/cell.jpg")
-val img = loadImageCP("/cell.jpg")
-...
-saveImage(imgAvg, "/cell_avg.jpg")
-
-// StrElType.Square
-val se = StrEl(Square, 3)
-\end{lstlisting}
-
-To create the structuring element, the \texttt{StrEl} trait has a
-<<companion object>> with an \texttt{apply} method (described in
-section \vref{sec:applymethod}. This gives a very compact syntax,
-combined with the import of the available structuring element types as
-shown above:
-
-\begin{lstlisting}
-object StrEl {
-  import StrElType._
-  def apply(t: StrElType, num: Int) = Array2DStrEl(t, num)
-}
-
-val se = StrEl(Square, 3)
-\end{lstlisting}
-
-Using traits, we are able to compose image objects with the operations
-we want. The operations are implemented in separate traits which are
-mixed in with the image on creation. This is using self-type
-annotations to specify that the trait can only be mixed in with
-classes of type \texttt{GrayScaleImage}:
-
-\begin{lstlisting}
-trait Standard { this: GrayScaleImage =>
-  def avg(se: StrEl[Int]) = { ... }
-}
-
-object Image {
-  import operations.{Morphology, Standard}
-
-  def apply(d: Matrix[Int]) = {
-    new GrayScaleImage(d) with Standard with Morphology
-  }
-}
-
-val imgAvg = img.avg(se)
-
-// Equivalent - operator notation
-val imgAvg = img avg se
-\end{lstlisting}
-
-\section{Charting DSL}
-
-TODO: describe DSL utilizing a Java charting library (jfreechart) to
-create charting DSL.
-
-A DSL based on the Java library
-JFreeChart\footnote{\url{http://www.jfree.org/jfreechart} -- Open
-  source (LGPL licensed) charting library written in Java.}.
-
-An example pie chart created with the DSL is shown in figure
-\vref{fig:piechartex}.
-
-\begin{figure}
-  \includegraphics[width=1.0\textwidth]{images/piechart}
-  \caption{Example pie chart created with the JFreeChart based
-    charting DSL.\label{fig:piechartex}}
-\end{figure}
-
-\section{Statistics DSL}
-
-TODO: describe simple statistics DSL.
-
-\section{Chess DSL}
-
-TODO: describe chess DSL.
 
 \chapter{Summary}
 \label{sec:summary}
