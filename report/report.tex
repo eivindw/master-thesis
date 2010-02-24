@@ -54,7 +54,7 @@
     private,protected,requires,return,sealed,
     super,this,throw,trait,true,try,
     type,val,var,while,with,yield},
-  otherkeywords={=>,<-,<\%,<:,>:,@}, % Removed \#, because of Ruby comments error
+  otherkeywords={=>,<-,<\%,<:,>:}, % Removed \#, @, because of Ruby comments error
   sensitive=true,
   morecomment=[l]{//},
   morecomment=[n]{/*}{*/},
@@ -64,7 +64,6 @@
 }
 
 \lstset{basicstyle=\footnotesize,
-%  columns=spaceflexible,
   numbers=none,
   numberstyle=\tiny\color{gray},
   keywordstyle=\color{blue}\bfseries,
@@ -160,7 +159,7 @@ May 2010
 \end{flushright}
 
 \chapter{Introduction}
-\label{sec:introduction}
+\label{chp:introduction}
 
 The goal of this chapter is to describe the problem at hand as
 detailed as possible. It has taken me a long time to clarify and
@@ -353,33 +352,35 @@ treated in separate chapters, with suggested techniques for solving
 them given in different programming languages:
 
 \begin{itemize}
-\item Chapter \ref{sec:examples} <<Programming Languages and
+\item Chapter \ref{chp:examples} <<Programming Languages and
   Examples>> describes the programming languages used and the example
   DSLs created in this thesis.
-\item Chapter \ref{sec:syntax} <<Syntax>> looks at techniques for
+\item Chapter \ref{chp:syntax} <<Syntax>> looks at techniques for
   creating concise and ``fluent'' syntax.
-\item Chapter \ref{sec:composition} <<Composition>> handles composition
+\item Chapter \ref{chp:composition} <<Composition>> handles composition
   of DSLs.
-\item Chapter \ref{sec:advancedtechniques} <<Advanced Techniques>> describes
+\item Chapter \ref{chp:advancedtechniques} <<Advanced Techniques>> describes
   advanced DSL techniques like pruning (removing features from) and
   extending the host language.
-\item Chapter \ref{sec:dsluse} <<Using the DSL>> handles different ways
+\item Chapter \ref{chp:dsluse} <<Using the DSL>> handles different ways
   to utilize and run the DSLs.
-\item Chapter \ref{sec:performance} <<Performance>> discusses various
+\item Chapter \ref{chp:performance} <<Performance>> discusses various
   aspects regarding DSL performance.
-\item Chapter \ref{sec:summary} <<Summary>> provides a summary
+\item Chapter \ref{chp:summary} <<Summary>> provides a summary
   containing the conclusion as well as some suggestions to further
   work.
 \end{itemize}
 
 \chapter{Programming Languages and Examples}
-\label{sec:examples}
+\label{chp:examples}
 
 This chapter introduces the alternative programming languages used in
 the thesis, and the DSL examples implemented. As described in the
 introduction the main focus has been on capabilities provided by a set
 of different programming languages, and how these capabilities sustain
-the development of various types of domain-specific languages.
+the development of various types of domain-specific languages. Some
+examples have been developed as part of the work, while other examples
+have been taken from existing frameworks.
 
 \section{JVM Programming Languages}
 \label{sec:programminglanguages}
@@ -406,15 +407,45 @@ I have chosen to categorize the languages in three different ways:
   type checking during run-time.
 \item Paradigm (OO/FP) -- There are many different programming
   paradigms. I have looked at object-oriented and functional
-  programming languages. One of the languages (Scala) is a
-  multi-paradigm language, combining object-orientation and functional
-  programming techniques.
+  programming languages. Some of the languages (Ruby, Groovy and
+  Scala) are multi-paradigm languages, combining object-orientation
+  and functional programming techniques.
 \item Execution (compiled/interpreted) -- On the JVM an interesting
   way to categorize programming languages is wether they are compiled
   to byte-code and run directly on the virtual machine, or if the
   language is interpreted and run by some extra layer on top of the
   JVM.
 \end{itemize}
+
+Table \vref{tab:plmatrix} shows the languages used in the thesis, and
+what categories they belong to. An \texttt{(x)} denotes partial
+support, a non-default configuration possibility, or that the language
+supports something similar. For example are both Groovy and Ruby said
+to support some notion of functional programming, although it is not
+their main focus. Scala and Clojure are both compiled languages that
+can be run in a REPL, a Read-Eval-Print-Loop compiling statements on
+the fly making it seem like they are interpreted. This gives both
+languages the possibility to run as scripts or directly in the
+console, as if they were interpreted (not compiled) languages.
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular*}{1\textwidth}{l c c c c c c}
+    \hline
+    & Object-oriented & Functional & Static Typing & Dynamic Typing & Compiled & Interpreted \\ [0.5ex]
+    \hline
+    Java & x & - & x & - & x & - \\
+    Groovy & x & (x) & - & x & (x) & x \\
+    Ruby & x & (x) & - & x & (x) & x \\
+    Clojure & - & x & - & x & x & (x) \\
+    Scala & x & x & x & - & x & (x) \\
+    \hline
+  \end{tabular*}
+  \caption{Programming languages comparison matrix.\label{tab:plmatrix}}
+\end{table}
+
+Each of the languages are further introduced in the following
+sections.
 
 \subsection{Java}
 
@@ -427,7 +458,7 @@ useful when building DSLs, features not currently found in the Java
 language itself. So Java will also be used quite heavily for reference
 and comparison to the other languages.
 
-\begin{lstlisting}[float,language=java]
+\begin{lstlisting}[language=java]
 public class HelloWorld {
   public static void main(String[] args) {
     // A Java comment
@@ -474,10 +505,10 @@ compilation.
 The main reason for my inclusion of Ruby in this thesis is the ``Ruby
 on Rails'' framework\cite{rails}, an extraordinary DSL running on the
 JVM with the help of the JRuby interpreter. In listing
-\vref{fig:rubyhello} is a Ruby implementation of the same ``hello
+\vref{lst:rubyhello} is a Ruby implementation of the same ``hello
 world'' program that was shown in Groovy in the previous section.
 
-\begin{lstlisting}[float,caption=Ruby ``hello world'' example,label=fig:rubyhello,language=ruby]
+\begin{lstlisting}[float,caption=Ruby ``hello world'' example,label=lst:rubyhello,language=ruby]
 class Greet
   @name
 
@@ -497,10 +528,10 @@ Greet.new("world").salute()
 JRuby can use classes from the standard Java API directly using the
 \texttt{include Java} statement. It can also import Java classes
 directly from jar files. So most Java libraries and APIs can be reused
-when working with JRuby on the JVM, as in the following little example
-(creating a Java Swing application):
+when working with JRuby on the JVM. An example of this is shown in
+listing \vref{lst:rubyjava} (creating a Java Swing application).
 
-\begin{lstlisting}[language=ruby]
+\begin{lstlisting}[float,caption=Ruby Java integration example,label=lst:rubyjava,language=ruby]
 # Special include to make standard Java API available
 include Java
 
@@ -542,9 +573,9 @@ world'' in the functional world):
 \end{lstlisting}
 
 Clojure integrates with Java using macros and the dot operator, as
-shown in the examples given in listing \vref{fig:clojurejava}.
+shown in the examples given in listing \vref{lst:clojurejava}.
 
-\begin{lstlisting}[float,caption=Clojure -- Java integration,label=fig:clojurejava,language=lisp]
+\begin{lstlisting}[float,caption=Clojure -- Java integration,label=lst:clojurejava,language=lisp]
 ; Get a system property
 (System/getProperty "java.vm.version")
 ; Call "toUpperCase" on the String "clojure"
@@ -561,7 +592,9 @@ Java. The very good interoperability between Clojure and Java is a bit
 surprising looking at the extreme differences in syntax and
 programming paradigm, but is a powerful addition to the Lisp
 world. Combining the macros of a Lisp language with all the available
-libraries on the Java platform seems to be a very good idea.
+libraries on the Java platform seems to be a very good idea. A good
+book for learning more about Clojure is <<Programming
+Clojure>>\cite{hal09}.
 
 \subsection{Scala}
 
@@ -580,12 +613,12 @@ thesis is the combination of powerful programming structures (both
 object-oriented and functional) with the cross-platform and wide
 adoption of the JVM. Code written in Scala can be run on any JVM
 version 1.5 or newer, and can utilize any library written in Java. It
-can thus be seen as a <<best of both worlds>> language.
+can thus be seen as a ``best of both worlds'' language.
 
-The following sections describe properties of Scala that might make it
-suited for building <<high performance DLSs>> on the JVM. For more
-detailed information about Scala please refer
-to\cite{ode08},\cite{scala} or\cite{scalatour}.
+The following sections describe properties of Scala that make it
+suited for building embedded DSLs on the JVM. For more detailed
+information about Scala please refer to\cite{ode08},\cite{scala}
+or\cite{scalatour}.
 
 \subsubsection{Scala and Java}
 \label{sec:scalajava}
@@ -748,10 +781,12 @@ val se = StrEl(Square, 3)
 \end{lstlisting}
 
 To create the structuring element, the \texttt{StrEl} trait has a
-<<companion object>> with an \texttt{apply} method (described in
-section \vref{sec:applymethod}. This gives a very compact syntax,
-combined with the import of the available structuring element types as
-shown above:
+``companion object''\footnote{A companion object is a singleton
+  \texttt{object} having the same name as an associated \texttt{trait}
+  or \texttt{class}\cite{ode08}.} with an \texttt{apply} method
+(described in section \vref{sec:applymethod}. This gives a very
+compact syntax, combined with the import of the available structuring
+element types as shown above:
 
 \begin{lstlisting}
 object StrEl {
@@ -787,17 +822,85 @@ val imgAvg = img.avg(se)
 val imgAvg = img avg se
 \end{lstlisting}
 
+\subsection{Statistics DSL}
+
+Statistic processing is an important aspect in many numerical
+calculation environments. For example in image analysis, statistical
+models are used intensively for pattern recognition (ie. finding text
+or other figures in images). In this respect it is interesting to have
+a DSL for statistical operations that can be used together with the
+image processing DSL to create a DSL environment for image analysis.
+
+A minimal DSL for statistics has been created in Scala for this
+work. It only has a very basic data structure, with a few rudimentary
+operations. The main reason for creating this little DSL is to provide
+a basis when working with DSL composition (see chapter
+\vref{chp:composition}).
+
+This whole DSL consist of a single \texttt{DataSet} class,
+implementing the basic operations \texttt{average}, \texttt{minValue}
+and \texttt{maxValue}. There is also a \texttt{DataSet} companion
+object acting as a factory for building datasets. The source code is
+given in listing \vref{lst:statsdsl}.
+
+\begin{lstlisting}[caption=Minimal statistics DSL implemented in Scala,label=lst:statsdsl]
+class DataSet(private val intArr: Array[Int]) {
+   def average = intArr.reduceLeft(_ + _) / intArr.size.toDouble
+
+   def minValue = intArr.reduceLeft(_ min _)
+
+   def maxValue = intArr.reduceLeft(_ max _)
+}
+
+object DataSet {
+   def apply(ints: Int*) = new DataSet(Array(ints: _*))
+}
+\end{lstlisting}
+
+Using the statistics DSL is typically done by creating a dataset from
+a series of integers, and then calling the wanted operations. An
+example calculating and printing (to the standard console) the average
+value of a standard 6-sided dice (numbers 1-6) is given below:
+
+\begin{lstlisting}
+val dice = DataSet(1, 2, 3, 4, 5, 6)
+
+println("Dice average: " + dice.average)
+\end{lstlisting}
+
 \subsection{Charting DSL}
 
-TODO: describe DSL utilizing a Java charting library (jfreechart) to
-create charting DSL.
+Another feature needed when working with numeric calculations is the
+ability to create charts displaying results, statistics or just a more
+visual representation of the data. As with the statistics DSL
+described above charting is important when working with image
+analysis, typically creating histograms of images, visualizing
+statistical distributions and many other uses.
 
-A DSL based on the Java library
+The DSL created for charting is also a minimal one, as with the
+statistics DSL. It provides the third and last important piece when
+building a full DSL environment for image analysis. The DSL is written
+in Scala (as the two DSLs described in previous sections), and
+implements the charting functionality using the Java library
 JFreeChart\footnote{\url{http://www.jfree.org/jfreechart} -- Open
-  source (LGPL licensed) charting library written in Java.}.
+  source (LGPL licensed) charting library written in Java.}. It shows
+how an existing Java library can be directly used as implementation
+for a DSL written in the other languages.
 
-An example pie chart created with the DSL is shown in figure
+An example creating a basic pie chart is shown in listing
+\vref{lst:chartdsl}, resulting in the chart shown in figure
 \vref{fig:piechartex}.
+
+\begin{lstlisting}[caption=Scala charting DSL -- create a basic pie chart,label=lst:chartdsl]
+createPieChart("Pie Chart",
+   pieData(
+      ("One", 43.2D),
+      ("Two", 10D),
+      ("Three", 27.5D),
+      ("Four", 17.5D),
+      ("Five", 11D),
+      ("Six", 19.3D)))))
+\end{lstlisting}
 
 \begin{figure}
   \includegraphics[width=1.0\textwidth]{images/piechart}
@@ -805,13 +908,9 @@ An example pie chart created with the DSL is shown in figure
     charting DSL.\label{fig:piechartex}}
 \end{figure}
 
-\subsection{Statistics DSL}
-
-TODO: describe simple statistics DSL.
-
 \subsection{Chess DSL}
 
-TODO: describe chess DSL.
+TODO: describe chess DSL. Drop example?
 
 \section{Other Examples Used}
 
@@ -832,7 +931,7 @@ TODO: describe jMock and ScalaTest.
 TODO: describe LINQ and related projects on Scala/JVM.
 
 \chapter{Syntax}
-\label{sec:syntax}
+\label{chp:syntax}
 
 \textit{The syntax of a language defines its surface
   form.}\cite{fri08} It is the set of rules that define the
@@ -872,9 +971,9 @@ HardDrive hd = new HardDrive().capacity(150).external().speed(7200);
 
 The chaining of methods can also be combined with method nesting,
 grouping methods that belong together (also from\cite{fow06}). An
-example of this is shown in listing \vref{fig:javachaining}.
+example of this is shown in listing \vref{lst:javachaining}.
 
-\begin{lstlisting}[float,caption=Java method chaining and nesting,label=fig:javachaining,language=java]
+\begin{lstlisting}[float,caption=Java method chaining and nesting,label=lst:javachaining,language=java]
 computer(
   processor(
     cores(2),
@@ -897,11 +996,11 @@ framework \texttt{jMock}\footnote{jMock -- A Lightweight Mock Object
 set of interfaces and factory builder objects allow method chaining
 maintaining the wanted order of method calls. The referred paper is a
 very good read demonstrating how to design and build a library as an
-embedded DSL in Java. The example shown in listing \vref{fig:jmock} is
+embedded DSL in Java. The example shown in listing \vref{lst:jmock} is
 from this paper, showing the DSL syntax of mock object expectations
 used in a mock \texttt{Offer} class.
 
-\begin{lstlisting}[float,caption=Java jMock example,label=fig:jmock,language=java]
+\begin{lstlisting}[float,caption=Java jMock example,label=lst:jmock,language=java]
 void testAcceptsOfferIfLowPrice() {
   offer = mock(Offer.class);
   offer.expects( once() )
@@ -959,7 +1058,7 @@ typically used for object creation through patterns like
 \texttt{Builder}\footnote{The builder pattern is an object-oriented
   pattern that assists the creation of variations of objects through a
   series of abstract method calls\cite{gam95}.}, or other utility operations
-like the sorting shown in the examples above. In my image analysis DSL
+like the sorting shown in the examples above. In my image processing DSL
 (described in section \vref{sec:dslimageprocessing}), singleton
 objects are used to construct objects:
 
@@ -1237,7 +1336,7 @@ val dBy2 = (i: Double) => i * 2 // Return value Double is infered from int param
 
 In the image processing DSL I have made extensive use of the type
 inference mechanism. As we can see from the example in listing
-\vref{fig:scalatypeinference} there is no explicit naming of the types
+\vref{lst:scalatypeinference} there is no explicit naming of the types
 involved, as opposed to the bottom part where the same code is given
 with the types. As the \texttt{avg} function is specified in the
 \texttt{Standard} trait being used with the \texttt{GrayScaleImage}
@@ -1246,7 +1345,7 @@ as the \texttt{Int} type parameter to the \texttt{StrEl}. The example
 also displays the power in hiding the implementation details from the
 user of the DSL.
 
-\begin{lstlisting}[float,caption=Scala type inference example,label=fig:scalatypeinference]
+\begin{lstlisting}[float,caption=Scala type inference example,label=lst:scalatypeinference]
 val img = loadImageFile("cell.jpg")
 val se = StrEl(Square, 3)
 val blurredImg = img.avg(se)
@@ -1382,9 +1481,9 @@ covered by the element. The yielded value is set as a new value in a
 new matrix, which is the final return value of the whole function. In
 the image processing DSL based on the Matrix DSL this functionality is
 used to implement a number of operations, using anonymous
-functions. This is shown in listing \vref{fig:scalaanonfunc}.
+functions. This is shown in listing \vref{lst:scalaanonfunc}.
 
-\begin{lstlisting}[float,caption=Scala anonymous function example,label=fig:scalaanonfunc]
+\begin{lstlisting}[float,caption=Scala anonymous function example,label=lst:scalaanonfunc]
 val matrix: Matrix[Int] // Internal image representation as a matrix
 
 // Use average anonymous function to create blur effect
@@ -1522,14 +1621,14 @@ Java has a wide range of mechanisms associated with metaprogramming:
 As an example of an embedded DSL in Java relying heavily on
 annotations is the Hibernate framework, providing an object-relational
 mapping between Java domain objects and database tables. The example
-in listing \vref{fig:javameta} shows Hibernate in work mapping the
+in listing \vref{lst:javameta} shows Hibernate in work mapping the
 classes \texttt{Person} and \texttt{Address} to database tables. A
 person has one address, but many persons can live on the same
 address. This relationship is mapped using annotations. With these
 annotations in place, Hibernate will generate the mapping (SQL-code)
 needed to extract correct data from the database.
 
-\begin{lstlisting}[float,caption=Java metaprogramming with annotations,label=fig:javameta,language=java]
+\begin{lstlisting}[float,caption=Java metaprogramming with annotations,label=lst:javameta,language=java]
 @Entity
 public class Person {
   @Column(name="person_name", length=100)
@@ -1562,7 +1661,7 @@ dynamic way, to add or alter method definitions at runtime. Both
 Groovy and Ruby have powerful support for this kind of dynamic
 metaprogramming.
 
-The example in listing \vref{fig:groovymeta} shows how the mechanism
+The example in listing \vref{lst:groovymeta} shows how the mechanism
 can be used. In this case a new method is added to the Java
 \texttt{String} class\footnote{Note that the \texttt{String} class is
   final in Java, but still modifiable with dynamic metaprogramming in
@@ -1571,7 +1670,7 @@ class is changed to a not-so-random implementation useful for unit
 testing or other environments where you want to have full control of
 returned values:
 
-\begin{lstlisting}[float,caption=Groovy metaprogramming example,label=fig:groovymeta,language=java]
+\begin{lstlisting}[float,caption=Groovy metaprogramming example,label=lst:groovymeta,language=java]
 // Add a "shout" method to the Java String class
 String.metaClass.shout = {
   println delegate.toUpperCase()
@@ -1590,13 +1689,13 @@ DSL utilizing metaprogramming is the Rails framework and the
 relationships between the classes, with respect to database
 relationships. The SQL code needed to fetch related objects will be
 generated as new methods. In the example in listing
-\vref{fig:railsmeta} this technique is shown for the classes
+\vref{lst:railsmeta} this technique is shown for the classes
 \texttt{Team} and \texttt{Player}. The methods \texttt{has\_many} and
 \texttt{belongs\_to} are implemented in a manner similar to the Groovy
 examples above, adding methods \texttt{team} and \texttt{players} with
 database extraction logic to the classes in use.
 
-\begin{lstlisting}[float,caption=Ruby on Rails example showing dynamic metaprogramming,label=fig:railsmeta,language=Ruby]
+\begin{lstlisting}[float,caption=Ruby on Rails example showing dynamic metaprogramming,label=lst:railsmeta,language=Ruby]
 class Team < ActiveRecord::Base
   has_many :players
 end
@@ -1614,10 +1713,10 @@ team.players.each { |team| ... }
 
 A simplified example of how the \texttt{belongs\_to} method is
 implemented using dynamic metaprogramming is shown in listing
-\vref{fig:rubydynmeta}, running some SQL and creating a collection of
+\vref{lst:rubydynmeta}, running some SQL and creating a collection of
 associated object dynamically.
 
-\begin{lstlisting}[float,caption=Ruby dynamic metaprogramming example,label=fig:rubydynmeta,language=Ruby]
+\begin{lstlisting}[float,caption=Ruby dynamic metaprogramming example,label=lst:rubydynmeta,language=Ruby]
 class ActiveRecord
   ...
   def self.has_many(arg)
@@ -1657,9 +1756,9 @@ unquote.
 
 Clojure also has some explicit functions to work with metadata --
 \texttt{meta} and \texttt{with-meta}. Some examples of use are shown
-in code listing \vref{fig:clojuremeta}.
+in code listing \vref{lst:clojuremeta}.
 
-\begin{lstlisting}[float,caption=Clojure metaprogramming example,label=fig:clojuremeta,language=lisp]
+\begin{lstlisting}[float,caption=Clojure metaprogramming example,label=lst:clojuremeta,language=lisp]
 (def my-user {:login "test" :password "secret"})      
 ; #'user/my-user
 my-user
@@ -1754,7 +1853,7 @@ found in many dynamic languages and the dynamic dispatch mechanism
 allowing custom handling of missing methods.
 
 \chapter{Composition}
-\label{sec:composition}
+\label{chp:composition}
 
 This chapter looks at various composition techniques used when working
 with DSLs. It is divided into two main sections; the first one
@@ -1789,11 +1888,11 @@ with examples.
 
 A use of traits can be to split functionality in several traits and
 create classes/objects with only the methods that we need. In the
-example given in listing \vref{fig:scalatraits} the \texttt{Matrix}
+example given in listing \vref{lst:scalatraits} the \texttt{Matrix}
 class does not have any methods, but instances of the class can be
 mixed in with traits containing various methods.
 
-\begin{lstlisting}[float,caption=Scala traits example,label=fig:scalatraits]
+\begin{lstlisting}[float,caption=Scala traits example,label=lst:scalatraits]
 class Matrix {} // No methods
 
 trait AvgMtx { this: Matrix =>
@@ -1818,9 +1917,9 @@ there is a general mixin meta-class function available, making it
 possible to combine several classes into one. Because of the dynamic
 typing the \texttt{name} variable of the \texttt{Base} class is
 available in the mixin-classes, as if they were subclassing the base
-class. This is shown in listing \vref{fig:groovymixins}.
+class. This is shown in listing \vref{lst:groovymixins}.
 
-\begin{lstlisting}[float,caption=Groovy mixing composition example,label=fig:groovymixins,language=java]
+\begin{lstlisting}[float,caption=Groovy mixing composition example,label=lst:groovymixins,language=java]
 class Base {
   String name;
 }
@@ -1850,11 +1949,11 @@ Groovy. Modules are a way to logically group classes, functions or
 other definitions belonging together, as an advanced form of the
 packages found in Java and Scala. Modules cannot be instantiated like
 classes, but can be mixed in with a new or existing class to add
-functionality. Given in listing \vref{fig:rubymodules} is the same
+functionality. Given in listing \vref{lst:rubymodules} is the same
 example as was shown for Groovy above, implemented using modules in
 Ruby.
 
-\begin{lstlisting}[float,caption=Ruby mixin composition using modules,label=fig:rubymodules,language=ruby]
+\begin{lstlisting}[float,caption=Ruby mixin composition using modules,label=lst:rubymodules,language=ruby]
 class Base
   @name
   
@@ -1988,7 +2087,7 @@ statistics, charting etc.
 TODO: Write conclusion.
 
 \chapter{Advanced Techniques}
-\label{sec:advancedtechniques}
+\label{chp:advancedtechniques}
 
 This chapter describes some advanced techniques that can be used in
 DSL construction. More specifically it deals with operations that
@@ -2064,7 +2163,7 @@ TODO: Clojure macro examples.
 TODO: Write conclusion.
 
 \chapter{Using the DSL}
-\label{sec:dsluse}
+\label{chp:dsluse}
 
 So far the focus has been on the creation of embedded DSLs. This
 chapter discusses various ways to use the DSLs created. There are
@@ -2086,9 +2185,9 @@ in Java (also mentioned in section \vref{sec:functionchaining}). It
 allows programmers writing unit tests to specify with an internal DSL
 syntax how they want to mock dependencies to the code they are
 testing. An example written in Java (DSL syntax mostly found in the
-expectations declarations) is shown in listing \vref{fig:javaapi}.
+expectations declarations) is shown in listing \vref{lst:javaapi}.
 
-\begin{lstlisting}[float,caption=Java example using jMock as an API,label=fig:javaapi,language=java]
+\begin{lstlisting}[float,caption=Java example using jMock as an API,label=lst:javaapi,language=java]
 import junit.framework.TestCase;
 
 import org.jmock.Mockery;
@@ -2118,10 +2217,10 @@ host language the DSL was written in. If the DSL is compiled to
 bytecode (\texttt{.class} files), it can be used from most of the
 other languages running on the JVM. The example above could just as
 well have been written in any of the languages used in this thesis,
-for example in Scala as shown in listing \vref{fig:scalaapi} (looking
+for example in Scala as shown in listing \vref{lst:scalaapi} (looking
 quite similar to the original Java example above).
 
-\begin{lstlisting}[float,caption=Scala example using jMock as an API,label=fig:scalaapi]
+\begin{lstlisting}[float,caption=Scala example using jMock as an API,label=lst:scalaapi]
 import junit.framework.TestCase
 
 import org.jmock.{Mockery, Expectations}
@@ -2155,8 +2254,8 @@ and compiled language, has a kind of interactive interpreter called
 REPL (Read-Evaluate-Print Loop) that typically can be used to test
 code on the fly. It can also be used to run Scala-code in a more
 script-like way. The following script can be run demonstrating this
-functionality, using the image analysis DSL from
-chapter \vref{sec:examples} as example (loading an image and saving a
+functionality, using the image processing DSL from
+chapter \vref{chp:examples} as example (loading an image and saving a
 blurred copy to a new file):
 
 \begin{lstlisting}
@@ -2174,14 +2273,14 @@ saveImage(blurredImg, "cell_blurred.jpg")
 The script can then be run from the commandline using the scala
 interpreter (called with the \texttt{scala} command), assuming the
 script is in a file named \texttt{ImageScript.scala} and that the
-image analysis DSL has it's classes packed in the jar
+image processing DSL has it's classes packed in the jar
 \texttt{simage.jar}:
 
 \begin{lstlisting}[language=]
 scala -classpath simage.jar ImageScript.scala
 \end{lstlisting}
 
-For users of the image analysis DSL this means a great simplification
+For users of the image processing DSL this means a great simplification
 in the way it is run. They do not have to learn how to make classes,
 objects and methods in Scala, as they would if they wanted to run the
 DSL as a regular library in a Scala file (requiring at a minimum
@@ -2276,7 +2375,7 @@ application\footnote{See\cite{sur09} and\cite{dic09} (internet blog
   posts) for examples of how to embed the Scala REPL.}. This could be
 a very powerful way to create a standalone application having a
 console or similar being able to run DSL commands directly. For the
-image analysis example shown in chapter \vref{sec:examples} it would
+image processing example shown in chapter \vref{chp:examples} it would
 be possible to create some kind of application combining such a
 console with an image viewer window showing the results of the
 operations directly on an image. This is similar to how \matlab{}
@@ -2321,7 +2420,7 @@ error handling. Dynamic versus static typing (type-safety).
 TODO: Write conclusion.
 
 \chapter{Performance}
-\label{sec:performance}
+\label{chp:performance}
 
 This chapter looks at the performance aspects of the various DSLs and
 host languages. The categories of languages are compared with regards
@@ -2368,7 +2467,7 @@ matrix I ended up testing a few different variants:
   matrix is by using Scala \texttt{Lists}. The idea for this
   implementation was inspired by a blog post by Jonathan
   Merritt\cite{mer08}. A simple example of using a list of lists is
-  shown in figure \vref{fig:listoflist}. However, this implementation
+  shown in figure \vref{lst:listoflist}. However, this implementation
   proves to be very slow in specific element access and iteration.
 \item \textbf{2D Array} -- In Scala an \texttt{Array} will usually be
   faster than \texttt{List} because it is compiled to a native array
@@ -2377,10 +2476,10 @@ matrix I ended up testing a few different variants:
   implementation with regards to element access and iteration. The
   implementation becomes slightly less straight-forward as we need to
   calculate the element positions in the array, as shown in figure
-  \vref{fig:2darray}.
+  \vref{lst:2darray}.
 \end{itemize}
 
-\begin{lstlisting}[float,caption=Matrix implementation based on List of Lists.,label=fig:listoflist]
+\begin{lstlisting}[float,caption=Matrix implementation based on List of Lists.,label=lst:listoflist]
 class Matrix[T](val elements: List[List[T]]) {
   val nRows = elements.size
   val nCols = if(elements.isEmpty) 0
@@ -2394,7 +2493,7 @@ class Matrix[T](val elements: List[List[T]]) {
 val m = new Matrix(List(List(1, 2), List(3, 4)))
 \end{lstlisting}
 
-\begin{lstlisting}[float,caption=Matrix implementation based on 2D Array.,label=fig:2darray]
+\begin{lstlisting}[float,caption=Matrix implementation based on 2D Array.,label=lst:2darray]
 class Matrix[T](cols: Int, val elements: Array[T]) {
   require(elements.size % cols == 0)
 
@@ -2413,7 +2512,7 @@ Many Image Processing operations require some kind of calculation
 performed for every element in the underlying matrix. As an example,
 consider the neighbour average operation implemented using a general
 structuring-element operation show in figure
-\vref{fig:strelavg}. Having as efficient implementation of the
+\vref{lst:strelavg}. Having as efficient implementation of the
 \texttt{seOp} method as possible is critical for large matrices. So
 having some way of efficiently iterating over all elements of the
 matrix is essential. Scala provides two basic forms of iterating;
@@ -2425,14 +2524,14 @@ matrix is essential. Scala provides two basic forms of iterating;
   \texttt{map} and \texttt{flatMap}. This is a very powerful structure
   allowing compact and readable code. An example of implementing a
   general structuring-element operation based on for comprehensions is
-  show in figure \vref{fig:forcomp}.
+  show in figure \vref{lst:forcomp}.
 \item \textbf{while loops} -- For regular loops Scala provides the
   \texttt{while} keyword. Using this instead of the for comprehensions
   gives a much more iterative implementation, as shown in figure
-  \vref{fig:whileloop}.
+  \vref{lst:whileloop}.
 \end{itemize}
 
-\begin{lstlisting}[float,caption=Implementing matrix neighbour average using a general structuring-element operation.,label=fig:strelavg]
+\begin{lstlisting}[float,caption=Implementing matrix neighbour average using a general structuring-element operation.,label=lst:strelavg]
 class Matrix ... {
   def seOp(se: Matrix, op: (Seq[Int]) => Int) = { ... }
 }
@@ -2442,7 +2541,7 @@ val se = new Matrix(3, Array.make(9, 1))
 val avgMatrix = matrix.seOp(se, (seq) => seq.reduceLeft(_ + _) / seq.size)
 \end{lstlisting}
 
-\begin{lstlisting}[float,caption=Implementation of a structuring element operation on a matrix using \texttt{for comprehensions}.,label=fig:forcomp]
+\begin{lstlisting}[float,caption=Implementation of a structuring element operation on a matrix using \texttt{for comprehensions}.,label=lst:forcomp]
 def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
   val w = se.nCols / 2
   val h = se.nRows / 2
@@ -2465,7 +2564,7 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float,caption=Implementation of a structuring element operation on a matrix using \texttt{while loops}.,label=fig:whileloop]
+\begin{lstlisting}[float,caption=Implementation of a structuring element operation on a matrix using \texttt{while loops}.,label=lst:whileloop]
 def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
   val w = se.nCols / 2
   val h = se.nRows / 2
@@ -2537,7 +2636,7 @@ basically concurrent processes that communicate by exchanging
 messages\cite{hal06}. My first attempt at making the Image Processing
 DSL parallel was by making a generic executor using the Actors
 API. The result, with an example of simple usage, is shown in figure
-\vref{fig:actorexecutor}. Isolated parts of the processing can be
+\vref{lst:actorexecutor}. Isolated parts of the processing can be
 split into separate functions that are distributed over a set of
 executors. So my example with a String operation is easily extended to
 Image Processing or any other domain that can be split into several
@@ -2548,7 +2647,7 @@ result to be ready. This is of course not a big problem, but the next
 section describes another technique that is better suited for parallel
 computing.
 
-\begin{lstlisting}[float,caption=A generic \texttt{Executor} based on the Scala Actors API.,label=fig:actorexecutor]
+\begin{lstlisting}[float,caption=A generic \texttt{Executor} based on the Scala Actors API.,label=lst:actorexecutor]
 import actors.Actor
 import actors.Actor._
 
@@ -2588,9 +2687,9 @@ asynchronously, but return a representation (the future) that allows
 to await the reply. This is better suited for the parallel processing
 we are trying to achieve. An example similar to the pure actor example
 in the previous section using futures is shown in figure
-\vref{fig:futureex}.
+\vref{lst:futureex}.
 
-\begin{lstlisting}[float,caption=An example using \texttt{Futures} to execute a function in a separate thread.,label=fig:futureex]
+\begin{lstlisting}[float,caption=An example using \texttt{Futures} to execute a function in a separate thread.,label=lst:futureex]
 import actors.Futures._
 
 // Define function - could also be done directly in the future-block below
@@ -2605,7 +2704,7 @@ println("Result: " + fut())
 
 Futures also support waiting for an array of functions to
 complete. This is the mechanism used in the Image Processing DSL. See
-figure \vref{fig:futureipex} for a complete example of how futures are
+figure \vref{lst:futureipex} for a complete example of how futures are
 used to run several operation in parallel and merge the results once
 all futures have finished running. The \texttt{Splittable} identifier
 is simply a trait specifying \texttt{split} and \texttt{merge} methods
@@ -2614,7 +2713,7 @@ function. Notice how the futures are yielded to a sequence directly
 from the for comprehension and awaited completion using the
 \texttt{awaitAll} function.
 
-\begin{lstlisting}[float,caption=A general parallel mechanism based on futures.,label=fig:futureipex]
+\begin{lstlisting}[float,caption=A general parallel mechanism based on futures.,label=lst:futureipex]
 import actors.Futures._
 
 object Operations {
@@ -2678,9 +2777,9 @@ Scala API exists which enables Scala programs to make use of the
 possibilities offered by OpenCL -- ScalaCL\cite{scalacl}.
 
 A simple example using ScalaCL to add two arrays of integers is shown
-in figure \vref{fig:scalacl}.
+in figure \vref{lst:scalacl}.
 
-\begin{lstlisting}[float,caption=Add two arrays of integers using ScalaCL,label=fig:scalacl]
+\begin{lstlisting}[float,caption=Add two arrays of integers using ScalaCL,label=lst:scalacl]
 import scalacl.{Dim, Program}
 import scalacl.ScalaCL._
 
@@ -2716,7 +2815,7 @@ categories?
 TODO: Write conclusion.
 
 \chapter{Summary}
-\label{sec:summary}
+\label{chp:summary}
 
 \section{Conclusion}
 
@@ -2744,20 +2843,6 @@ Summary.. $\ddot\smile$
 \item Create similar image processing DSL in Clojure.
 \item Finish the image processing work as a usable library.
 \end{itemize}
-
-\begin{table}[ht]
-  \centering
-  \begin{tabular}{c c c c}
-    \hline\hline
-    & find & addlast & delfirst \\ [0.5ex]
-    \hline\hline
-    find & OK & I & I \\
-    addlast & - & I & I \\
-    delfirst & - & - & I \\
-    \hline\hline
-  \end{tabular}
-  \caption{A pure example table.\label{tab:ex1}}
-\end{table}
 
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{master}
