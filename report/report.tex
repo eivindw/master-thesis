@@ -15,11 +15,15 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
 \usepackage[compact]{titlesec}
+\usepackage{mdwlist}
+\usepackage{multicol}
 \usepackage{chngcntr}
 \counterwithout*{footnote}{chapter}
 \setcounter{tocdepth}{1}
 
 \setlength\topmargin{0in}
+\setlength\topsep{0in}
+%\setlength\topskip{0in}
 \setlength\headheight{0in}
 \setlength\headsep{0in}
 \setlength\textheight{9.0in}
@@ -28,7 +32,12 @@
 \setlength\evensidemargin{0in}
 \setlength\parindent{0in}
 \setlength\parskip{0.10in}
+\setlength\partopsep{0in}
 \setlength\columnsep{0.25in}
+
+\titlespacing{\section}{0pt}{*1}{*0}
+\titlespacing{\subsection}{0pt}{*1}{*0}
+\titlespacing{\subsubsection}{0pt}{*1}{*0}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -217,7 +226,7 @@ practicioners looking to support decision-making it can easily be
 adapted to support an evaluative thesis as this one. The main steps of
 EBSE are as follows:
 
-\begin{enumerate}
+\begin{enumerate*}
 \item Convert a relevant problem or need for information into an
   answerable question.
 \item Search the literature for the best available evidence to answer
@@ -229,14 +238,14 @@ EBSE are as follows:
   practice.
 \item Evaluate performance in comparison with previous performance and
   seek ways to improve it.
-\end{enumerate}
+\end{enumerate*}
 
 With this list as basis I have built a list of steps that I will
 follow in the thesis work. To summarize I will use existing literature
 extensively to build a solid base for the experiments conducted, and
 try to critically conclude the work at the end:
 
-\begin{enumerate}
+\begin{enumerate*}
 \item Create answerable questions -- Make sure the questions to
   research are sound and possible to answer.
 \item Search existing literature -- Find literature to provide direct
@@ -251,7 +260,7 @@ try to critically conclude the work at the end:
 \item Critical evaluation -- The experiments and results found must be
   carefully evaluated. By being critical to my own results I hope to
   improve the overall quality of the thesis deliverance.
-\end{enumerate}
+\end{enumerate*}
 
 \section{Domain-Specific Languages}
 \label{sec:dsls}
@@ -418,7 +427,7 @@ useful when building DSLs, features not currently found in the Java
 language itself. So Java will also be used quite heavily for reference
 and comparison to the other languages.
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[float,language=java]
 public class HelloWorld {
   public static void main(String[] args) {
     // A Java comment
