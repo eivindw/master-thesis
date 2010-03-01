@@ -17,13 +17,15 @@
 \usepackage[compact]{titlesec}
 \usepackage{mdwlist}
 \usepackage{multicol}
+\usepackage{setspace}
+\usepackage[subfigure]{tocloft}
 \usepackage{chngcntr}
 \counterwithout*{footnote}{chapter}
 \setcounter{tocdepth}{1}
 
 \setlength\topmargin{0in}
 \setlength\topsep{0in}
-%\setlength\topskip{0in}
+\setlength\topskip{0in}
 \setlength\headheight{0in}
 \setlength\headsep{0in}
 \setlength\textheight{9.0in}
@@ -79,9 +81,6 @@
   language=scala,
   captionpos=b,
   floatplacement=h,
-%  aboveskip=0pt,
-%  belowskip=0pt
-%  linewidth=0.5\linewidth
 }
 
 \hypersetup{pdfborder={0 0 0},colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
@@ -115,13 +114,23 @@ domain-specific tasks, and further research is suggested in the form
 of new language features and new ways to utilize existing language
 features.
 
+\clearpage
+\begin{multicols}{2}
 \tableofcontents
+\end{multicols}
 
+\clearpage
+\addcontentsline{toc}{chapter}{List of Tables}
 \listoftables
 
+\addcontentsline{toc}{chapter}{List of Figures}
 \listoffigures
 
+\clearpage
+\begin{multicols}{2}
+\addcontentsline{toc}{chapter}{List of Code Listings}
 \lstlistoflistings
+\end{multicols}
 
 \chapter*{Preface}
 \addcontentsline{toc}{chapter}{Preface}
@@ -458,7 +467,7 @@ useful when building DSLs, features not currently found in the Java
 language itself. So Java will also be used quite heavily for reference
 and comparison to the other languages.
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[language=java,caption=Java ``hello world'' example,label=lst:javahello]
 public class HelloWorld {
   public static void main(String[] args) {
     // A Java comment
@@ -475,7 +484,7 @@ leverage existing Java libraries directly. An example of a simple
 object-oriented ``Hello World!'' program is shown in the following
 example:
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[language=java,caption=Groovy ``hello world'' example,label=lst:groovyhello]
 class Greet {
   def name
 
@@ -559,7 +568,7 @@ respect to embedding DSLs on the JVM. Below is an example of the
 implementation of the Fibonacci function (a more common ``hello
 world'' in the functional world):
 
-\begin{lstlisting}[language=lisp]
+\begin{lstlisting}[language=lisp,caption=Clojure Fibonacci example,label=lst:clojurefibonacci]
 ; A kind of hello world function
 (def hello (fn [] "Hello world"))
 
@@ -722,7 +731,7 @@ example of using the DSLs.
 The \matlab{} code to perform the operation could
 typically look like this:
 
-\begin{lstlisting}[language=matlab]
+\begin{lstlisting}[language=matlab,caption=\matlab{} image processing example,label=lst:matlabimgproc]
 img = imread('cell.jpg');
 % 3x3 neighborhood default
 imgAvg = medfilt2(img);
@@ -730,9 +739,10 @@ imwrite(imgAvg, 'cell_avg.jpg');
 \end{lstlisting}
 
 My goal is to create a Scala DSL to achieve the same result. A
-suggested Scala-solution to the problem will look something like this:
+suggested Scala-solution to the problem will look something like the
+example shown in listing \vref{lst:scalaimgproc}.
 
-\begin{lstlisting}
+\begin{lstlisting}[float,caption=Scala image processing example,label=lst:scalaimgproc]
 // Imports...
 val img = loadImageCP("/cell.jpg")
 val se = StrEl(Square, 3)
@@ -767,7 +777,7 @@ definition of structuring element, are all member functions in classes
 \texttt{SImageIO} and \texttt{StrElType}. These can be imported with
 the \texttt{.\_} notation in Scala, and are then available directly:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala image processing syntax example,label=lst:scalaipsyn]
 import io.SImageIO._
 import structs.StrElType._
 
@@ -788,7 +798,7 @@ To create the structuring element, the \texttt{StrEl} trait has a
 compact syntax, combined with the import of the available structuring
 element types as shown above:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala companion object example,label=lst:scalacompobj]
 object StrEl {
   import StrElType._
   def apply(t: StrElType, num: Int) = Array2DStrEl(t, num)
@@ -803,7 +813,7 @@ mixed in with the image on creation. This is using self-type
 annotations to specify that the trait can only be mixed in with
 classes of type \texttt{GrayScaleImage}:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala image processing traits,label=lst:scalaimgtraits]
 trait Standard { this: GrayScaleImage =>
   def avg(se: StrEl[Int]) = { ... }
 }
@@ -862,7 +872,7 @@ a series of integers, and then calling the wanted operations. An
 example calculating and printing (to the standard console) the average
 value of a standard 6-sided dice (numbers 1-6) is given below:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala statistics DSL usage,label=lst:scalastatsdsluse]
 val dice = DataSet(1, 2, 3, 4, 5, 6)
 
 println("Dice average: " + dice.average)
@@ -899,7 +909,7 @@ createPieChart("Pie Chart",
       ("Three", 27.5D),
       ("Four", 17.5D),
       ("Five", 11D),
-      ("Six", 19.3D)))))
+      ("Six", 19.3D)))
 \end{lstlisting}
 
 \begin{figure}
@@ -958,7 +968,7 @@ chaining several function calls together. As an example consider the
 following Java-code (from\cite{fow06}), where the construction of a
 \texttt{HardDrive} object is shown with and without method chaining:
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[language=java,caption=Java function chaining example,label=lst:javafuncchain]
 // Construct with setter methods
 HardDrive hd = new HardDrive();
 hd.setCapacity(150);
@@ -971,9 +981,9 @@ HardDrive hd = new HardDrive().capacity(150).external().speed(7200);
 
 The chaining of methods can also be combined with method nesting,
 grouping methods that belong together (also from\cite{fow06}). An
-example of this is shown in listing \vref{lst:javachaining}.
+example of this is shown in listing \vref{lst:javachainnest}.
 
-\begin{lstlisting}[float,caption=Java method chaining and nesting,label=lst:javachaining,language=java]
+\begin{lstlisting}[float,caption=Java method chaining and nesting,label=lst:javachainnest,language=java]
 computer(
   processor(
     cores(2),
@@ -1025,7 +1035,7 @@ instance and not with objects created from the class. The following
 example shows how to sort a list of strings in Java, using the static
 method \texttt{sort} in the \texttt{Collections} class:
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[language=java,caption=Java static sort example,label=lst:javastaticsort]
 // Create a list of strings
 List<String> names = ...
 
@@ -1038,7 +1048,7 @@ in Scala. Instead of having methods defined as static there is a
 notion of a singleton object, as in the following example defining
 sorting similar to the Java-example above:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala singleton object sort example,label=lst:scalasingletonsort]
 // Define ListSorter object
 object ListSorter {
   def sort(list: List) { ... }
@@ -1062,7 +1072,7 @@ like the sorting shown in the examples above. In my image processing DSL
 (described in section \vref{sec:dslimageprocessing}), singleton
 objects are used to construct objects:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala image processing singleton objects,label=lst:scalaimgsingleton]
 // Using singleton object:
 val squareElement = StrEl(Square, 3) // 3x3 square element
 val lineElement = StrEl(HLine, 5) // 5x1 line element
@@ -1079,7 +1089,7 @@ for creating concise syntax, and thus in the embedding of DSLs. Using
 static member import the Java sorting example from previous section
 could have been written like this:
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[language=java,caption=Java static member import example,label=lst:javastaticimport]
 import static java.util.Collections.*; // Import all static members of the Collections class
 ...
 
@@ -1094,7 +1104,7 @@ In Scala member imports are less restricted than in Java. They can be
 used anywhere in the code (not just at the start of the file), and are
 not restricted to static members.
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala member import example,label=lst:scalamemberimport]
 class Fruit(val name: String, val color: String) // Define class Fruit with two members
 
 val apple = new Fruit("apple", "red") // Create apple as instance of Fruit
@@ -1110,7 +1120,7 @@ to use the method/type names directly (such as the
 \texttt{loadImageFile} method and the \texttt{Square} type in the
 example below):
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala image processing member imports,label=lst:scalaimgmemberimport]
 import simage.io.SImageIO._
 import simage.structs._
 import simage.structs.StrElType._
@@ -1145,7 +1155,7 @@ with the \texttt{+} method name in a simple matrix DSL (being an
 important part of the larger image processing DSL shown in section
 \vref{sec:dslimageprocessing}):
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala operator notation function example,label=lst:scalaoperator]
 abstract class Matrix {
   // Method names can be operators
   def +(other: Matrix) = add(other)
@@ -1170,7 +1180,7 @@ Development\footnote{BDD is a software development technique first
   natural language, and has been implemented as embedded DSLs in a
   number of different languages.} in a very fluent style:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala ScalaTest example,label=lst:scalatest]
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 
@@ -1198,7 +1208,7 @@ addition it is a common idiom in Ruby to append method names with a
 questionmark if the method returns a boolean value. As shown in the
 following example demonstrating how parentheses are optional:
 
-\begin{lstlisting}[language=Ruby]
+\begin{lstlisting}[language=Ruby,caption=Ruby parameter example,label=lst:rubyparam]
 name = "John"
 
 # Method without parameters
@@ -1228,7 +1238,7 @@ parameters directly to an object. In the following example the
 \texttt{apply} method is used to index the \texttt{Matrix} class as if
 it was a native feature:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala \texttt{apply} method example,label=lst:scalaapply]
 class Matrix[T] {
   def apply(row: Int, col: Int): T = ...
 }
@@ -1243,7 +1253,7 @@ actual class being used to create the object. This makes it possible
 to create code according to the factory method pattern\cite{gam95}, as
 in the following example (simplified version of Matrix structure):
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala \texttt{apply} method factory example,label=lst:scalaapplyfactory]
 abstract class Array2DMatrix[T](elements: Array[T]) extends Matrix[T] {
   ... // Some abstract specialization of the Matrix class
 }
@@ -1278,7 +1288,7 @@ implementation of the DSL relies on a number of language features
 expressions -- see sections below) in addition to the query syntax
 itself.
 
-\begin{lstlisting}[language={[Sharp]C}]
+\begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ example,label=lst:linq]
 // Query syntax:
 var results = 
   from c in SomeCollection
@@ -1298,7 +1308,7 @@ query syntax much like that of LINQ. Complex expressions using the
 mechanism will be rewritten to a combination of \texttt{filter},
 \texttt{flatMap} and \texttt{map}:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala \texttt{for comprehension} example,label=lst:scalafor]
 // "Query syntax" - for comprehension:
 val results = for {
   name <- listOfNames
@@ -1327,7 +1337,7 @@ query syntax.
 The Scala compiler will try to infer the types used. So if the type is
 obvious there is no need to specify it:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala basic type inference example,label=lst:scalabasictypeinference]
 val i = 42 // Type Int is infered
 val d = i + 2.1 // Type Double is infered
 val iBy2 = (i: Int) => i * 2 // Return value Int is infered from int parameter
@@ -1367,7 +1377,7 @@ following Scala example an implicit conversion is used to convert from
 \texttt{Int} to \texttt{MyInt}, and thus allowing the
 \texttt{doubleIt} method to be called directly on the integer value:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala implicit type conversion example,label=lst:scalaimplicitconversion]
 // Wrapper class for int
 class MyInt(val i: Int) {
   def doubleIt = i * 2 // Method
@@ -1385,7 +1395,7 @@ as if it had defined the methods \texttt{should} and \texttt{in}. The
 value returned from the \texttt{pop} operation on the stack being
 tested is treated the same way:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=ScalaTest example using implicit type conversions,label=lst:scalatestimplicitconversion]
 ...
 "A Stack" should "pop values in last-in-first-out order" in {
 ...
@@ -1404,7 +1414,7 @@ since there is defined a conversion from \texttt{String}. The value
 popped off the stack is converted to a \texttt{AnyShouldMatcher} with
 a similar implicit conversion, including a generic type parameter:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=ScalaTest implicit type conversion definitions,label=lst:scalatestimplicitconversiondef]
 implicit override def convertToStringShouldWrapper(o: String): StringShouldWrapper
 
 implicit def convertToAnyShouldWrapper[T](o: T): AnyShouldWrapper[T]
@@ -1434,7 +1444,7 @@ does not support anonymous functions, would result in something
 similar to this using a \texttt{for-loop} combined with an
 \texttt{if-statement}:
 
-\begin{lstlisting}[language=java]
+\begin{lstlisting}[language=java,caption=Java simple for-loop/if example]
 List<Integer> numbers = ... // Make instance of list of integers
 List<Integer> evenNumbers = new ArrayList<Integer>();
 
@@ -1449,7 +1459,7 @@ which is used to decide what values should be returned in a new
 list. In Scala, for example, the above example could be implemented as
 follows:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala basic anonymous function example]
 val numbers = ... // Make instance of list of integers
 val evenNumbers = numbers.filter(_ % 2 == 0)
 \end{lstlisting}
@@ -1468,7 +1478,7 @@ In my Matrix DSL I have used higher-order functions to create
 general-purpose functions to perform operations spanning a given
 structuring element. The signature looks like this:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala higher-order function example]
 def seOp(se: StrEl[Int], op: (Seq[T]) => T): Matrix[T]
 \end{lstlisting}
 
@@ -1508,7 +1518,7 @@ DSLs. Users of the image processing DSL would never have to see the
 anonymous functions, but could use the function \texttt{blur},
 \texttt{erode} and \texttt{dilate} directly:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala image processing functions implemented using anonymous functions]
 val image = ... // Obtain image instance
 val se = StrEl(Square, 3) // Create 3x3 structuring element
 val blurredImage = image.blur(se)
@@ -1538,7 +1548,7 @@ the implementation of LINQ (as described in an earlier section).
 Scala also supports anonymous types. An example of using anonymous
 types together with type inference:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala anonymous types example]
 val person = new { val name = "John"; val age = 26 }
 
 println(person.name + " is " + person.age + " years old..")
@@ -1547,7 +1557,7 @@ println(person.name + " is " + person.age + " years old..")
 In LINQ this is used to allow selection of fields from a database or
 other data structure:
 
-\begin{lstlisting}[language={[Sharp]C}]
+\begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ example using anonymous types]
 var results = 
   ... // Some query
   select new {c.SomeProperty, c.OtherProperty};
@@ -1560,7 +1570,7 @@ while instantiating it. In C\# this can look like the following, and
 is also used to select objects of given class instead of anonymous
 types from LINQ:
 
-\begin{lstlisting}[language={[Sharp]C}]
+\begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ object initializer example]
 val results =
   ... // Some query
   select new Person { Name = c.SomeProperty, Age = c.OtherProperty }
@@ -1569,7 +1579,7 @@ val results =
 Scala also supports a form for object initializers, as in the
 following example:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala object initializer example]
 class Person {
   var name = ""
   var age = 0
@@ -1784,7 +1794,7 @@ types. In the following code we re-implement with open classes/monkey
 patching the same example shown earlier with implicit type
 conversions:
 
-\begin{lstlisting}[language=Ruby]
+\begin{lstlisting}[language=Ruby,caption=Ruby example showing ``monkey patching'' on open classes]
 class Integer
   def doubleIt
     self * 2
@@ -1815,7 +1825,7 @@ version of the \texttt{ActiveRecord} class from the \texttt{Rails}
 framework. It maps objects to database tables and allows dynamic
 querying through the DSL syntax:
 
-\begin{lstlisting}[language=Ruby]
+\begin{lstlisting}[language=Ruby,caption=Ruby on Rails \texttt{ActiveRecord} example]
 class ActiveRecord
   # ...
   def self.method_missing(method_id, *arguments)
@@ -2020,7 +2030,7 @@ methods \texttt{average}, \texttt{minValue} and \texttt{maxValue}. In
 the most basic form it can be used directly to compute the average,
 minimum and maximum values of a series of integers:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala statistics DSL basic example]
 val ds = DataSet(1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 println("Average: " + ds.average) // 5.0 (double value)
@@ -2038,7 +2048,7 @@ using the length of the strings as input, in the implicit function
 string-array as if it was an instance of a dataset (which in fact it
 is as the compiler implicitly converts it to one on demand):
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala word statistics example]
 val words = Array("eivind", "test", "oslo", "bekk", "scala", "elephant", "cat")
 
 implicit def str2DS(str: Array[String]) = {
@@ -2060,7 +2070,7 @@ could say that we have defined a new ``statistical image processing
 DSL'' combining the two existing DSL, all without writing any other
 code than the actual conversion. A simple example is shown below:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala example using implicit conversion to combine DSL for statistics with DSL for image processing]
 val img = Image(Matrix(3, List(
   9, 8, 7,
   6, 5, 6,
@@ -2133,7 +2143,7 @@ parameter passing, and single parameter functions can be called using
 curly braces instead of parenthesis to specify the parameter. As an
 example consider the following definition of a new while construct:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala example making functions look like built-in keywords]
 def mywhile(cond: => Boolean)(body: => Unit) {
   if(cond) {
     body
@@ -2258,7 +2268,7 @@ functionality, using the image processing DSL from
 chapter \vref{chp:examples} as example (loading an image and saving a
 blurred copy to a new file):
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Scala scripting usage example]
 import simage.io.SImageIO._
 import simage.structs._
 import simage.structs.StrElType._
@@ -2309,7 +2319,7 @@ definitions, type aliases or function definitions. Taking the example
 from the previous section on scripting we can put all the import
 statements into a file called PreDef.scala:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=PreDef.scala file with image processing imports]
 import simage.io.SImageIO._
 import simage.structs._
 import simage.structs.StrElType._
@@ -2318,7 +2328,7 @@ import simage.structs.StrElType._
 The interactive interpreter can then be started using the option
 \texttt{-i PreDef.scala} as in the following example:
 
-\begin{lstlisting}[language=]
+\begin{lstlisting}[language=,caption=Scala REPL execution with preloaded import statements]
 scala -classpath simage.jar -i PreDef.scala
 
 Loading Predef.scala...
@@ -2338,7 +2348,7 @@ one (notice the output for every line wich is simply the interpreter
 calling the \texttt{toString} method after printing the type on the
 newly created object -- very useful for debugging purposes):
 
-\begin{lstlisting}[language=bash]
+\begin{lstlisting}[language=bash,caption=Scala REPL image processing example]
 scala> val img = loadImageFile("cell.jpg")
 img: simage.structs.GrayScaleImage with simage.operations.Standard with simage.operations.Morphology =
 Image 512x512
@@ -2844,8 +2854,10 @@ Summary.. $\ddot\smile$
 \item Finish the image processing work as a usable library.
 \end{itemize}
 
+\begin{spacing}{0}
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{master}
 \bibliographystyle{plain}
+\end{spacing}
 
 \end{document}
