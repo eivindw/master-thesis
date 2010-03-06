@@ -83,6 +83,8 @@
   floatplacement=h,
 }
 
+\renewcommand{\lstlistlistingname}{List of Code Listings}
+
 \hypersetup{pdfborder={0 0 0},colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
 
 \newcommand{\matlab}{\textsc{Matlab}\textregistered}
@@ -115,6 +117,7 @@ of new language features and new ways to utilize existing language
 features.
 
 \clearpage
+\addcontentsline{toc}{chapter}{Contents}
 \begin{multicols}{2}
 \tableofcontents
 \end{multicols}
@@ -1368,6 +1371,8 @@ queries\cite{spi09}. Both mechanisms rely on monadic behaviour
 constructed by combining a set of basic functions (as shown in the
 examples above).
 
+TODO: write about Clojure relational algebra support on sets?
+
 \section{Type Inference}
 
 With type inference the compiler will figure out the type of a value
@@ -1631,6 +1636,7 @@ val person = new Person { name = "John"; age = 26 }
 \end{lstlisting}
 
 \section{Metaprogramming}
+\label{sec:metaprogramming}
 
 Metaprogramming is the writing of programs that write or manipulate
 other programs (or themselves) as their data, or that do part of the
@@ -1707,6 +1713,7 @@ Scala has no special mechanism for metaprogramming yet, and has not
 been considered in this section.
 
 \subsection{Dynamic Metaprogramming}
+\label{sec:dynamicmetaprogramming}
 
 Dynamically typed languages are able to use metaprogramming in a more
 dynamic way, to add or alter method definitions at runtime. Both
@@ -2135,6 +2142,19 @@ specialized part of the domain. For example an environment for various
 numeric analysis could be built combining DSLs for image processing,
 statistics, charting etc.
 
+\subsection{Package Templates}
+\label{sec:packagetemplates}
+
+Package templates is an object-oriented mechanism being research by
+the \textsc{swat} project at the Department of Informatics, at the
+University of Oslo. Package templates extend the notion of packages in
+languages like Java and Scala, with the ability to instatiate and
+customizing packages. The mechanism is described in detail with
+examples in\cite{axe09}. This section outlines how a package template
+mechanism can be utilized to combine embedded DSLs.
+
+TODO: finish
+
 \section{Summary}
 
 TODO: Write conclusion.
@@ -2154,6 +2174,7 @@ programming language to suit our needs.
 \section{Removing from Host Language -- Pruning}
 
 \subsection{Compiler Plugins}
+\label{sec:compilerplugins}
 
 TODO: example Scala compiler plugin, removing for comprehension
 support or similar from the language.
@@ -2392,7 +2413,7 @@ one (notice the output for every line wich is simply the interpreter
 calling the \texttt{toString} method after printing the type on the
 newly created object -- very useful for debugging purposes):
 
-\begin{lstlisting}[language=bash,caption=Scala REPL image processing example.]
+\begin{lstlisting}[language=,caption=Scala REPL image processing example.]
 scala> val img = loadImageFile("cell.jpg")
 img: simage.structs.GrayScaleImage with simage.operations.Standard with simage.operations.Morphology =
 Image 512x512
@@ -2871,32 +2892,113 @@ TODO: Write conclusion.
 \chapter{Summary}
 \label{chp:summary}
 
+This chapter provides a conclusion of the results found. A separate
+section is devoted to showing particular research contributions, that
+are believed to be new ideas created during the thesis work. At last a
+section suggesting future work is given.
+
 \section{Conclusion}
 
-Summary.. $\ddot\smile$
-
-\subsection{Research Contributions}
-
 \begin{itemize}
-\item Using package template mechanism from \textsc{swat} project in
-  embedding DSLs (using DSL/combining DSLs).
-\item ``New'' object-oriented features from \textsc{beta} (virtual
-  classes/extending methods).
-\item AOP features integrated in language (qi4j, Ioke?).
-\item More dynamic-like features in static languages (metaprogramming,
-  dynamic dispatch).
-\item Embedding high-performance DSLs on JVM with Scala.
-\item Showing that an environment for image processing with an
-  embedded DSL based on Scala can be made.
+\item Major language differences with regards to implementing embedded
+  DSLs. When is dynamic language good? When is static good? When is
+  functional programming smart?
+\item Performance. Language differences? Common JVM things?
 \end{itemize}
 
-\section{Future Work}
+\section{Research Contributions}
+
+This section summarizes research contributions made in the thesis
+work. As much of the results are not new in terms of research, and
+also are scathered throughout the report, it is important to gather
+all the key findings in one place. The following subsections each
+describe a perceived research contribution made by this thesis work.
+
+\subsection{Package Templates for Embedded DSL Composition}
+
+\subsection{Suggested new Features for Scala}
 
 \begin{itemize}
-\item Work on implementing package templates in Scala.
-\item Create similar image processing DSL in Clojure.
-\item Finish the image processing work as a usable library.
+\item Virtual Classes (\textsc{beta})
+\item Extending Methods (\textsc{beta})
+\item \texttt{dynamic} keyword (C\#)
+\item Advanced Meta Programming Capabilities (Ruby/Groovy)
 \end{itemize}
+
+\subsection{AOP Features Integrated in Language}
+
+\subsection{Dynamic Features in Statically Typed Languages}
+
+\subsection{Embedding High-Performance DSLs on the JVM}
+
+\subsection{Basic Elements of Image Processing DSL in Scala}
+
+\section{Suggestions for Future Work}
+
+As this thesis has a quite general of wide-spread focus, there are
+several areas that could be worth researching further and in more
+details. This section is divided into subsections, each describing a
+separate area that deserves more attention. I believe several new
+master thesis can be written from each of the suggested areas
+below. The topics have been identified from working with embedded
+DSLs, but are presented as more general features.
+
+\subsection{Implementing Package Templates in Scala}
+
+The package template mechanism described in\cite{axe09} by the
+\textsc{swat} project is an advanced object-oriented mechanism that
+could be implemented in Scala. Writing compiler plugins is an
+available and well documented feature (discussed in section
+\vref{sec:compilerplugins}) that could be utilized in this work.
+
+\subsection{Add Support for a Dynamic Type in a Statically Typed Language}
+
+The C\# language from Microsoft is a statically typed language that
+from version 4.0\footnote{To be released spring 2010.} adds support
+for a \texttt{dynamic} keyword allowing type checking to be postponed
+until runtime\footnote{C\# 4.0 -- Using Type dynamic:
+  \url{http://msdn.microsoft.com/en-us/library/dd264736\%28VS.100\%29.aspx}}. Features
+such as this bridges much of the gap between statically and
+dynamically typed languages. A suggestion of future work is to add
+similar support to one of the statically typed languages running on
+the JVM (as Scala or Java used in this thesis).
+
+\subsection{Implement More Powerful Meta Programming Features in Scala}
+
+As described in section \vref{sec:dynamicmetaprogramming} one of the
+major benefits of using a dynamically typed language is the powerful
+metaprogramming mechanisms. It would certainly be interesting to
+research further the possibilities of adding similar support to Scala
+or another statically typed language on the JVM. This task could be
+done in parallell with the dynamic type support described in the
+previous section.
+
+\subsection{Create Image Processing DSL in Clojure}
+
+Clojure is a very interesting language providing a more pure
+functional programming model than Scala on the JVM. It would be
+interesting investigating further using the functional capabilities of
+Clojure in implementing an image processing DSL similar to the one
+implemented in Scala in this thesis.
+
+\subsection{Implement a Complete Environment for Computationally Intensive Tasks}
+
+The main example in this thesis work has been the DSLs for image
+processing, statistics and charts. Joint together these form a very
+basic foundation for an environment providing a friendly syntax in
+programming computationally intensive tasks.
+
+It would be very interesting working further with these ideas,
+focusing more on the specific domain of image processing and other
+tasks requiring high performance computations. A JVM based environment
+could potentially support several different host languages, each being
+leveraged for its benefits. For example using Scala and Clojure for
+concurrency, and Groovy for more dynamic queries (charting, reporting
+or similar). The building blocks requiring full control of the
+generated byte-code could be implemented in Java (for optimal
+performance), using the other languages to provide DSL syntax and
+other enhancements (like concurrency, querying, interactive
+interpreter consoles ++) on top.
 
 \begin{spacing}{0}
 \addcontentsline{toc}{chapter}{Bibliography}
