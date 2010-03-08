@@ -2050,6 +2050,18 @@ optimizing the size of the bytecode produced.
 
 \subsection{Functional Composition}
 
+Multimethod example shown in \vref{lst:cljmm}.
+
+\begin{lstlisting}[language=lisp,caption=Clojure multi-method example,label=lst:cljmm]
+(defmulti my-print class)
+
+(defmethod my-print String [s]
+  (.write *out* s))
+
+(defmethod my-print Number [n]
+  (.write *out* (.toString n)))
+\end{lstlisting}
+
 TODO: write with clojure examples
 
 \begin{itemize}
@@ -2148,12 +2160,53 @@ statistics, charting etc.
 Package templates is an object-oriented mechanism being research by
 the \textsc{swat} project at the Department of Informatics, at the
 University of Oslo. Package templates extend the notion of packages in
-languages like Java and Scala, with the ability to instatiate and
-customizing packages. The mechanism is described in detail with
-examples in\cite{axe09}. This section outlines how a package template
-mechanism can be utilized to combine embedded DSLs.
+languages like Java and Scala, with the ability to instantiate and
+customize packages. The mechanism is described in detail with examples
+in\cite{axe09}. This section outlines how a package template mechanism
+can be utilized to combine embedded DSLs.
 
-TODO: finish
+Having a package template mechanism in Java could be used as a sort of
+multiple inheritance, as the mechanism supports merging implementation
+details from several package classes into one new class. This could be
+used to combine DSL classes similar to the example shown with implicit
+conversions in the previous section. An example of how this could be
+done is shown in listing \vref{lst:ptdsl}. Notice how the
+\texttt{ImageStatistics} class constructed has methods from both the
+\texttt{Image} and \texttt{DataSet} super classes, similar to what
+could be achieved using traits with Scala.
+
+\begin{lstlisting}[float,language=java,caption=Package template DSL example.,label=lst:ptdsl]
+template Statistics {
+  class DataSet {
+    public int avg() { // Example statistical operation
+      int[] data = getData();
+      ... // Lots of Java code to compute and return average value
+    }
+
+    abstract int[] getData();
+  }
+}
+
+template ImageProcessing {
+  class Image {
+    int[] imgData;
+
+    public void blur() { ... } // Example image operation
+  }
+}
+
+inst Statistics with Operations => ImageStatistics
+inst ImageProcessing with Image => ImageStatistics
+
+class ImageStatistics with Operations {
+  int[] getData() { return imgData; } // Return image data as an array
+}
+
+// Examples of use, an ImageStatistics object has both blur() and avg() methods:
+Image img = ...
+img.blur();
+int average = img.avg();
+\end{lstlisting}
 
 \section{Summary}
 
@@ -2231,7 +2284,13 @@ features supporting the DSL.
 
 TODO: DSL example using the technique shown above.
 
-TODO: Clojure macro examples.
+TODO: Clojure macro examples. Clojure \texttt{unless} implementation
+as a macro shown in listing \vref{lst:cljunless}.
+
+\begin{lstlisting}[language=lisp,caption=Clojure macro adding unless,label=lst:cljunless]
+(defmacro unless [expr form]
+  (list 'if expr nil form))
+\end{lstlisting}
 
 \section{Summary}
 
@@ -2899,12 +2958,25 @@ section suggesting future work is given.
 
 \section{Conclusion}
 
-\begin{itemize}
-\item Major language differences with regards to implementing embedded
-  DSLs. When is dynamic language good? When is static good? When is
-  functional programming smart?
-\item Performance. Language differences? Common JVM things?
-\end{itemize}
+This section concludes the results found during the work of the
+thesis. It is divided into subsection grouping related results.
+
+\subsection{Language Categories and Embedded DSLs}
+
+TODO: describe key findings in dynamic/static, oo/functional,
+compiled/intepreted with regards to DSL types and wanted
+features. Answer: When is dynamic language good? When is static good?
+When is functional programming smart?
+
+\subsection{Usage}
+
+TODO: summarize usage scenarios. How to use different language DSLs?
+Tool support, error handling?
+
+\subsection{Performance}
+
+TODO: summarize performance findings. Language differences + general
+JVM things.
 
 \section{Research Contributions}
 
