@@ -2572,24 +2572,13 @@ functional vs object-oriented/imperative.
 
 \section{Code Efficiency}
 
-\begin{itemize}
-\item Scala for comprehensions --> while loops - functional
-  programming problem on the JVM?
-\item Primitives - byte, int and double support - contrast to objects
-  on everything (autoboxing)
-\item Data structures - Scala list of lists vs 2D-array
-\end{itemize}
-
-\subsection{Efficient Implementation Tips}
-\label{sec:effimpl}
-
 When performing the same operation a large number of times, as is the
 case with many algorithms for Image Processing, there are various
 implementation related things that need to be considered. In this
 section I summarize the lessons learned with regards to tuning the
 code for maximum performance.
 
-\subsubsection{Choice of data structures}
+\subsection{Choice of data structures}
 \label{sec:datastructures}
 
 The underlying data structure for images and Image Processing is the
@@ -2640,7 +2629,7 @@ class Matrix[T](cols: Int, val elements: Array[T]) {
 val m = new Matrix(2, Array(1, 2, 3, 4))
 \end{lstlisting}
 
-\subsubsection{Iterations -- \texttt{for} comprehensions vs \texttt{while} loops}
+\subsection{Iterations -- \texttt{for} comprehensions vs \texttt{while} loops}
 
 Many Image Processing operations require some kind of calculation
 performed for every element in the underlying matrix. As an example,
@@ -2732,23 +2721,11 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
 }
 \end{lstlisting}
 
-\begin{itemize}
-  \item Scala and primitives
-  \item JVM tuning
-\end{itemize}
+\subsection{Using JVM Primitives}
+
+TODO: write something about this?
 
 \section{Multithreading -- Parallel Computing}
-
-\begin{itemize}
-\item Java multithreading
-\item Java futures
-\item Scala actors
-\item Scala futures
-\item Clojure concurrent programming. Clojure functions are
-  \texttt{java.util.concurrent.Callable}.
-\end{itemize}
-
-\subsection{Parallel Processing}
 
 With images larger than a certain size, the operations performed in
 the image analysis are bound to be heavy in terms of the number of
@@ -2762,7 +2739,17 @@ for concurrent programming on a multi-core/-processor environment,
 while the third section discuss a mechanism for parallelization using
 the GPU (Graphics Processing Unit).
 
-\subsubsection{Actors API}
+\subsection{Java Concurrency}
+
+TODO: write?
+
+\begin{itemize}
+\item Java multithreading
+\item Java futures
+\item Java fork \& join in Java 7?
+\end{itemize}
+
+\subsection{Actors API}
 \label{sec:actors}
 
 The primary concurrency construct in Scala is actors. Actors are
@@ -2813,7 +2800,7 @@ while(!exec.hasResult) {} // Busy waiting..
 println("Result: " + exec.getResult.get) // Prints "SCALA"
 \end{lstlisting}
 
-\subsubsection{Futures API}
+\subsection{Futures API}
 \label{sec:futures}
 
 Actors may communicate using futures where requests are handled
@@ -2887,14 +2874,16 @@ val doubledList = parallel (
 ).asInstanceOf[MyList]
 \end{lstlisting}
 
+\subsection{Functional Concurrency with Clojure}
+
+TODO: write. Clojure concurrent programming. Clojure functions are
+\texttt{java.util.concurrent.Callable}.
+
 \section{Distributed DSL}
 
 Distributed cache or similar. Akka distributed actors on Scala?
 
 \section{Secondary Processors -- GPU}
-
-\subsubsection{OpenCL with ScalaCL}
-\label{sec:opencl}
 
 Recent years manufacturers of graphics cards and GPUs (Graphics
 Processing Unit) have made libraries available to run general code
