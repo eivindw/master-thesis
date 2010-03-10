@@ -2565,10 +2565,49 @@ possible on the JVM.
 
 \section{Host Language -- Dynamic vs. Static Typing}
 
-TODO: finish section
+One of the language categorizations that potentially has a lot of
+impact on the performance on the JVM is wether the language is
+dynamically of statically typed. While static languages typically
+perform type checking at compile-time, dynamic languages will postpone
+most type checking until runtime. The JVM does however not support
+runtime type checking very well at the present version, although some
+work is being done to improve this. The next version of Java will most
+likely have much better support for dynamic languages\footnote{The
+  Java Community Process is developing <<JSR-292: Supporting
+  Dynamically Typed Languages on the Java\texttrademark Platform>>
+  (\url{http://jcp.org/aboutJava/communityprocess/edr/jsr292})},
+including a specific JVM instruction (\texttt{invokedynamic}) allowing
+optimizations of dynamic method invocations.
 
-Performance benchmarks dynamic vs static, interpreted vs compiled,
-functional vs object-oriented/imperative.
+At the moment much of the dynamically typed languages on the JVM are
+implemented using reflection and synthetic Java types. This makes the
+code run significantly slower than that of the statically typed
+languages. Some work has been done to optimize this in compiled
+dynamic languages, or languages supporting some notion of just-in-time
+compilation. If the type is dynamic, but still obvious to the
+compiler, it is possible for the compiler to create bytecode that is
+using regular static types instead. However, a thourough knowledge of
+the languages and their compilers is needed to know exactly what code
+will be optimized and how it should be written.
+
+No particular benchmarks have been performed in this thesis, but
+several existing ones have been studied to verify that the above
+statements about dynamic languages being slower are actually
+true\footnote{Several language benchmarks are published on the
+  internet, an example:
+  \url{http://shootout.alioth.debian.org/}}. Most tests show that
+dynamic languages are significantly slower than the static ones. The
+languages studied in this thesis seem to come up in this order when
+compared:
+
+\begin{enumerate*}
+\item Java -- original bytecode is the fastest.
+\item Scala -- nearly as fast as Java in many cases.
+\item Clojure -- uncertain about this one, but the tight coupling to
+  Java suggest best performance of the three dynamic languages.
+\item JRuby -- significantly slower than Java, faster than Groovy.
+\item Groovy -- the slowest of the all.
+\end{enumerate*}
 
 \section{Code Efficiency}
 
