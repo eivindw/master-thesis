@@ -2764,7 +2764,7 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
 
 TODO: write something about this?
 
-\section{Multithreading -- Parallel Computing}
+\section{Concurrency -- Parallel or Distributed Computing}
 
 With images larger than a certain size, the operations performed in
 the image analysis are bound to be heavy in terms of the number of
@@ -2915,12 +2915,42 @@ val doubledList = parallel (
 
 \subsection{Functional Concurrency with Clojure}
 
-TODO: write. Clojure concurrent programming. Clojure functions are
-\texttt{java.util.concurrent.Callable}.
+An important factor in all functional programming is the strict
+separation between mutable and immutable data structures. Where Scala,
+being a multi-paradigm language, offers mutable variables and
+encapsulation of state as all object-oriented languages (in addition
+to offering immutable alternatives), Clojure tries to be more pure on
+the functional side and hence makes immutable programming the
+``default'' model in the language. All handling of state must be done
+in an explicit manner, forcing the user of the language to deal with
+all changes to the mutable state of a program. A program that has no
+shared mutable state can easily take advantage of concurrent
+programming. If you know that the same state can not be overriden by
+multiple threads there is no need for explicit locking or other
+mechanisms synchronizing access to the data. This is one of the major
+benefits when working with functional programming languages. This
+section shows how mechanisms for concurrency can be utilized in
+Clojure, with some simple examples.
 
-\section{Distributed DSL}
+One of the ways Clojure integrated with Java is in making all
+functions implement the \texttt{java.util.concurrent.Callable}
+interface, from the concurrent classes added to the JDK from version
+1.5. This allows all Clojure functions being able to run directly in
+separate Java thread, or using executors or other mechanisms from the
+Java concurrent API. So spawning several threads to perform separate
+tasks is extremely easy. An example is shown in the following listing,
+where the function printing ``hello!'' is run in a separate thread on
+the JVM:
 
-Distributed cache or similar. Akka distributed actors on Scala?
+\begin{lstlisting}[language=lisp]
+(.start (Thread. (fn [] (print "hello!"))))
+\end{lstlisting}
+
+It gets a bit more complicated when several threads need to cooperate
+to solve a task, as in the Scala image processing examples shown in
+previous sections.
+
+TODO: create Clojure matrix example with multithreaded use.
 
 \section{Secondary Processors -- GPU}
 
