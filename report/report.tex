@@ -2249,14 +2249,57 @@ distribution. So if the plugin is present the functionality will be
 available, but once it is removed the added functionality will not be
 available anymore.
 
+It would be quite trivial to write a compiler plugin that disables
+unwanted features of Scala. For example if we wanted to remove the
+\texttt{while} contruct, the plugin could simply search the abstract
+syntax tree for occurences of while, and output an error message if
+any are found. No examples are given here, but the Scala website
+provides a good tutorial for getting started writing compiler
+plugins\footnote{Writing Scala Compiler Plugins --
+  \url{http://www.scala-lang.org/node/140}}.
+
 \subsection{Pruning in Dynamic Languages}
+\label{sec:dynlangprune}
 
-TODO: describe how open classes in Ruby can be used
-(remove\_method/undef\_method). Groovy possibilities?
+Another way to prune functionality from the host language is to
+utilize the open classes in Ruby, first introduced in section
+\vref{sec:monkey_patching}. This can be used to redefine methods on
+the base classes in the language, maybe throwing an exception or
+printing an error message if an unwanted method is called. As an
+example, the code in listing \vref{lst:rubyprunestring} shows an
+example where the implementation of \texttt{String.length} is
+redefined to print an error message.
 
-\subsection{Pruning in Functional LISP}
+\begin{lstlisting}[float,language=ruby,caption=Ruby String pruning example.,label=lst:rubyprunestring]
+class String
+  def length
+    puts "Illegal method invoke!"
+  end
+end
+\end{lstlisting}
 
-TODO: describe possibilities in Clojure.
+Ruby also has some metaprogramming methods that can be used to remove
+methods from base classes. The \texttt{remove\_method} method can be
+used to remove a given method from the current class, while
+\texttt{undef\_method} will undefine the method completely. In listing
+\vref{lst:rubyundefmethod} the \texttt{String.length} is undefined
+completely, rendering the message <<\texttt{NoMethodError: undefined
+  method `length' for "hei":String}>> if called on the string ``hei''.
+
+\begin{lstlisting}[float,language=ruby,caption=Ruby \texttt{undef\_method} example.,label=lst:rubyundefmethod]
+class String
+  undef_method: length
+end
+\end{lstlisting}
+
+Similar ways to modify the base API methods and classes are also
+available in Groovy, as was shown with the \texttt{random} method
+redefinition in listing \vref{lst:groovymeta}.
+
+\subsection{Pruning in Functional Languages}
+
+TODO: describe possibilities in Clojure (switch to ns + redef
+function, use binding).
 
 \section{Extending Host Language}
 
@@ -2270,11 +2313,19 @@ you want to extend the various host languages.
 
 \subsection{Compiler Plugins}
 
-TODO: Scala compiler plugin example, again?
+The compiler plugin mechanism described in \vref{sec:compilerplugins}
+could of course also be used to extend the language. Some of the new
+functionality added to Scala is first introduced as compiler plugins,
+and then later added to the main distribution after being tested. An
+example of this is the continuations support that will be added to
+Scala 2.8\footnote{A Taste of 2.8: Continuations --
+  \url{http://www.scala-lang.org/node/2096}}.
 
 \subsection{Dynamic Languages}
 
-TODO: Ruby open classes again.
+The mechanisms described in section \vref{sec:dynlangprune} can just
+as well be used to extend the host language with new methods. Examples
+of this was shown in section \vref{sec:monkey_patching}.
 
 \subsection{Functional Languages}
 
@@ -2339,7 +2390,20 @@ a macro shown in listing \vref{lst:cljunless}.
 
 \section{Summary}
 
-TODO: Write conclusion.
+There are different ways to modify the host language. With compiler
+plugins, as supported by Scala, it is possible to redefine whatever
+you like in the language. This does however require the use of
+externally activated plugins, that must be available whenever the
+functionality they provide is wanted. Dynamic languages support ways
+to add methods to existing base classes, as well as removing or
+redefining methods.
+
+The most exiting capabilities in changing the host language is found
+using macros in Clojure. They are an integrated part of the language,
+but can still redefine existing functionality or add all kinds of new
+structures. Much of the base functionality in Clojure is actually
+built using macros, as opposed to being integrated as separate
+keywords.
 
 \chapter{Exploring Ways to Use Embedded DSLs}
 \label{chp:dsluse}
