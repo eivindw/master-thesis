@@ -215,7 +215,7 @@ domain-specific languages, with my discussion, is given in section
 
 I have 10 years experience using the Java programming language,
 working as a professional consultant for BEKK\footnote{Bekk Consulting
-  AS (\url{http://www.bekk.no}).}. I have always been facinated by
+  AS (\url{http://www.bekk.no}).}. I have always been fascinated by
 various programming languages, and how they can be used to approach
 problems and solutions. When starting on a master thesis it is natural
 for me to focus on programming language capabilities. I feel that the
@@ -233,7 +233,7 @@ Engineering'' (EBSE) is introduced. It describes a method that can be
 used when making decisions in Software Engineering, combining evidence
 found in literature with practical experience and conducted
 experiments. Although the method is mainly targeted towards
-practicioners looking to support decision-making it can easily be
+practitioners looking to support decision-making it can easily be
 adapted to support an evaluative thesis as this one. The main steps of
 EBSE are as follows:
 
@@ -291,10 +291,10 @@ create interfaces that look and behave almost like a particular
 programming language.
 
 In this thesis I have identified different requirements of embedded
-DLSs running on the Java Virtual Machine (JVM), and looked at how
+DSLs running on the Java Virtual Machine (JVM), and looked at how
 various programming languages (described in section
 \vref{sec:programminglanguages}) solve these aspects. As described in
-the next section the exact definition of an embedded DLS is hard to
+the next section the exact definition of an embedded DSL is hard to
 find, and as such this thesis is just as much a study of different
 programming languages and what capabilities they provide.
 
@@ -310,7 +310,7 @@ like these is difficult, and in my opinion not contributing to a
 fruitful discussion. I have tried to turn my focus toward interesting
 capabilities different languages have, and the problems they solve. As
 such some of the examples I will be using might not qualify as
-embedded DLSs, but merely as libraries/interfaces with untraditional,
+embedded DSLs, but merely as libraries/interfaces with nontraditional,
 or in other ways interesting, use of the host language.
 
 Martin Fowler and Eric Evans have defined the name ``fluent
@@ -327,7 +327,7 @@ domain and as such has a lot in common with the thoughts behind DDD.
 
 The reason I include the section with this discussion is to briefly
 try to demonstrate that the area of embedded DSLs is a complex and
-maybe not precicely defined. The activity of building an embedded DSL
+maybe not precisely defined. The activity of building an embedded DSL
 is tightly connected to the understanding of the domain at hand, and
 the capabilities required from the host language will vary strongly
 with that understanding. The next section gives a list of such
@@ -423,7 +423,7 @@ I have chosen to categorize the languages in three different ways:
   Scala) are multi-paradigm languages, combining object-orientation
   and functional programming techniques.
 \item Execution (compiled/interpreted) -- On the JVM an interesting
-  way to categorize programming languages is wether they are compiled
+  way to categorize programming languages is whether they are compiled
   to byte-code and run directly on the virtual machine, or if the
   language is interpreted and run by some extra layer on top of the
   JVM.
@@ -620,7 +620,7 @@ Clojure>>\cite{hal09}.
 
 Scala is a relatively new language (first version released
 2003\cite{scala}) providing exciting programming capabilities on the
-Java Virtual Machine (JVM). The main reason for chosing Scala in this
+Java Virtual Machine (JVM). The main reason for choosing Scala in this
 thesis is the combination of powerful programming structures (both
 object-oriented and functional) with the cross-platform and wide
 adoption of the JVM. Code written in Scala can be run on any JVM
@@ -638,7 +638,7 @@ or\cite{scalatour}.
 Scala code (.scala files) compiles to Java bytecode (.class files)
 through a special compiler (\texttt{scalac}). The bytecode can then be
 run on the JVM as if it was created from Java source (.java files). In
-adition Scala provides a number of library classes that need to be
+addition Scala provides a number of library classes that need to be
 included as a jar file. This relationship between Scala and Java is
 illustrated in figure \vref{fig:scalajava}.
 
@@ -681,7 +681,7 @@ Scala:
 \item Access to libraries -- The JVM has a wide range of libraries
   available, many being Open Source.
 \item High performance -- The JVM has been proven to be a high
-  performant Virtual Machine, with a large number of tuning
+  performance Virtual Machine, with a large number of tuning
   possibilities.
 \end{itemize}
 
@@ -716,7 +716,7 @@ GitHub\footnote{GitHub repositories website --
 \subsubsection{Description}
 
 Image Processing is an area involving series of computationally heavy
-operations performed on images. Many practicioners in the area have
+operations performed on images. Many practitioners in the area have
 more mathematical than computer science oriented background. This
 leads to the need for DSLs where complicated and computationally heavy
 operations can be performed with a simple and straightforward syntax.
@@ -853,10 +853,10 @@ a basis when working with DSL composition (see chapter
 This whole DSL consist of a single \texttt{DataSet} class,
 implementing the basic operations \texttt{average}, \texttt{minValue}
 and \texttt{maxValue}. There is also a \texttt{DataSet} companion
-object acting as a factory for building datasets. The source code is
+object acting as a factory for building data-sets. The source code is
 given in listing \vref{lst:statsdsl}.
 
-\begin{lstlisting}[caption=Minimal statistics DSL implemented in Scala.,label=lst:statsdsl]
+\begin{lstlisting}[caption={[Scala statistics DSL]Minimal statistics DSL implemented in Scala.},label=lst:statsdsl]
 class DataSet(private val intArr: Array[Int]) {
    def average = intArr.reduceLeft(_ + _) / intArr.size.toDouble
 
@@ -870,7 +870,7 @@ object DataSet {
 }
 \end{lstlisting}
 
-Using the statistics DSL is typically done by creating a dataset from
+Using the statistics DSL is typically done by creating a data-set from
 a series of integers, and then calling the wanted operations. An
 example calculating and printing (to the standard console) the average
 value of a standard 6-sided dice (numbers 1-6) is given below:
@@ -904,7 +904,7 @@ An example creating a basic pie chart is shown in listing
 \vref{lst:chartdsl}, resulting in the chart shown in figure
 \vref{fig:piechartex}.
 
-\begin{lstlisting}[float,caption=Scala charting DSL -- create a basic pie chart.,label=lst:chartdsl]
+\begin{lstlisting}[float,caption={[Scala charting DSL]Scala charting DSL -- create a basic pie chart.},label=lst:chartdsl]
 createPieChart("Pie Chart",
    pieData(
       ("One", 43.2D),
@@ -938,7 +938,7 @@ shown in listing \vref{lst:activerecordex} (from\cite{rails}). The
 relationship between tables in the database is directly mapped to Ruby
 classes, using a very specific syntax.
 
-\begin{lstlisting}[float,language=ruby,caption=Example using the Ruby on Rails \texttt{ActiveRecord} database querying classes.,label=lst:activerecordex]
+\begin{lstlisting}[float,language=ruby,caption={[Ruby on Rails \texttt{ActiveRecord} example]Example using the Ruby on Rails \texttt{ActiveRecord} database querying classes.},label=lst:activerecordex]
 class Client < ActiveRecord::Base
   has_one :address
   has_one :mailing_address
@@ -1068,7 +1068,7 @@ void testAcceptsOfferIfLowPrice() {
 
 Function chaining is available in most programming languages. In
 functional programming it is a fundamental concept, while in
-object-oriented langauges more a design choice (as in the example
+object-oriented languages more a design choice (as in the example
 above).
 
 \section{Static Methods/Singleton Objects}
@@ -1250,7 +1250,7 @@ In the dynamic language Ruby they have a similar mechanism to
 Scala. Here you are allowed to leave the parentheses surrounding the
 parameter(s) out, but not the dot in front of the method name. In
 addition it is a common idiom in Ruby to append method names with a
-questionmark if the method returns a boolean value. As shown in the
+question mark if the method returns a boolean value. As shown in the
 following example demonstrating how parentheses are optional:
 
 \begin{lstlisting}[language=Ruby,caption=Ruby parameter example.,label=lst:rubyparam]
@@ -1385,10 +1385,10 @@ The Scala compiler will try to infer the types used. So if the type is
 obvious there is no need to specify it:
 
 \begin{lstlisting}[caption=Scala basic type inference example.,label=lst:scalabasictypeinference]
-val i = 42 // Type Int is infered
-val d = i + 2.1 // Type Double is infered
-val iBy2 = (i: Int) => i * 2 // Return value Int is infered from int parameter
-val dBy2 = (i: Double) => i * 2 // Return value Double is infered from int parameter
+val i = 42 // Type Int is inferred
+val d = i + 2.1 // Type Double is inferred
+val iBy2 = (i: Int) => i * 2 // Return value Int is inferred from int parameter
+val dBy2 = (i: Double) => i * 2 // Return value Double is inferred from int parameter
 \end{lstlisting}
 
 In the image processing DSL I have made extensive use of the type
@@ -1442,7 +1442,7 @@ as if it had defined the methods \texttt{should} and \texttt{in}. The
 value returned from the \texttt{pop} operation on the stack being
 tested is treated the same way:
 
-\begin{lstlisting}[caption=ScalaTest example using implicit type conversions.,label=lst:scalatestimplicitconversion]
+\begin{lstlisting}[caption={[ScalaTest implicit conversion example]ScalaTest example using implicit type conversions.},label=lst:scalatestimplicitconversion]
 ...
 "A Stack" should "pop values in last-in-first-out order" in {
 ...
@@ -1461,7 +1461,7 @@ since there is defined a conversion from \texttt{String}. The value
 popped off the stack is converted to a \texttt{AnyShouldMatcher} with
 a similar implicit conversion, including a generic type parameter:
 
-\begin{lstlisting}[caption=ScalaTest implicit type conversion definitions.,label=lst:scalatestimplicitconversiondef]
+\begin{lstlisting}[caption={[ScalaTest implicit definitions]ScalaTest implicit type conversion definitions.},label=lst:scalatestimplicitconversiondef]
 implicit override def convertToStringShouldWrapper(o: String): StringShouldWrapper
 
 implicit def convertToAnyShouldWrapper[T](o: T): AnyShouldWrapper[T]
@@ -1529,7 +1529,7 @@ structuring element. The signature looks like this:
 def seOp(se: StrEl[Int], op: (Seq[T]) => T): Matrix[T]
 \end{lstlisting}
 
-It might look cryptical at first, but is really quite simple. The
+It might look cryptic at first, but is really quite simple. The
 first parameter is a structuring element (typically spanning a small
 3x3 section of the matrix), and the second is a function converting a
 sequence of values to one value. The structuring element is passed
@@ -1565,7 +1565,7 @@ DSLs. Users of the image processing DSL would never have to see the
 anonymous functions, but could use the function \texttt{blur},
 \texttt{erode} and \texttt{dilate} directly:
 
-\begin{lstlisting}[caption=Scala image processing functions implemented using anonymous functions]
+\begin{lstlisting}[caption={[Scala IP anonymous functions]Scala image processing functions implemented using anonymous functions.}]
 val image = ... // Obtain image instance
 val se = StrEl(Square, 3) // Create 3x3 structuring element
 val blurredImage = image.blur(se)
@@ -1754,7 +1754,7 @@ generated as new methods. In the example in listing
 examples above, adding methods \texttt{team} and \texttt{players} with
 database extraction logic to the classes in use.
 
-\begin{lstlisting}[float,caption=Ruby on Rails example showing dynamic metaprogramming.,label=lst:railsmeta,language=Ruby]
+\begin{lstlisting}[float,caption={[Ruby on Rails dynamic metaprogramming]Ruby on Rails example showing dynamic metaprogramming.},label=lst:railsmeta,language=Ruby]
 class Team < ActiveRecord::Base
   has_many :players
 end
@@ -1775,7 +1775,7 @@ implemented using dynamic metaprogramming is shown in listing
 \vref{lst:rubydynmeta}, running some SQL and creating a collection of
 associated object dynamically.
 
-\begin{lstlisting}[float,caption=Ruby dynamic metaprogramming example.,label=lst:rubydynmeta,language=Ruby]
+\begin{lstlisting}[float,caption={[Ruby dyn. metaprogramming example]Ruby dynamic metaprogramming example.},label=lst:rubydynmeta,language=Ruby]
 class ActiveRecord
   ...
   def self.has_many(arg)
@@ -1798,7 +1798,7 @@ one generated by the rails framework. However, the client would not
 know about the methods until after compiling. So programming in this
 fashion in a static language would require some intermediate step of
 explicit code-generation or compiling before calling the generated
-methods. I think this is an extremely big differenciator when it comes
+methods. I think this is an extremely big differentiator when it comes
 to certain kind of DSLs and programming language paradigms. A DSL like
 Rails could never have been written in a static language.
 
@@ -1843,7 +1843,7 @@ types. In the following code we re-implement with open classes/monkey
 patching the same example shown earlier with implicit type
 conversions:
 
-\begin{lstlisting}[language=Ruby,caption=Ruby example showing ``monkey patching'' on open classes.]
+\begin{lstlisting}[language=Ruby,caption={[Ruby ``monkey patching'' example]Ruby example showing ``monkey patching'' on open classes.}]
 class Integer
   def doubleIt
     self * 2
@@ -1888,7 +1888,7 @@ end
 class Person < ActiveRecord::Base
 end
 
-# Query the database for person with given username
+# Query the database for person with given user name
 person = Person.find_by_username "eivindw"
 \end{lstlisting}
 
@@ -1907,7 +1907,7 @@ difference with regards to DSL syntax seems to be that between static
 and dynamic languages. Even with feature rich static programming
 languages like Scala there are a series of concepts from dynamic
 languages which does not have a natural counterpart in the statically
-typed domain. Most notebly are the powerful metaprogramming features
+typed domain. Most notably are the powerful metaprogramming features
 found in many dynamic languages and the dynamic dispatch mechanism
 allowing custom handling of missing methods.
 
@@ -1935,7 +1935,7 @@ secondly functional composition using decorators is shown.
 \subsection{Traits - Polymorphic Abilities}
 
 Scala has support for virtual types (abstract type members) and
-familiy polymorphism\cite{ode03}, mixin composition\cite{ode05} and
+family polymorphism\cite{ode03}, mixin composition\cite{ode05} and
 higher-order genericity\cite{moo08}. These are all powerful features
 that support polymorphic embedding of DSLs\cite{hof08}.
 
@@ -2050,7 +2050,7 @@ optimizing the size of the bytecode produced.
 
 \subsection{Functional Composition}
 
-Multimethod example shown in \vref{lst:cljmm}.
+Multi-method example shown in \vref{lst:cljmm}.
 
 \begin{lstlisting}[language=lisp,caption=Clojure multi-method example,label=lst:cljmm]
 (defmulti my-print class)
@@ -2065,7 +2065,7 @@ Multimethod example shown in \vref{lst:cljmm}.
 TODO: write with clojure examples
 
 \begin{itemize}
-\item Multimethods with \texttt{defmulti} and \texttt{defmethod}.
+\item Multi-methods with \texttt{defmulti} and \texttt{defmethod}.
 \item Metaprogramming
 \item Macro decorators
 \end{itemize}
@@ -2085,8 +2085,8 @@ functionality from two different DSLs. The concept is demonstrated
 with an example.
 
 The following code shows a simple DSL for statistics in use. Typically
-some kind of dataset is created with numeric values (in this example
-only integer values for simplicity). The dataset implements the
+some kind of data-set is created with numeric values (in this example
+only integer values for simplicity). The data-set implements the
 methods \texttt{average}, \texttt{minValue} and \texttt{maxValue}. In
 the most basic form it can be used directly to compute the average,
 minimum and maximum values of a series of integers:
@@ -2101,12 +2101,12 @@ println("Maximum value: " + ds.maxValue) // 9 (int value)
 
 As a first example of using implicit conversion to apply a DSL to new
 values, we want to compute statistic values for an array of words
-(strings) using the dataset DSL. In the following example an implicit
-conversion from string-array to dataset is utilized to find the
-average, minimum and maximum word lengths. The dataset is created
+(strings) using the data-set DSL. In the following example an implicit
+conversion from string-array to data-set is utilized to find the
+average, minimum and maximum word lengths. The data-set is created
 using the length of the strings as input, in the implicit function
-\texttt{str2DS}. It is then possible to call dataset methods on the
-string-array as if it was an instance of a dataset (which in fact it
+\texttt{str2DS}. It is then possible to call data-set methods on the
+string-array as if it was an instance of a data-set (which in fact it
 is as the compiler implicitly converts it to one on demand). An
 example is shown in listing \vref{lst:scalawordstats}.
 
@@ -2126,13 +2126,13 @@ Finally we combine the image processing DSL with the statistics DSL
 using the same technique that was shown for the string-array above. An
 implicit conversion is defined converting instances of
 \texttt{GrayScaleImage} (image storing only one integer value per
-pixel) to a dataset, making it possible to call the statistics method
+pixel) to a data-set, making it possible to call the statistics method
 to compute the average, minimum and maximum pixel values. In a way one
 could say that we have defined a new ``statistical image processing
 DSL'' combining the two existing DSL, all without writing any other
 code than the actual conversion. A simple example is shown below:
 
-\begin{lstlisting}[caption=Scala example using implicit conversion to combine DSL for statistics with DSL for image processing.]
+\begin{lstlisting}[caption={[Scala implicit conv. DSL combine example]Scala example using implicit conversion to combine DSL for statistics with DSL for image processing.}]
 val img = Image(Matrix(3, List(
   9, 8, 7,
   6, 5, 6,
@@ -2261,7 +2261,7 @@ curly braces instead of parenthesis to specify the parameter. As an
 example consider the definition of a new while construct shown in
 listing \vref{lst:scalabuiltinkeywords}
 
-\begin{lstlisting}[float,caption=Scala example making functions look like built-in keywords.,label=lst:scalabuiltinkeywords]
+\begin{lstlisting}[float,caption={[Scala built-in keyword functions]Scala example making functions look like built-in keywords.},label=lst:scalabuiltinkeywords]
 def mywhile(cond: => Boolean)(body: => Unit) {
   if(cond) {
     body
@@ -2404,7 +2404,7 @@ val blurredImg = img.avg(se)
 saveImage(blurredImg, "cell_blurred.jpg")
 \end{lstlisting}
 
-The script can then be run from the commandline using the scala
+The script can then be run from the command line using the scala
 interpreter (called with the \texttt{scala} command), assuming the
 script is in a file named \texttt{ImageScript.scala} and that the
 image processing DSL has it's classes packed in the jar
@@ -2438,12 +2438,12 @@ advantage of using the DSL in an interactive console is the unique
 ability it offers in issuing commands that are run directly.
 
 The Scala REPL has an option to pre-load a file with commands on
-startup. Typically this can be used to include imports, implicit
+start-up. Typically this can be used to include imports, implicit
 definitions, type aliases or function definitions. Taking the example
 from the previous section on scripting we can put all the import
 statements into a file called PreDef.scala:
 
-\begin{lstlisting}[caption=PreDef.scala file with image processing imports.]
+\begin{lstlisting}[caption={[PreDef file with IP imports]PreDef.scala file with image processing imports.}]
 import simage.io.SImageIO._
 import simage.structs._
 import simage.structs.StrElType._
@@ -2452,7 +2452,7 @@ import simage.structs.StrElType._
 The interactive interpreter can then be started using the option
 \texttt{-i PreDef.scala} as in the following example:
 
-\begin{lstlisting}[language=,caption=Scala REPL execution with preloaded import statements.]
+\begin{lstlisting}[language=,caption={[Scala REPL execution]Scala REPL execution with preloaded import statements.}]
 scala -classpath simage.jar -i PreDef.scala
 
 Loading Predef.scala...
@@ -2468,7 +2468,7 @@ scala>
 \end{lstlisting}
 
 We can the issue the same commands used in the script example one by
-one (notice the output for every line wich is simply the interpreter
+one (notice the output for every line which is simply the interpreter
 calling the \texttt{toString} method after printing the type on the
 newly created object -- very useful for debugging purposes):
 
@@ -2505,7 +2505,7 @@ TODO: check JLine with interpreter (specially Clojure).
 
 If we want to take the interactive interpreter in Scala a step further
 it is actually possible to embed it in your own
-application\footnote{See\cite{sur09} and\cite{dic09} (internet blog
+application\footnote{See\cite{sur09} and\cite{dic09} (Internet blog
   posts) for examples of how to embed the Scala REPL.}. This could be
 a very powerful way to create a standalone application having a
 console or similar being able to run DSL commands directly. For the
@@ -2525,7 +2525,7 @@ for building custom running environments for any embedded DSL written
 in Scala (or any other language that compiles to regular Java
 bytecode).
 
-TODO: example embedding interpreter, with simple Swing gui or similar?
+TODO: example embedding interpreter, with simple Swing GUI or similar?
 
 \section{Tool Support}
 
@@ -2566,7 +2566,7 @@ possible on the JVM.
 \section{Host Language -- Dynamic vs. Static Typing}
 
 One of the language categorizations that potentially has a lot of
-impact on the performance on the JVM is wether the language is
+impact on the performance on the JVM is whether the language is
 dynamically of statically typed. While static languages typically
 perform type checking at compile-time, dynamic languages will postpone
 most type checking until runtime. The JVM does however not support
@@ -2586,7 +2586,7 @@ languages. Some work has been done to optimize this in compiled
 dynamic languages, or languages supporting some notion of just-in-time
 compilation. If the type is dynamic, but still obvious to the
 compiler, it is possible for the compiler to create bytecode that is
-using regular static types instead. However, a thourough knowledge of
+using regular static types instead. However, a thorough knowledge of
 the languages and their compilers is needed to know exactly what code
 will be optimized and how it should be written.
 
@@ -2594,7 +2594,7 @@ No particular benchmarks have been performed in this thesis, but
 several existing ones have been studied to verify that the above
 statements about dynamic languages being slower are actually
 true\footnote{Several language benchmarks are published on the
-  internet, an example:
+  Internet, an example:
   \url{http://shootout.alioth.debian.org/}}. Most tests show that
 dynamic languages are significantly slower than the static ones. The
 languages studied in this thesis seem to come up in this order when
@@ -2641,7 +2641,7 @@ matrix I ended up testing a few different variants:
   \vref{lst:2darray}.
 \end{itemize}
 
-\begin{lstlisting}[float,caption=Matrix implementation based on List of Lists.,label=lst:listoflist]
+\begin{lstlisting}[float,caption={[Scala matrix list of lists]Matrix implementation based on List of Lists.},label=lst:listoflist]
 class Matrix[T](val elements: List[List[T]]) {
   val nRows = elements.size
   val nCols = if(elements.isEmpty) 0
@@ -2655,7 +2655,7 @@ class Matrix[T](val elements: List[List[T]]) {
 val m = new Matrix(List(List(1, 2), List(3, 4)))
 \end{lstlisting}
 
-\begin{lstlisting}[float,caption=Matrix implementation based on 2D Array.,label=lst:2darray]
+\begin{lstlisting}[float,caption={[Scala matrix 2D array]Matrix implementation based on 2D Array.},label=lst:2darray]
 class Matrix[T](cols: Int, val elements: Array[T]) {
   require(elements.size % cols == 0)
 
@@ -2693,7 +2693,7 @@ matrix is essential. Scala provides two basic forms of iterating;
   \vref{lst:whileloop}.
 \end{itemize}
 
-\begin{lstlisting}[float,caption=Implementing matrix neighbour average using a general structuring-element operation.,label=lst:strelavg]
+\begin{lstlisting}[float,caption={[Scala matrix neighbour average]Implementing matrix neighbour average using a general structuring-element operation.},label=lst:strelavg]
 class Matrix ... {
   def seOp(se: Matrix, op: (Seq[Int]) => Int) = { ... }
 }
@@ -2703,7 +2703,7 @@ val se = new Matrix(3, Array.make(9, 1))
 val avgMatrix = matrix.seOp(se, (seq) => seq.reduceLeft(_ + _) / seq.size)
 \end{lstlisting}
 
-\begin{lstlisting}[float,caption=Implementation of a structuring element operation on a matrix using \texttt{for comprehensions}.,label=lst:forcomp]
+\begin{lstlisting}[float,caption={[Scala matrix \texttt{for-comprehension}]Implementation of a structuring element operation on a matrix using \texttt{for comprehensions}.},label=lst:forcomp]
 def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
   val w = se.nCols / 2
   val h = se.nRows / 2
@@ -2726,7 +2726,7 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[float,caption=Implementation of a structuring element operation on a matrix using \texttt{while loops}.,label=lst:whileloop]
+\begin{lstlisting}[float,caption={[Scala matrix \texttt{while-loops}]Implementation of a structuring element operation on a matrix using \texttt{while loops}.},label=lst:whileloop]
 def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
   val w = se.nCols / 2
   val h = se.nRows / 2
@@ -2783,7 +2783,7 @@ the GPU (Graphics Processing Unit).
 TODO: write?
 
 \begin{itemize}
-\item Java multithreading
+\item Java multi-threading
 \item Java futures
 \item Java fork \& join in Java 7?
 \end{itemize}
@@ -2807,7 +2807,7 @@ result to be ready. This is of course not a big problem, but the next
 section describes another technique that is better suited for parallel
 computing.
 
-\begin{lstlisting}[float,caption=A generic \texttt{Executor} based on the Scala Actors API.,label=lst:actorexecutor]
+\begin{lstlisting}[float,caption={[Scala actor executor]A generic \texttt{Executor} based on the Scala Actors API.},label=lst:actorexecutor]
 import actors.Actor
 import actors.Actor._
 
@@ -2849,7 +2849,7 @@ we are trying to achieve. An example similar to the pure actor example
 in the previous section using futures is shown in figure
 \vref{lst:futureex}.
 
-\begin{lstlisting}[float,caption=An example using \texttt{Futures} to execute a function in a separate thread.,label=lst:futureex]
+\begin{lstlisting}[float,caption={[Scala futures example]An example using \texttt{Futures} to execute a function in a separate thread.},label=lst:futureex]
 import actors.Futures._
 
 // Define function - could also be done directly in the future-block below
@@ -2873,7 +2873,7 @@ function. Notice how the futures are yielded to a sequence directly
 from the for comprehension and awaited completion using the
 \texttt{awaitAll} function.
 
-\begin{lstlisting}[float,caption=A general parallel mechanism based on futures.,label=lst:futureipex]
+\begin{lstlisting}[float,caption={[Scala futures parallel mechanism]A general parallel mechanism based on futures.},label=lst:futureipex]
 import actors.Futures._
 
 object Operations {
@@ -2925,7 +2925,7 @@ the functional side and hence makes immutable programming the
 in an explicit manner, forcing the user of the language to deal with
 all changes to the mutable state of a program. A program that has no
 shared mutable state can easily take advantage of concurrent
-programming. If you know that the same state can not be overriden by
+programming. If you know that the same state can not be overridden by
 multiple threads there is no need for explicit locking or other
 mechanisms synchronizing access to the data. This is one of the major
 benefits when working with functional programming languages. This
@@ -2933,14 +2933,15 @@ section shows how mechanisms for concurrency can be utilized in
 Clojure, with some simple examples.
 
 One of the ways Clojure integrated with Java is in making all
-functions implement the \texttt{java.util.concurrent.Callable}
-interface, from the concurrent classes added to the JDK from version
-1.5. This allows all Clojure functions being able to run directly in
-separate Java thread, or using executors or other mechanisms from the
-Java concurrent API. So spawning several threads to perform separate
-tasks is extremely easy. An example is shown in the following listing,
-where the function printing ``hello!'' is run in a separate thread on
-the JVM:
+functions implement the \texttt{java.util.concurrent.Callable} and
+\texttt{java.lang.Runnable} interfaces, from the concurrent classes
+added to the JDK from version 1.5. This allows all Clojure functions
+being able to run directly in separate Java threads, or using
+executors or other mechanisms from the Java concurrent API. So
+spawning several threads to perform separate tasks is extremely
+easy. An example is shown in the following listing, where the function
+printing ``hello!''  is run in a separate thread (also created
+directly) on the JVM:
 
 \begin{lstlisting}[language=lisp]
 (.start (Thread. (fn [] (print "hello!"))))
@@ -2948,9 +2949,65 @@ the JVM:
 
 It gets a bit more complicated when several threads need to cooperate
 to solve a task, as in the Scala image processing examples shown in
-previous sections.
+previous sections. Clojure provides some different mechanisms when
+working with shared data:
 
-TODO: create Clojure matrix example with multithreaded use.
+\begin{itemize*}
+\item \textbf{Atoms} -- Single unit data that can be read/changed in
+  atomic, synchronous operations.
+\item \textbf{Refs} -- Shared data units that must be modified in
+  Software Transactional Memory (STM), a Clojure transaction
+  mechanism. Several refs can be changed in one atomic synchronous
+  operation.
+\item \textbf{Agents} -- Shared data units supporting asynchronous
+  updates running functions on separate threads, using messages. This
+  is similar to the Scala actor mechanism described in section
+  \vref{sec:actors}.
+\end{itemize*}
+
+All of these mechanisms make it possible to program in a functional
+way, and apply the proper concurrency terms when needing to share
+state with other functions.
+
+Another way to make Clojure code run faster is to use memoization of
+functions. With memoization the result of the function is cached in
+memory with the parameters as keys. Whenever a function is called with
+the same parameters as before the cached result is returned
+directly. So in using memoization on computationally heavy functions
+we are trading CPU for memory. Less CPU will be used, as the
+calculations only run once, but more memory will be consumed in
+caching all the function results. A simple example, inspired from an
+example in\cite{hal09}, of memoization is shown in code listing
+\vref{lst:cljmemoization}. Running the example clearly shows that the
+memoized version runs roughly 3 times faster as it is actually only
+run two times for the given values:
+
+\begin{lstlisting}[language=]
+\$ clj-orig memo.clj 
+(slow-double) "Elapsed time: 602.931 msecs"
+(mem-double) "Elapsed time: 200.744 msecs"
+\end{lstlisting}
+
+\begin{lstlisting}[float,language=lisp,caption=Clojure memoization example,label=lst:cljmemoization]
+; Slow function
+(defn slow-double [n]
+  (Thread/sleep 100)
+  (* n 2))
+; Memoized version of slow function
+(def mem-double (memoize slow-double))
+
+; Timing the two functions over a vector of values
+(def values [1 2 1 2 1 2])
+(time (dorun (map slow-double values)))
+(time (dorun (map mem-double values)))
+\end{lstlisting}
+
+The memoization mechanism in Clojure would be very useful when
+implementing an image processing DSL or similar requiring heavy
+computations. Large parts of many images are similar, and would most
+likely lead to the functions being called with the same parameters
+several times when passing over the image. A memoized version would
+simply return the already calculated value the second time around.
 
 \section{Secondary Processors -- GPU}
 
@@ -2999,12 +3056,57 @@ println("First: " + prog.output.get(0)) // Print 6
 
 \section{JVM Tuning -- JVM Arguments}
 
-General JVM tuning tips? Or specific for languages/language
-categories?
+The JVM supports a wide varity of tuning/configuration options that
+must be considered when optimizing an application for
+performance. This section briefly describes some of these options,
+with a focus on the various programming languages running on the
+JVM. Configuring the JVM for performance is covered in details by
+documentation provided by
+Sun\footnote{\url{http://java.sun.com/javase/technologies/performance.jsp}}
+\footnote{\url{http://java.sun.com/performance/reference/whitepapers/tuning.html}}.
+
+\subsection{Configuring Memory Usage and the Garbage Collectors}
+
+The way memory is used and reused can be configured in a wide variety
+of ways on the JVM. This is common for all kinds of programs running
+on the virtual machine, regardless of language implementation. It is
+possible to control both the heap (where objects are stored) and stack
+(where active executions are stored) sizes, setting initial values and
+controlling how fast they can grow in size and the upper limits. Since
+the JVM provides automatic garbage collection, setting memory limits
+directly control how often the garbage collector will run. Parameters
+are also available to control how the garbage collectors
+run\footnote{\url{http://java.sun.com/docs/hotspot/gc5.0/gc_tuning_5.html}}.
+
+\subsection{Configuring for Specific Programming Languages}
+
+TODO: write.
 
 \section{Summary}
 
-TODO: Write conclusion.
+The performance part is one of the areas where there is a big
+difference between the various language categories. Dynamic languages
+are significantly slower than static ones running on the JVM, due to
+synthetic types and use of reflection-based mechanisms. This might
+change is future releases of Java as more native support for dynamic
+invocation is added to the JVM.
+
+Functional language provide an exciting new view on concurrency, with
+a focus on immutable data structures. Scala combines
+object-orientation with functional programming style to enable
+concurrency through a variety of mechanisms, such as actors and
+futures. Clojure provides a more pure functional view, enabling
+mechanisms like concurrent agents and function memoization to improve
+performance.
+
+New frameworks are appearing allowing the use of GPUs or other
+secondary processors found on modern computers, potentially bringing
+the performance of JVM based programs to new heights.
+
+Several ways to tune the JVM for performance exist. These could be
+used for most languages running on the JVM, although a more detailed
+understanding of each language should be made to utilize this in a
+best possible way.
 
 \chapter{Summary}
 \label{chp:summary}
@@ -3021,8 +3123,8 @@ thesis. It is divided into subsection grouping related results.
 
 \subsection{Language Categories and Embedded DSLs}
 
-TODO: describe key findings in dynamic/static, oo/functional,
-compiled/intepreted with regards to DSL types and wanted
+TODO: describe key findings in dynamic/static, OO/functional,
+compiled/interpreted with regards to DSL types and wanted
 features. Answer: When is dynamic language good? When is static good?
 When is functional programming smart?
 
@@ -3040,7 +3142,7 @@ JVM things.
 
 This section summarizes research contributions made in the thesis
 work. As much of the results are not new in terms of research, and
-also are scathered throughout the report, it is important to gather
+also are scattered throughout the report, it is important to gather
 all the key findings in one place. The following subsections each
 describe a perceived research contribution made by this thesis work.
 
@@ -3100,7 +3202,7 @@ major benefits of using a dynamically typed language is the powerful
 metaprogramming mechanisms. It would certainly be interesting to
 research further the possibilities of adding similar support to Scala
 or another statically typed language on the JVM. This task could be
-done in parallell with the dynamic type support described in the
+done in parallel with the dynamic type support described in the
 previous section.
 
 \subsection{Create Image Processing DSL in Clojure}
@@ -3137,3 +3239,39 @@ interpreter consoles ++) on top.
 \end{spacing}
 
 \end{document}
+
+% LocalWords:  lst linq TODO boxcolor matnat textcolor programminglanguages fn
+% LocalWords:  dsls plmatrix HelloWorld args println rubyhello rubyjava defn se
+% LocalWords:  setDefaultCloseOperation setVisible fibonacci clojurejava javac
+% LocalWords:  getProperty toUpperCase clojure getName scalajava scalacompile
+% LocalWords:  javacompile jvm scalalib eximg exavg img imread jpg imgAvg StrEl
+% LocalWords:  medfilt imwrite scalaimgproc loadImageCP saveImage SImageIO num
+% LocalWords:  StrElType applymethod DStrEl GrayScaleImage ie chp DataSet ints
+% LocalWords:  minValue maxValue statsdsl intArr reduceLeft chartdsl piechartex
+% LocalWords:  createPieChart pieData activerecordex MailingAddress embeddeddsl
+% LocalWords:  HardDrive hd setCapacity setExternal setSpeed javachainnest eq
+% LocalWords:  jmock testAcceptsOfferIfLowPrice returnValue ListSorter HLine IP
+% LocalWords:  dslimageprocessing squareElement lineElement loadImageFile BDD
+% LocalWords:  StackSpec FlatSpec ShouldMatchers NoSuchElementException intVal
+% LocalWords:  emptyStack intMatrix DMatrix IntArray SomeCollection someValue
+% LocalWords:  SomeProperty OtherProperty flatMap listOfNames startsWith iBy Qi
+% LocalWords:  dBy scalatypeinference blurredImg MyInt doubleIt fromInt seOp zA
+% LocalWords:  methodnames scalatestimplicitconversion StringShouldWrapper adr
+% LocalWords:  AnyShouldMatcher scalatestimplicitconversiondef AnyShouldWrapper
+% LocalWords:  convertToStringShouldWrapper convertToAnyShouldWrapper ArrayList
+% LocalWords:  querysyntax evenNumbers scalaanonfunc blurredImage erodedImage
+% LocalWords:  javameta ManyToOne getAddress OneToMany getPersons groovymeta ds
+% LocalWords:  railsmeta rubydynmeta dyn arg sql clojuremeta login CET username
+% LocalWords:  NoMethodError eivindw scalatraits AvgMtx MorphMtx groovymixins
+% LocalWords:  StdOp ExtraOp rubymodules MyBase cljmm defmulti defmethod str VM
+% LocalWords:  toString scalawordstats conv ptdsl ImageStatistics getData undef
+% LocalWords:  ImageProcessing imgData scalabuiltinkeywords mywhile cond expr
+% LocalWords:  cljunless defmacro functionchaining javaapi PublisherTest oneOf
+% LocalWords:  TestCase testSimplePublish isAlive assertIsSatisfied scalaapi cx
+% LocalWords:  ImageScript simage PreDef Predef HotSpot clj irb groovysh JLine
+% LocalWords:  IntelliJ NetBeans Refactoring listoflist darray nRows nCols ry
+% LocalWords:  isEmpty forall strelavg forcomp whileloop avgMatrix seValues mem
+% LocalWords:  toArray newArr actorexecutor ExecMsg hasResult getResult func
+% LocalWords:  futureex futureipex awaitAll MyList splitList doubledList msecs
+% LocalWords:  asInstanceOf cljmemoization dorun scalacl SeOpOCL iarr IntsVar
+% LocalWords:  prog compilerplugins aspx dynamicmetaprogramming
