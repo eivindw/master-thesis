@@ -2226,11 +2226,28 @@ programming language to suit our needs.
 
 \section{Removing from Host Language -- Pruning}
 
+This first section deals with the removing of functionality from the
+host language. It can be interesting when designing an embedded DSL to
+actually deactivate constructs in the host language not being used,
+and that you don't want to user of the DSL to be using either. For
+instance if the DSL is written in a very functional style in the Scala
+language, it might be interesting to disable some of the more
+imperative mechanisms such as \texttt{while-loops}. Given this is a
+pretty narrow requirement, and probably not really often needed, the
+following sections just briefly discuss some of the options that
+exist.
+
 \subsection{Compiler Plugins}
 \label{sec:compilerplugins}
 
-TODO: example Scala compiler plugin, removing for comprehension
-support or similar from the language.
+Scala supports the notion of compiler plugins. This means that you can
+write your own code that will be run as part of the compilation
+process in Scala. The compiler plugin has full access to the abstract
+syntax tree, and can make changes or additions as needed. The plugin
+is packaged as a separate unit, and does not impact the main Scala
+distribution. So if the plugin is present the functionality will be
+available, but once it is removed the added functionality will not be
+available anymore.
 
 \subsection{Pruning in Dynamic Languages}
 
@@ -2243,6 +2260,14 @@ TODO: describe possibilities in Clojure.
 
 \section{Extending Host Language}
 
+More interesting than removing stuff from the host language (as
+discussed in the previous section) might be the ability to extend
+it. If the host language does not natively support the kind of control
+structure or primitive that can make your DSL as expressive as
+possible, it might come in handy to be able to add that support
+yourself. The following subsections describe some possibilities when
+you want to extend the various host languages.
+
 \subsection{Compiler Plugins}
 
 TODO: Scala compiler plugin example, again?
@@ -2252,6 +2277,14 @@ TODO: Scala compiler plugin example, again?
 TODO: Ruby open classes again.
 
 \subsection{Functional Languages}
+
+Functional languages have a wide variety of ways to extend the hos
+language. The first subsection below describes how functions
+themselves can be written to appear as built-in keywords. The second
+subsection describe Clojure macros, an extremely flexible mechanism
+when it comes to extending the language.
+
+\subsubsection{First-class Functions as Built-in Control Structures}
 
 With functional languages it is possible to create control structures
 that look like built-in keywords, but are simply first-class
@@ -2282,10 +2315,22 @@ built-in control structures. This is very useful designing DSLs where
 we want it to seem like the host language has been extended with new
 features supporting the DSL.
 
-TODO: DSL example using the technique shown above.
+\subsubsection{Clojure Macros}
 
-TODO: Clojure macro examples. Clojure \texttt{unless} implementation
-as a macro shown in listing \vref{lst:cljunless}.
+In Clojure it is also possible to create functions as in the Scala
+example in the previous section. But Clojure has a much more powerful
+mechanism as well, namely the macro system. Macros in Clojure extend
+the compiler by writing regular user code, and are totally different
+from other programming languages macro systems. Many of the core
+constructs in Clojure are in fact implemented as macros, and are not
+actually primitives or other built-in support.
+
+A macro can be seen as a kind of template that outputs code, like that
+found in many other programming languages. The big difference with
+macros in LISP-languages like Clojure however, is that the macro
+itself is valid code and has full access to the whole language. As a
+first example, consider the Clojure \texttt{unless} implementation as
+a macro shown in listing \vref{lst:cljunless}.
 
 \begin{lstlisting}[language=lisp,caption=Clojure macro adding unless,label=lst:cljunless]
 (defmacro unless [expr form]
