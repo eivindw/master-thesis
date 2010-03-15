@@ -47,7 +47,7 @@
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 \definecolor{matnat}{rgb}{0.004,0.47,0.44}
 
-% "define" Scala
+% Define Scala
 \lstdefinelanguage{scala}{
   morekeywords={abstract,case,catch,class,def,
     do,else,extends,false,final,finally,
@@ -63,6 +63,10 @@
   morestring=[b]",
   morestring=[b]',
   morestring=[b]"""
+}
+
+% Define Clojure
+\lstdefinelanguage{clojure}[Auto]{Lisp}{
 }
 
 \lstset{basicstyle=\footnotesize,
@@ -361,27 +365,21 @@ structuring the rest of this report:
 The rest of this report is structured around the requirements listed
 in section \vref{sec:requirements}. Each of the requirements are
 treated in separate chapters, with suggested techniques for solving
-them given in different programming languages:
+them given in different programming languages.
 
-\begin{itemize}
-\item Chapter \ref{chp:examples} <<Programming Languages and
-  Examples>> describes the programming languages used and the example
-  DSLs created in this thesis.
-\item Chapter \ref{chp:syntax} <<Syntax>> looks at techniques for
-  creating concise and ``fluent'' syntax.
-\item Chapter \ref{chp:composition} <<Composition>> handles
-  composition of DSLs.
-\item Chapter \ref{chp:advancedtechniques} <<Advanced Techniques>>
-  describes advanced DSL techniques like pruning (removing features
-  from) and extending the host language.
-\item Chapter \ref{chp:dsluse} <<Exploring Ways to Use Embedded DSLs>>
-  handles different ways to utilize and run the DSLs.
-\item Chapter \ref{chp:performance} <<Performance>> discusses various
-  aspects regarding DSL performance.
-\item Chapter \ref{chp:summary} <<Summary>> provides a summary
-  containing the conclusion as well as some suggestions to further
-  work.
-\end{itemize}
+Chapter \ref{chp:examples} <<Programming Languages and Examples>>
+describes the programming languages used and the example DSLs created
+in this thesis.  Chapter \ref{chp:syntax} <<Syntax>> looks at
+techniques for creating concise and ``fluent'' syntax.  Chapter
+\ref{chp:composition} <<Composition>> handles composition of DSLs.
+Chapter \ref{chp:advancedtechniques} <<Advanced Techniques>> describes
+advanced DSL techniques like pruning (removing features from) and
+extending the host language.  Chapter \ref{chp:dsluse} <<Exploring
+Ways to Use Embedded DSLs>> handles different ways to utilize and run
+the DSLs.  Chapter \ref{chp:performance} <<Performance>> discusses
+various aspects regarding DSL performance.  Chapter \ref{chp:summary}
+<<Summary>> provides a summary containing the conclusion as well as
+some suggestions to further work.
 
 \chapter{Programming Languages and Examples}
 \label{chp:examples}
@@ -834,6 +832,15 @@ val imgAvg = img.avg(se)
 // Equivalent - operator notation
 val imgAvg = img avg se
 \end{lstlisting}
+
+\subsubsection{Performance and Parallel Computing}
+
+With images larger than a certain size, the operations performed in
+the image analysis are bound to be heavy in terms of the number of
+computations that need to be executed. This opens up a demand for
+exploiting the capabilities found in modern computers with regard to
+parallelization and concurrency. Parallelizing the image processing
+DSL is explored in section \vref{sec:concurrency}.
 
 \subsection{Statistics DSL}
 
@@ -2210,7 +2217,16 @@ int average = img.avg();
 
 \section{Summary}
 
-TODO: Write conclusion.
+This chapter has explored ways to create modular, reusable DSL
+components, as well as techniques used to combine several
+DSLs. Mixin-composition, found in Groovy, Ruby and Scala, is a
+powerful way to create loosly coupled modular DSLs. The functional
+composition techniques in Clojure provide some exiting new ways to
+compose modular code, compared to the more imperative
+languages. Implict conversion is a good technique found in Scala that
+enables combining two DSLs in a very smooth manner. The package
+templates mechanism research at the University of Oslo seems like a
+good alternative to combine DSLs.
 
 \chapter{Advanced Techniques}
 \label{chp:advancedtechniques}
@@ -2298,8 +2314,57 @@ redefinition in listing \vref{lst:groovymeta}.
 
 \subsection{Pruning in Functional Languages}
 
-TODO: describe possibilities in Clojure (switch to ns + redef
-function, use binding).
+Clojure has very few built-in control structures and keywords. Much of
+the core functionality is defined as macros or functions in the
+\texttt{clojure.core} namespace. Since Clojure is a dynamic language,
+all of these macros can be redefined by the user. The code in listing
+\vref{lst:cljredefcore} shows an example where the core function for
+adding numbers is redefined to multiply instead. Although the example
+is pretty useless, it still shows how base language functionality can
+be changed. It is a powerful, but dangerous ability. Imagine the kinds
+of error users would get if this was done in a number-centric DSL like
+the image processing example used for this thesis.
+
+\begin{lstlisting}[language=lisp,caption=Clojure redefining core functions.,label=lst:cljredefcore]
+; Enter the clojure core namespace
+(ns clojure.core)
+
+; Redefine the add method as multiply
+(def + *)
+
+; The result of this addition will surprise the user
+(+ 2 3)
+\end{lstlisting}
+
+Another way to change the core functionality of Clojure, is to use
+\texttt{dynamic bindings}. With dynamic bindings it is possible to
+redefine the meaning of a globally defined variable, within the scope
+of a function/macro. An example is shown in listing
+\vref{lst:cljbinding}\footnote{Example from
+  \url{http://en.wikipedia.org/wiki/Clojure\#Examples}.}, showing how
+the \texttt{noprint} macro redefines the \texttt{*out*} special
+variable to a dummy \texttt{java.io.Writer} object. The \texttt{*out*}
+variable is used by many functions to print information to a standard
+output/console. However, because of the redefining done by the dynamic
+binding, all print stataments within a \texttt{noprint} macro call
+will be suppressed.
+
+\begin{lstlisting}[float,language=lisp,caption=Clojure macro binding core variable.,label=lst:cljbinding]
+(def bit-bucket-writer
+  (proxy [java.io.Writer] []
+    (write [buf] nil)
+    (close []    nil)
+    (flush []    nil)))
+
+(defmacro noprint
+  "Evaluates the given expressions with all printing to *out* silenced."
+  [& forms]
+  `(binding [*out* bit-bucket-writer]
+     ~@forms))
+
+(println "Regular println!")
+(noprint (println "Noprint println!"))
+\end{lstlisting}
 
 \section{Extending Host Language}
 
@@ -2608,8 +2673,6 @@ package/class/member names) and interactive debugging.
 TODO: Clojure REPL (with user.clj example). Ruby irb. Groovy groovysh
 (Groovy Shell).
 
-TODO: check JLine with interpreter (specially Clojure).
-
 \section{Embedded Interpreter}
 
 If we want to take the interactive interpreter in Scala a step further
@@ -2715,7 +2778,7 @@ compared:
 \item Clojure -- uncertain about this one, but the tight coupling to
   Java suggest best performance of the three dynamic languages.
 \item JRuby -- significantly slower than Java, faster than Groovy.
-\item Groovy -- the slowest of the all.
+\item Groovy -- the slowest of all the languages studied.
 \end{enumerate*}
 
 \section{Code Efficiency}
@@ -2874,18 +2937,15 @@ def seOp(se: Matrix, op: (Seq[Int]) => Int) = {
 TODO: write something about this?
 
 \section{Concurrency -- Parallel or Distributed Computing}
+\label{sec:concurrency}
 
-With images larger than a certain size, the operations performed in
-the image analysis are bound to be heavy in terms of the number of
-computations that need to be executed. This opens up a demand for
-exploiting the capabilities found in modern computers with regard to
-parallelization and concurrency. In the following sections we look at
-different mechanisms available from the Scala language to achieve
-better performance through utilization of the hardware resources
-available in the computer. The first two sections discuss mechanisms
-for concurrent programming on a multi-core/-processor environment,
-while the third section discuss a mechanism for parallelization using
-the GPU (Graphics Processing Unit).
+In the following sections we look at different mechanisms available
+from the Scala language to achieve better performance through
+utilization of the hardware resources available in the computer. The
+first two sections discuss mechanisms for concurrent programming on a
+multi-core/-processor environment, while the third section discuss a
+mechanism for parallelization using the GPU (Graphics Processing
+Unit).
 
 \subsection{Java Concurrency}
 
