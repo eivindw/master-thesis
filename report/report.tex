@@ -2220,10 +2220,10 @@ int average = img.avg();
 This chapter has explored ways to create modular, reusable DSL
 components, as well as techniques used to combine several
 DSLs. Mixin-composition, found in Groovy, Ruby and Scala, is a
-powerful way to create loosly coupled modular DSLs. The functional
+powerful way to create loosely coupled modular DSLs. The functional
 composition techniques in Clojure provide some exiting new ways to
 compose modular code, compared to the more imperative
-languages. Implict conversion is a good technique found in Scala that
+languages. Implicit conversion is a good technique found in Scala that
 enables combining two DSLs in a very smooth manner. The package
 templates mechanism research at the University of Oslo seems like a
 good alternative to combine DSLs.
@@ -2267,8 +2267,8 @@ available anymore.
 
 It would be quite trivial to write a compiler plugin that disables
 unwanted features of Scala. For example if we wanted to remove the
-\texttt{while} contruct, the plugin could simply search the abstract
-syntax tree for occurences of while, and output an error message if
+\texttt{while} construct, the plugin could simply search the abstract
+syntax tree for occurrences of while, and output an error message if
 any are found. No examples are given here, but the Scala website
 provides a good tutorial for getting started writing compiler
 plugins\footnote{Writing Scala Compiler Plugins --
@@ -2346,7 +2346,7 @@ the \texttt{noprint} macro redefines the \texttt{*out*} special
 variable to a dummy \texttt{java.io.Writer} object. The \texttt{*out*}
 variable is used by many functions to print information to a standard
 output/console. However, because of the redefining done by the dynamic
-binding, all print stataments within a \texttt{noprint} macro call
+binding, all print statements within a \texttt{noprint} macro call
 will be suppressed.
 
 \begin{lstlisting}[float,language=lisp,caption=Clojure macro binding core variable.,label=lst:cljbinding]
@@ -2677,16 +2677,16 @@ TODO: Clojure REPL (with user.clj example). Ruby irb. Groovy groovysh
 
 If we want to take the interactive interpreter in Scala a step further
 it is actually possible to embed it in your own
-application\footnote{See\cite{sur09} and\cite{dic09} (Internet blog
-  posts) for examples of how to embed the Scala REPL.}. This could be
-a very powerful way to create a standalone application having a
-console or similar being able to run DSL commands directly. For the
-image processing example shown in chapter \vref{chp:examples} it would
-be possible to create some kind of application combining such a
-console with an image viewer window showing the results of the
-operations directly on an image. This is similar to how \matlab{}
-works, a proven environment for image analysis and other mathematical
-calculations.
+application\footnote{\url{http://suereth.blogspot.com/2009/04/embedding-scala-interpreter.html}}
+\footnote{\url{http://speaking-my-language.blogspot.com/2009/11/embedded-scala-interpreter.html}}
+(see footnotes for some examples). This could be a very powerful way
+to create a standalone application having a console or similar being
+able to run DSL commands directly. For the image processing example
+shown in chapter \vref{chp:examples} it would be possible to create
+some kind of application combining such a console with an image viewer
+window showing the results of the operations directly on an
+image. This is similar to how \matlab{} works, a proven environment
+for image analysis and other mathematical calculations.
 
 I think this technique could be very useful for a number of cases. All
 kinds of DSLs where you might want to see some immediate results of
@@ -2721,9 +2721,39 @@ How well does the different host languages support custom error
 handling on the DSL level? Separate/different chapter? Compile-time
 error handling. Dynamic versus static typing (type-safety).
 
+\subsection{Compiler- or Runtime Errors?}
+
+TODO: write?
+
+\subsection{Type Errors -- Dynamic or Static Typing?}
+
+TODO: write?
+
 \section{Summary}
 
-TODO: Write conclusion.
+DSLs on the JVM can be used in a variety of ways; as a library,
+script, directly in interpreter or even embedded with the
+interpreter. All the languages studied, except Java, support some kind
+of interactive interpreter/REPL. This can be used to evaluate DSL code
+directly, without the need to set up a full environment with source
+files.
+
+A major advantage running a DSL on the JVM is the large amount of
+tools available for the platform. Many of the tools available for the
+Java language can be used directly for other languages running
+bytecode on the JVM. The statically typed languages seem to have
+somewhat better support for Integrated Development Environments, than
+the dynamic ones.
+
+Reporting errors, and exception handling is quite different in the
+languages studied, although the basic Java exception mechanism is used
+as a base for all of them. There is also a big difference between code
+that is compiled first, compared to code being run on an interpreter,
+when it comes to error handling. Static languages have an advantage,
+in that they can discover type errors earlier than is the case with
+dynamic languages. Dynamic languages seem to rely on automated unit
+tests to a larger extend, to cope with the disadvantage of not knowing
+the types up front.
 
 \chapter{Performance}
 \label{chp:performance}
@@ -3225,7 +3255,7 @@ println("First: " + prog.output.get(0)) // Print 6
 
 \section{JVM Tuning -- JVM Arguments}
 
-The JVM supports a wide varity of tuning/configuration options that
+The JVM supports a wide variety of tuning/configuration options that
 must be considered when optimizing an application for
 performance. This section briefly describes some of these options,
 with a focus on the various programming languages running on the
@@ -3440,7 +3470,9 @@ interpreter consoles ++) on top.
 % LocalWords:  ImageScript simage PreDef Predef HotSpot clj irb groovysh JLine
 % LocalWords:  IntelliJ NetBeans Refactoring listoflist darray nRows nCols ry
 % LocalWords:  isEmpty forall strelavg forcomp whileloop avgMatrix seValues mem
-% LocalWords:  toArray newArr actorexecutor ExecMsg hasResult getResult func
+% LocalWords:  toArray newArr actorexecutor ExecMsg hasResult getResult func ns
 % LocalWords:  futureex futureipex awaitAll MyList splitList doubledList msecs
 % LocalWords:  asInstanceOf cljmemoization dorun scalacl SeOpOCL iarr IntsVar
-% LocalWords:  prog compilerplugins aspx dynamicmetaprogramming
+% LocalWords:  prog compilerplugins aspx dynamicmetaprogramming rubyprunestring
+% LocalWords:  rubyundefmethod hei cljredefcore cljbinding noprint buf
+% LocalWords:  dynlangprune
