@@ -582,6 +582,28 @@ world'' in the functional world):
 )
 \end{lstlisting}
 
+Clojure is the language studied that has the least in common with
+Java, with regards to syntax and appearance. Many people not being
+used to the syntax of LISP might find Clojure difficult to read, with
+all the parenthesis being a central part of the structure. Figure
+\vref{fig:cljjava} shows a basic example with a variable, function and
+some output, implemented side by side in Clojure and Java. In many
+ways Clojure is much more consistent in its syntax. While Java has
+special keywords and forms for defining variables, functions, operator
+use and more, Clojure simply does everything the same way. Notice how
+the definition of the variable in Clojure is the same as the
+definition of the function, and that the comparison operator used in
+the if statement in Java is also just a regular function in the same
+form as the definitions in Clojure. Once you get used to the Clojure
+way, Java might not feel so consistent anymore.
+
+\begin{figure}[t]
+  \subfigure[Clojure]{\lstinputlisting[language=lisp,linewidth=0.45\textwidth,boxpos=b]{../examples/clj-java/ex.clj}}
+  \hfill
+  \subfigure[Java]{\lstinputlisting[language=java,linewidth=0.45\textwidth,boxpos=b]{../examples/clj-java/ex.java}}
+  \caption{Example comparing syntax consistency of Clojure and Java side by side.\label{fig:cljjava}}
+\end{figure}
+
 Clojure integrates with Java using macros and the dot operator, as
 shown in the examples given in listing \vref{lst:clojurejava}.
 
@@ -863,7 +885,7 @@ and \texttt{maxValue}. There is also a \texttt{DataSet} companion
 object acting as a factory for building data-sets. The source code is
 given in listing \vref{lst:statsdsl}.
 
-\begin{lstlisting}[caption={[Scala statistics DSL]Minimal statistics DSL implemented in Scala.},label=lst:statsdsl]
+\begin{lstlisting}[float,caption={[Scala statistics DSL]Minimal statistics DSL implemented in Scala.},label=lst:statsdsl]
 class DataSet(private val intArr: Array[Int]) {
    def average = intArr.reduceLeft(_ + _) / intArr.size.toDouble
 
@@ -880,7 +902,8 @@ object DataSet {
 Using the statistics DSL is typically done by creating a data-set from
 a series of integers, and then calling the wanted operations. An
 example calculating and printing (to the standard console) the average
-value of a standard 6-sided dice (numbers 1-6) is given below:
+value of a standard 6-sided dice (numbers 1-6) is given in listing
+\vref{lst:scalastatsdsluse}.
 
 \begin{lstlisting}[caption=Scala statistics DSL usage.,label=lst:scalastatsdsluse]
 val dice = DataSet(1, 2, 3, 4, 5, 6)
@@ -3475,4 +3498,4 @@ interpreter consoles ++) on top.
 % LocalWords:  asInstanceOf cljmemoization dorun scalacl SeOpOCL iarr IntsVar
 % LocalWords:  prog compilerplugins aspx dynamicmetaprogramming rubyprunestring
 % LocalWords:  rubyundefmethod hei cljredefcore cljbinding noprint buf
-% LocalWords:  dynlangprune
+% LocalWords:  dynlangprune invokedynamic
