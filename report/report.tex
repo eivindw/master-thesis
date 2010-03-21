@@ -2718,9 +2718,18 @@ statistical, financial or graphical DSLs. A generic application might
 even be reused for several different DSLs, thus being a powerful base
 for building custom running environments for any embedded DSL written
 in Scala (or any other language that compiles to regular Java
-bytecode).
+bytecode). A project using this approach is
+Kojo\footnote{\url{http://www.kogics.net/sf:kojo}}, a programming
+learning environment for children. They have their own Scala-based DSL
+for programming in a visual environment, utilizing an embedded REPL
+for writing and executing commands. Figure \vref{fig:kojoss} shows a
+screenshot of Kojo, with the embedded REPL in the bottom left window.
 
-TODO: example embedding interpreter, with simple Swing GUI or similar?
+\begin{figure}
+  \includegraphics[width=1.0\textwidth]{images/kojo_ss}
+  \caption{Screenshot from Kojo, a programming learning environment with
+    an embedded DSL-REPL.\label{fig:kojoss}}
+\end{figure}
 
 \section{Tool Support}
 
@@ -2729,14 +2738,54 @@ with a host language, I think it is interesting to provide a brief
 overview and comparison over the development tool support the various
 languages offer.
 
-\begin{itemize}
-\item Java -- IntelliJ, Eclipse, NetBeans++ Refactoring. Code
-  completion. Error highlighting. Integration with frameworks.
-\item Scala
-\item Clojure
-\item Ruby -- dynamic language different than static?
-\item Groovy
-\end{itemize}
+\subsection{IDE -- Integrated Development Environments}
+
+An important productivity factor when programming is having access to
+a good IDE (Integrated Development Environment), helping with editing,
+running, refactoring and organizing the code. Java has come a long way
+in this area, with products such as Eclipse, NetBeans and IntelliJ
+IDEA being central contributors to developer effectivity. Plugins
+exist for all the three mentioned IDEs giving some support to all the
+languages used in this thesis. For example the Image Processing DSL
+was to a large extent implemented using the IntelliJ IDEA environment,
+with a Scala plugin (screenshot shown in figure
+\vref{fig:intellijss}. A thourough comparison between the various
+alternative environments have not been carried out, but as a general
+comment it is interesting to see the difference between static and
+dynamic languages. Static languages seem to be easier to implement
+tools for, as much of the functionality is to some degree based on
+type evaluations (for example code completion, error notifications and
+refactoring).
+
+\begin{figure}
+  \includegraphics[width=1.0\textwidth]{images/intellij_ss}
+  \caption{Screenshot from IntelliJ IDEA, an Integrated Development
+    Environment having good support for Scala.\label{fig:intellijss}}
+\end{figure}
+
+\subsection{Command Line Tools}
+
+The Java platform has an incredible large amount of command line based
+tools available, both from Sun and third party providers. Many of
+these tools can be used more or less directly on all languages running
+on the JVM, as they can analyze bytecode or other JVM-based management
+options. Typical examples are standard Java tools like \texttt{jps},
+\texttt{jstat}, \texttt{jstack} and \texttt{javap} (all included in
+standard Java Development Kit
+distribution\footnote{\url{http://java.sun.com/javase/6/docs/technotes/tools/}}).
+
+Other useful tools include those that are used to automate the
+building of projects (like
+\texttt{make}\footnote{\url{http://www.gnu.org/software/make/}} for
+unix). All the languages studied have respective alternatives, like
+\texttt{rake}\footnote{\url{http://rake.rubyforge.org/}} for JRuby,
+\texttt{sbt}\footnote{\url{http://code.google.com/p/simple-build-tool/}}
+for Scala and
+\texttt{leiningen}\footnote{\url{http://github.com/technomancy/leiningen}}
+for Clojure. In addition many of the basic Java tools also work for
+alternative languages. The Image Processing DSL was compiled and
+tested using \texttt{Maven2}\footnote{\url{http://maven.apache.org/}},
+a commonly used open source tool for building Java-projects.
 
 \section{Error Handling}
 
@@ -3155,11 +3204,11 @@ section shows how mechanisms for concurrency can be utilized in
 Clojure, with some simple examples.
 
 One of the ways Clojure integrated with Java is in making all
-functions implement the \texttt{java.util.concurrent.Callable} and
-\texttt{java.lang.Runnable} interfaces, from the concurrent classes
-added to the JDK from version 1.5. This allows all Clojure functions
-being able to run directly in separate Java threads, or using
-executors or other mechanisms from the Java concurrent API. So
+functions implement the \texttt{java.lang.Runnable} and
+\texttt{java.util.concurrent.Callable} interfaces, from the concurrent
+classes added to the JDK from version 1.5. This allows all Clojure
+functions being able to run directly in separate Java threads, or
+using executors or other mechanisms from the Java concurrent API. So
 spawning several threads to perform separate tasks is extremely
 easy. An example is shown in the following listing, where the function
 printing ``hello!''  is run in a separate thread (also created
