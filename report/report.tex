@@ -2693,8 +2693,15 @@ From Scala version 2.8\footnote{To be released in the first part of
 REPL will have many improvements such as code completion (of
 package/class/member names) and interactive debugging.
 
-TODO: Clojure REPL (with user.clj example). Ruby irb. Groovy groovysh
-(Groovy Shell).
+As mentioned in the beginning of this section all the studied
+languages support interactive interpreters. Clojure has a REPL, much
+like that shown for Scala. Ruby has an \texttt{irb} (Interactive
+Ruby), and Groovy provides a Groovy-shell. These tools give all the
+languages some advantages over using Java directly. The ability to
+directly execute statments is extremely useful when you need to test a
+piece of code. Most of the minor examples shown in this report where
+implemented directly in the interactive interpreter environments, and
+then copied out when working.
 
 \section{Embedded Interpreter}
 
@@ -3382,10 +3389,12 @@ best possible way.
 \chapter{Summary}
 \label{chp:summary}
 
-This chapter provides a conclusion of the results found. A separate
-section is devoted to showing particular research contributions, that
-are believed to be new ideas created during the thesis work. At last a
-section suggesting future work is given.
+This chapter first provides a conclusion of the results
+found. Secondly follows a section providing a critical discussion of
+the work performed. A separate section is devoted to showing
+particular research contributions, that are believed to be new ideas
+created during the thesis work. At last a section suggesting future
+work is given.
 
 \section{Conclusion}
 
@@ -3393,6 +3402,19 @@ This section concludes the results found during the work of the
 thesis. It is divided into subsection grouping related results.
 
 \subsection{Language Categories and Embedded DSLs}
+
+There is no doubt that all the languages studied in this thesis work
+provide much features that are not found in the Java language. This
+section tries to summarize when (for what kind of tasks) the different
+languages would be a good match.
+
+The dynamic object-oriented languages (Groovy and Ruby) offer a very
+concise coding-style. Code looks very clean without information about
+types included. Another extremely powerful mechanism only available in
+the dynamic languages is the dynamic metaprogramming described in
+section \vref{sec:dynamicmetaprogramming}. Code that dynamically
+generates new code provides a basis for popular DSL environments like
+the Ruby on Rails framework.
 
 TODO: describe key findings in dynamic/static, OO/functional,
 compiled/interpreted with regards to DSL types and wanted
@@ -3409,6 +3431,43 @@ Tool support, error handling?
 TODO: summarize performance findings. Language differences + general
 JVM things.
 
+\section{Evaluation and Discussion}
+
+This section is meant to provide a critical self-evaluation and
+discussion of the work performed. As this project is coming to an end,
+I realize that there are a few things that could have been done and/or
+prioritized differently.
+
+A first observation that should be made is regarding the scope of the
+project, and the programming languages included. When I started
+working on this thesis I had a very good understanding and experience
+with the Java programming language. All the other programming
+languages were relatively new to me. The amount of time and
+mindset-shifting needed to learn 3-4 new programming languages in less
+than a year was seriously under-estimated. As such, a more narrow
+focus with only one alternative language might have been more
+effective with regards to the domain-spesific language angle. For me
+personally it has been an extremly interesting year, with a massive
+amount of useful knowledge added, but I have a feeling that the
+research contribution of the thesis could have been bigger with a
+slightly more narrow focus.
+
+Secondly one could also question the domain-specific language
+focus. As it turned out, this work is much more focused on general
+capabilities in different programming languages than it is focused on
+domain-specific languages. Although these things are closely related,
+as language features certainly are important when implementing
+domain-specific languages. Maybe a more pure focus on programming
+language comparison would have been better?
+
+All in all I am still quite happy with the results of this thesis
+work. I have learned many new programming languages, and certainly
+gained a new understanding of what it means to work in a
+research-oriented setting. As shown in section \vref{sec:futurework},
+I feel that this thesis could be used as a basis for several new
+master-assignments, all narrowing down on parts that the wide scope
+did not allow detailing further in this report.
+
 \section{Research Contributions}
 
 This section summarizes research contributions made in the thesis
@@ -3419,24 +3478,35 @@ describe a perceived research contribution made by this thesis work.
 
 \subsection{Package Templates for Embedded DSL Composition}
 
-\subsection{Suggested new Features for Scala}
-
-\begin{itemize}
-\item Virtual Classes (\textsc{beta})
-\item Extending Methods (\textsc{beta})
-\item \texttt{dynamic} keyword (C\#)
-\item Advanced Meta Programming Capabilities (Ruby/Groovy)
-\end{itemize}
-
-\subsection{AOP Features Integrated in Language}
+As described in section \vref{sec:packagetemplates}, package templates
+is a newly researched mechanism suggesting an exiting new way to
+compose Java-programs. Using this mechanism in a domain-specific
+language setting is an interesting idea.
 
 \subsection{Dynamic Features in Statically Typed Languages}
 
+Dynamic languages have advantages with regards to metaprogramming, as
+members and types can be invoked without actually existing at
+compile-time. Adding some kind of dynamic support to an advanced
+static language like Scala would be a very interesting experiment.
+
 \subsection{Embedding High-Performance DSLs on the JVM}
+
+The whole performance section, with a focus on high-performance DSL
+code running in a JVM, provides a new view. Much of the JVM-DSL
+related research material that has been written is entirely focused
+around syntax-capabilities. The performance focus is also important
+and is one of the areas suggested for further research in the sections
+to follow.
 
 \subsection{Basic Elements of Image Processing DSL in Scala}
 
+The general idea of using Scala to build an image processing DSL also
+seems like an area where there is not much research existing from
+before.
+
 \section{Suggestions for Future Work}
+\label{sec:futurework}
 
 As this thesis has a quite general of wide-spread focus, there are
 several areas that could be worth researching further and in more
