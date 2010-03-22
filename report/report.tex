@@ -3409,27 +3409,87 @@ section tries to summarize when (for what kind of tasks) the different
 languages would be a good match.
 
 The dynamic object-oriented languages (Groovy and Ruby) offer a very
-concise coding-style. Code looks very clean without information about
-types included. Another extremely powerful mechanism only available in
-the dynamic languages is the dynamic metaprogramming described in
-section \vref{sec:dynamicmetaprogramming}. Code that dynamically
-generates new code provides a basis for popular DSL environments like
-the Ruby on Rails framework.
+concise coding-style, a central requirement when developing embedded
+DSLs. Code looks very clean without information about types
+included. Another extremely powerful mechanism only available in the
+dynamic languages is the dynamic metaprogramming described in section
+\vref{sec:dynamicmetaprogramming}. Code that dynamically generates new
+code provides a basis for popular DSL environments like the Ruby on
+Rails framework.
 
-TODO: describe key findings in dynamic/static, OO/functional,
-compiled/interpreted with regards to DSL types and wanted
-features. Answer: When is dynamic language good? When is static good?
-When is functional programming smart?
+The multi-paradigm language Scala, combining object-orientation with
+functional programming, offer a huge set of new capabilities when it
+comes to embedded DSL design (compared to the Java language). Features
+like implicit conversions, type inference and operator notation on
+regular methods are just some examples. Being statically typed and
+compiled still makes the language similar in many ways to Java, and
+might be one of the easiest languages to learn for a Java
+programmer. Scala offers, in most cases, code that is just as concise
+as that of the dynamic languages, with the added benefit of being
+compiled and thus checked for many errors earlier than the interpreted
+languages.
+
+The purely functional language of Clojure is maybe the most
+``different'' from the rest of the languages, especially with regards
+to the syntax. With the inheritance from LISP it has very few keywords
+and built-in control structures. However, it sports a macro-mechanism
+that is capable of creating most control structures. As such the
+language is maybe one of the best suited for writing narrow and
+specific DSLs, as it can be adjusted to exactly the way you want
+it. The language was included in the project as an ``outsider'', but
+proved its worth very quickly.
 
 \subsection{Usage}
 
-TODO: summarize usage scenarios. How to use different language DSLs?
-Tool support, error handling?
+While a DSL written in Java will have to be compiled and used like an
+API or library in other Java code, all the languages studied have
+other capabilities with regards to usage.
+
+Interpreted languages can be run directly as scripts on a JVM, and the
+compiled ones include REPL-environments giving them the same
+capabilities. Creating and running a script-file is significantly
+faster than wrapping the functionality up in a class with a main
+method, as you would have to do in Java.
+
+The interpreters/REPL-environments can also be used directly, to run
+code on the fly. This is an amazing capability when it comes to
+testing code out during implementation. Another exciting use is the
+ability to embed these environments directly in an application,
+providing an interactive environment for the DSL directly. This would
+be highly relevant for a numerical computation environment including
+the example DSLs of image processing, statistics and charting.
+
+An advantage all the languages share is the ability to utilize the
+existing tools and frameworks on the JVM. Java is an extremely popular
+language, and there are thousands of useful open source or other
+easily available tools to choose from.
 
 \subsection{Performance}
 
-TODO: summarize performance findings. Language differences + general
-JVM things.
+The biggest difference in performance between the language types is
+that between dynamic and static languages. Dynamic languages running
+on the JVM are significantly slower, because of synthetic types. This
+might change in future versions of the JVM, as the
+\texttt{invokedynamic} instruction is added to the JVM. But at the
+moment a DSL that needs effective code, like those adding thousands of
+numbers or similar, should probably be implemented in static languages
+(like Java or Scala).
+
+The functional languages provide ways to create very concise
+code. However, some of these features seem to cost quite a lot when it
+comes to performance. Some examples include for-comprehensions and
+pattern matching in Scala, that are much slower than while-loops or
+general if-else statements. So there is a tradeoff between concise
+code and high performance. Scala 2.8 might improve this a little, with
+better support for JVM primitives and annotations to create effective
+recursions and pattern matching statements.
+
+The functional languages of Scala and Clojure offer very good
+mechanisms for concurrency. The immutable world of functional
+programming makes it very easy to create threads that coorporate in
+solving problems. The biggest advantage is that they make concurrency
+easy to implement without risks for deadlocks and other common
+problems when working with Java concurrency.
 
 \section{Evaluation and Discussion}
 
