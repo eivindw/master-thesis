@@ -1,4 +1,4 @@
-\documentclass[a4paper,english]{report}
+\documentclass[a4paper,english]{book}
 
 \usepackage[latin1]{inputenc}
 \usepackage[T1]{fontenc}
@@ -26,8 +26,8 @@
 \setlength\topmargin{0in}
 \setlength\topsep{0in}
 \setlength\topskip{0in}
-\setlength\headheight{0in}
-\setlength\headsep{0in}
+%\setlength\headheight{0in}
+%\setlength\headsep{0in}
 \setlength\textheight{9.0in}
 \setlength\textwidth{6.5in}
 \setlength\oddsidemargin{0in}
@@ -120,23 +120,27 @@ domain-specific tasks, and further research is suggested in the form
 of new language features and new ways to utilize existing language
 features.
 
-\clearpage
+\cleardoublepage
 \addcontentsline{toc}{chapter}{Contents}
 \begin{multicols}{2}
-\tableofcontents
+{\pagestyle{plain}
+\tableofcontents}
 \end{multicols}
 
 \clearpage
 \addcontentsline{toc}{chapter}{List of Tables}
-\listoftables
+{\pagestyle{plain}
+\listoftables}
 
 \addcontentsline{toc}{chapter}{List of Figures}
-\listoffigures
+{\pagestyle{plain}
+\listoffigures}
 
 \clearpage
 \begin{multicols}{2}
 \addcontentsline{toc}{chapter}{List of Code Listings}
-\lstlistoflistings
+{\pagestyle{plain}
+\lstlistoflistings}
 \end{multicols}
 
 \chapter*{Preface}
@@ -598,9 +602,9 @@ form as the definitions in Clojure. Once you get used to the Clojure
 way, Java might not feel so consistent anymore.
 
 \begin{figure}[t]
-  \subfigure[Clojure]{\lstinputlisting[language=lisp,linewidth=0.48\textwidth]{../examples/clj-java/ex.clj}}
+  \subfigure[Clojure]{\lstinputlisting[nolol,language=lisp,linewidth=0.48\textwidth]{../examples/clj-java/ex.clj}}
   \hspace{37pt}
-  \subfigure[Java]{\lstinputlisting[language=java,linewidth=0.48\textwidth]{../examples/clj-java/ex.java}}
+  \subfigure[Java]{\lstinputlisting[nolol,language=java,linewidth=0.48\textwidth]{../examples/clj-java/ex.java}}
   \caption{Example comparing syntax consistency of Clojure and Java side by side.\label{fig:cljjava}}
 \end{figure}
 
