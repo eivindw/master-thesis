@@ -290,6 +290,31 @@ try to critically conclude the work at the end:
   improve the overall quality of the thesis deliverance.
 \end{enumerate*}
 
+\begin{figure}[h]
+  \begin{center}
+  \tikzstyle{line} = [draw, -latex']
+  \tikzstyle{cloud} = [rectangle, draw, fill=blue!20, text width=6em, text centered, rounded corners, node distance=4.5cm, minimum height=5em]
+  %\tikzstyle{cloud} = [draw, ellipse,fill=red!20, text width=5em, text centered, node distance=4.5cm, minimum height=5em]
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [cloud] (requirement) {Identify requirement};
+    \node [cloud, right of=requirement, above of=requirement] (theory) {Search theory};
+    \node [cloud, right of=requirement, below of=requirement] (evaluate) {Evaluate};
+    \node [cloud, right of=theory] (example) {Write example};
+    \node [cloud, right of=evaluate] (conclude) {Conclude};
+    \node [cloud, right of=example, below of=example] (measure) {Measure};
+    % Draw edges
+    \path [line] (requirement) -- (theory);
+    \path [line] (theory) -- (example);
+    \path [line] (example) -- (measure);
+    \path [line] (measure) -- (conclude);
+    \path [line] (conclude) -- (evaluate);
+    \path [line] (evaluate) -- (requirement);
+  \end{tikzpicture}
+  \end{center}
+  \caption{Illustration of method phases.\label{fig:method}}
+\end{figure}
+
 \section{Domain-Specific Languages}
 \label{sec:dsls}
 
