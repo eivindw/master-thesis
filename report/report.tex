@@ -1106,6 +1106,34 @@ class Role < ActiveRecord::Base
 end
 \end{lstlisting}
 
+\subsection{Hibernate}
+
+Hibernate is a so called object-relational-mapping (ORM) framework
+written in Java. It provides much the same functionality as the
+\texttt{ActiveRecord} mechanism described in the previous sections,
+but implemented in Java using annotations. In listing
+\vref{lst:javahibernate}, the \texttt{Client} class from the Ruby on
+Rails example given in \vref{lst:activerecordex} is implemented in
+Java using Hibernate.
+
+\begin{lstlisting}[float,language=java,caption=Java Hibernate example,label=lst:javahibernate]
+@Entity
+public class Client
+
+  @ManyToOne
+  public Address getAddress();
+
+  @ManyToOne
+  public Address getMailingAddress();
+
+  @OneToMany
+  public List<Order> getOrders();
+
+  @ManyToMany
+  public List<Role> getRoles();
+}
+\end{lstlisting}
+
 \subsection{Testing Frameworks}
 
 Several frameworks for automated unit testing are good examples of
@@ -1136,15 +1164,18 @@ exist on the JVM.
 \label{chp:syntax}
 
 \textit{The syntax of a language defines its surface
-  form.}\cite{fri08} It is the set of rules that define the
-combinations of symbols that are considered to be correctly structured
-programs in that language. So a DSL is defined in terms of its
-syntax. For an embedded DSL its syntax describes special ways to use
-the host language. This chapter describes various programming language
-concepts that can be useful when designing an embedded DSL. The final
-section concludes on some major differences between various classes of
-host languages and what these mean to the construction of embedded
-DSLs.
+  form.}\cite{fri08}
+
+It is the set of rules that define the combinations of symbols that
+are considered to be correctly structured programs in that
+language. For an embedded DSL its syntax describes special ways to use
+the host language. Or in other words what defines the code as an
+embedded DSL is the way the syntax constructs of the host language are
+used, while the semantics stay the same. This chapter describes
+various programming language concepts that can be useful when
+designing an embedded DSL. These concepts form the building blocks
+that one can choose from when building a DSL. Choice of language
+determines what features will be available.
 
 \section{Function Chaining/Nesting}
 \label{sec:functionchaining}
@@ -1204,6 +1235,10 @@ functional programming it is a fundamental concept, while in
 object-oriented languages more a design choice (as in the example
 above).
 
+TODO: more about interfaces/ordering of method calls.
+
+TODO: functional example, using monads?
+
 \section{Static Methods/Singleton Objects}
 
 In object-oriented languages functions are nested inside classes. In
@@ -1217,7 +1252,7 @@ method \texttt{sort} in the \texttt{Collections} class:
 // Create a list of strings
 List<String> names = ...
 
-// Sort the list
+// Sort the list using the static sort method in the Collections class
 Collections.sort(names);
 \end{lstlisting}
 
@@ -1245,12 +1280,13 @@ typically used for object creation through patterns like
   specifying the exact class of the object\cite{gam95}.} and
 \texttt{Builder}\footnote{The builder pattern is an object-oriented
   pattern that assists the creation of variations of objects through a
-  series of abstract method calls\cite{gam95}.}, or other utility operations
-like the sorting shown in the examples above. In the image processing DSL
-(described in section \vref{sec:dslimageprocessing}), singleton
-objects are used to construct objects:
+  series of abstract method calls\cite{gam95}.}, or other utility
+operations like the sorting shown in the examples above. In the image
+processing DSL (described in section \vref{sec:dslimageprocessing}),
+singleton objects are used to construct objects. An example is shown
+in listing \vref{lst:scalaimgsingleton}.
 
-\begin{lstlisting}[caption=Scala image processing singleton objects.,label=lst:scalaimgsingleton]
+\begin{lstlisting}[float,caption=Scala image processing singleton objects.,label=lst:scalaimgsingleton]
 // Using singleton object:
 val squareElement = StrEl(Square, 3) // 3x3 square element
 val lineElement = StrEl(HLine, 5) // 5x1 line element
@@ -1262,10 +1298,15 @@ val lineElement = new StrEl(HLine, 5)
 
 \section{Member Imports}
 
-Member imports is a very useful mechanism in object-oriented languages
-for creating concise syntax, and thus in the embedding of DSLs. Using
+With member imports it is possible to make members of a class
+available directly in the code that is being written. Member imports
+is a very useful mechanism in object-oriented languages for creating
+concise syntax, and thus in the embedding of DSLs. Java supports
+importing static members of classes, both methods and constants. Using
 static member import the Java sorting example from previous section
-could have been written like this:
+can be written as the code in listing \vref{lst:javastaticimport},
+omitting the name of the \texttt{Collections} class where the
+\texttt{sort} method is used.
 
 \begin{lstlisting}[language=java,caption=Java static member import example.,label=lst:javastaticimport]
 import static java.util.Collections.*; // Import all static members of the Collections class
@@ -1351,8 +1392,8 @@ val m3 = m1 add m2
 
 Combining the method naming in Scala with method chaining can give
 ``fluent interfaces'' with even more concise syntax than what was
-shown in previous sections. The following example is used from the
-website of ScalaTest, as testing framework supporting Behaviour Driven
+shown in previous sections. The following example is from the website
+of ScalaTest, a testing framework supporting Behaviour Driven
 Development\footnote{BDD is a software development technique first
   introduced in\cite{nor06}. It aims at writing automated tests in a
   natural language, and has been implemented as embedded DSLs in a
@@ -1383,10 +1424,10 @@ In the dynamic language Ruby they have a similar mechanism to
 Scala. Here you are allowed to leave the parentheses surrounding the
 parameter(s) out, but not the dot in front of the method name. In
 addition it is a common idiom in Ruby to append method names with a
-question mark if the method returns a boolean value. As shown in the
-following example demonstrating how parentheses are optional:
+question mark if the method returns a boolean value. Some examples of
+use are shown in listing \vref{lst:rubyparam}.
 
-\begin{lstlisting}[language=Ruby,caption=Ruby parameter example.,label=lst:rubyparam]
+\begin{lstlisting}[float,language=Ruby,caption=Ruby parameter example.,label=lst:rubyparam]
 name = "John"
 
 # Method without parameters
@@ -1466,7 +1507,7 @@ implementation of the DSL relies on a number of language features
 expressions -- see sections below) in addition to the query syntax
 itself. An example is shown in listing \vref{lst:linq}.
 
-\begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ example.,label=lst:linq]
+\begin{lstlisting}[float,language={[Sharp]C},caption=C\# LINQ example.,label=lst:linq]
 // Query syntax:
 var results = 
   from c in SomeCollection
@@ -1506,6 +1547,8 @@ examples above).
 
 TODO: write about Clojure relational algebra support on sets?
 
+TODO: ref. monads described in sec 3.1 (also todo). Ref to Hudak monad paper.
+
 \section{Type Inference}
 
 With type inference the compiler will figure out the type of a value
@@ -1524,7 +1567,9 @@ val iBy2 = (i: Int) => i * 2 // Return value Int is inferred from int parameter
 val dBy2 = (i: Double) => i * 2 // Return value Double is inferred from int parameter
 \end{lstlisting}
 
-In the image processing DSL I have made extensive use of the type
+TODO: dynamic language example for comparison.
+
+In the image processing DSL there is extensive use of the type
 inference mechanism. As we can see from the example in listing
 \vref{lst:scalatypeinference} there is no explicit naming of the types
 involved, as opposed to the bottom part where the same code is given
@@ -1532,8 +1577,10 @@ with the types. As the \texttt{avg} function is specified in the
 \texttt{Standard} trait being used with the \texttt{GrayScaleImage}
 the full type ``GrayScaleImage with Standard'' must be given, as well
 as the \texttt{Int} type parameter to the \texttt{StrEl}. The example
-also displays the power in hiding the implementation details from the
-user of the DSL.
+also displays the part type inference plays in hiding the
+implementation details from the user of the DSL. With type inference
+the user does not need to be aware of the types returned (what traits
+are used and so forth).
 
 \begin{lstlisting}[float,caption=Scala type inference example.,label=lst:scalatypeinference]
 val img = loadImageFile("cell.jpg")
@@ -1569,7 +1616,7 @@ val ten = 5.doubleIt
 \end{lstlisting}
 
 Implicit conversions are commonly used when creating embedded DSLs in
-Scala. A good example if found in the ScalaTest example shown in
+Scala. A good example is found in the ScalaTest example shown in
 section \vref{sec:methodnames}, where the \texttt{String} type is used
 as if it had defined the methods \texttt{should} and \texttt{in}. The
 value returned from the \texttt{pop} operation on the stack being
@@ -1587,7 +1634,7 @@ it should "throw NoSuchElementException if an empty stack is popped" in {
 ...
 \end{lstlisting}
 
-What makes this possible is a some implicit conversions. For the
+What makes this possible is implicit conversions. For the
 \texttt{String} class the \texttt{should} method is defined in a class
 called \texttt{StringShouldWrapper}, which is implicitly available
 since there is defined a conversion from \texttt{String}. The value
@@ -1611,11 +1658,11 @@ section \vref{sec:combining_dsls}.
 Anonymous functions, or lambda expressions, can be used as parameters
 for higher-order function\footnote{Higher-order functions are
   functions that can take other functions as input parameters or
-  return a function as output value.}. They are useful to make concise
-code, and avoiding duplication. For example in the Scala for
-comprehensions and the LINQ statements shown in section
-\vref{sec:querysyntax}, anonymous functions play a role in allowing
-filtering (if-statements).
+  return a function as output value, or functions that can be stored
+  in variables.}. They are useful to make concise code, and avoiding
+duplication. For example in the Scala for comprehensions and the LINQ
+statements shown in section \vref{sec:querysyntax}, anonymous
+functions play a role in allowing filtering (if-statements).
 
 To show how anonymous functions work consider the following
 example. The goal is to filter all even numbers from a list, typically
@@ -1719,6 +1766,10 @@ the next version of Java\footnote{Several different proposals for
   documented as ``Project Lambda'' at the OpenJDK:
   \url{http://openjdk.java.net/projects/lambda/}.}.
 
+\section{Named Parameters}
+
+TODO: write. body: => Unit
+
 \section{Anonymous Types}
 
 Anonymous types allow the construction of types without a name, based
@@ -1743,11 +1794,13 @@ var results =
   select new {c.SomeProperty, c.OtherProperty};
 \end{lstlisting}
 
+TODO: clojure example data structure. Same as Scala example with person?
+
 \section{Object Initializer}
 
 Object initializers provide the ability to give values to an object
 while instantiating it. In C\# this can look like the following, and
-is also used to select objects of given class instead of anonymous
+is also used to select objects of a given class instead of anonymous
 types from LINQ:
 
 \begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ object initializer example]
@@ -1768,6 +1821,8 @@ class Person {
 val person = new Person { name = "John"; age = 26 }
 \end{lstlisting}
 
+TODO: say something about DSL use?
+
 \section{Metaprogramming}
 \label{sec:metaprogramming}
 
@@ -1775,10 +1830,12 @@ Metaprogramming is the writing of programs that write or manipulate
 other programs (or themselves) as their data, or that do part of the
 work at compile time that would otherwise be done at runtime. In terms
 of embedded DSL creation, metaprogramming can be an extremely useful
-mechanism. There are quite drastic differences between the different
+mechanism. There are quite drastic differences between the studied
 programming paradigms in how they provide metaprogramming, how it is
 used and what you can do with it. The next sub-sections describe some
 of these differences with examples.
+
+TODO: references on metaprogramming definitions?
 
 \subsection{Metaprogramming in Static Languages}
 
@@ -1809,10 +1866,10 @@ Java has a wide range of mechanisms associated with metaprogramming:
     (\url{http://www.qi4j.org/}).}.
 \end{itemize}
 
-As an example of an embedded DSL in Java relying heavily on
-annotations is the Hibernate framework, providing an object-relational
-mapping between Java domain objects and database tables. The example
-in listing \vref{lst:javameta} shows Hibernate in work mapping the
+An example of an embedded DSL in Java relying heavily on annotations
+is the Hibernate framework, providing an object-relational mapping
+between Java domain objects and database tables. The example in
+listing \vref{lst:javameta} shows Hibernate in work mapping the
 classes \texttt{Person} and \texttt{Address} to database tables. A
 person has one address, but many persons can live on the same
 address. This relationship is mapped using annotations. With these
@@ -1842,25 +1899,28 @@ Address adr = ... // obtain some address object
 for(Person person : adr.getPersons()) { ... }
 \end{lstlisting}
 
-Scala has no special mechanism for metaprogramming yet, and has not
-been considered in this section.
+Scala has no special mechanism for metaprogramming beyond those
+offered in Java (Scala also supports annotations and reflection), and
+has not been considered in this section.
 
 \subsection{Dynamic Metaprogramming}
 \label{sec:dynamicmetaprogramming}
 
 Dynamically typed languages are able to use metaprogramming in a more
-dynamic way, to add or alter method definitions at runtime. Both
-Groovy and Ruby have powerful support for this kind of dynamic
-metaprogramming.
+dynamic way, to add or alter method definitions at runtime. The
+dynamic typing allows referring to names of functions that don't yet
+exist at compile-time, while a static language would end up with a
+compiler error in the same situation. Both Groovy and Ruby have
+powerful support for this kind of dynamic metaprogramming.
 
 The example in listing \vref{lst:groovymeta} shows how the mechanism
-can be used. In this case a new method is added to the Java
+can be used in Groovy. In this case a new method is added to the Java
 \texttt{String} class\footnote{Note that the \texttt{String} class is
   final in Java, but still modifiable with dynamic metaprogramming in
   Groovy.}, and the static \texttt{random} method of the \texttt{Math}
 class is changed to a not-so-random implementation useful for unit
 testing or other environments where you want to have full control of
-returned values:
+returned values.
 
 \begin{lstlisting}[float,caption=Groovy metaprogramming example.,label=lst:groovymeta,language=java]
 // Add a "shout" method to the Java String class
@@ -1875,17 +1935,22 @@ Math.metaClass.static.random = {
 }
 \end{lstlisting}
 
-The implementation is roughly the same in Ruby. A typical example of a
-DSL utilizing metaprogramming is the Rails framework and the
-\texttt{ActiveRecord} class. Here metaprogramming is used to specify
-relationships between the classes, with respect to database
-relationships. The SQL code needed to fetch related objects will be
-generated as new methods. In the example in listing
-\vref{lst:railsmeta} this technique is shown for the classes
-\texttt{Team} and \texttt{Player}. The methods \texttt{has\_many} and
-\texttt{belongs\_to} are implemented in a manner similar to the Groovy
-examples above, adding methods \texttt{team} and \texttt{players} with
-database extraction logic to the classes in use.
+Ruby supports dynamic metaprogramming in a manner similar to that
+shown for Groovy. A typical example of a DSL utilizing metaprogramming
+in Ruby is the Rails framework and the \texttt{ActiveRecord}
+class. Here metaprogramming is used to specify relationships between
+the classes, with respect to database relationships. The SQL code
+needed to fetch related objects will be generated as new methods. In
+the example in listing \vref{lst:railsmeta} this technique is shown
+for the classes \texttt{Team} and \texttt{Player}. The methods
+\texttt{has\_many} and \texttt{belongs\_to} are implemented in a
+manner similar to the Groovy examples above, adding methods
+\texttt{team} and \texttt{players} with database extraction logic to
+the classes in use. A simplified example of how the
+\texttt{belongs\_to} method is implemented using dynamic
+metaprogramming in Ruby is shown in listing \vref{lst:rubydynmeta},
+running some SQL and creating a collection of associated object
+dynamically.
 
 \begin{lstlisting}[float,caption={[Ruby on Rails dynamic metaprogramming]Ruby on Rails example showing dynamic metaprogramming.},label=lst:railsmeta,language=Ruby]
 class Team < ActiveRecord::Base
@@ -1902,11 +1967,6 @@ player.team
 # And a team will have a 'players' method returning a collection of players
 team.players.each { |team| ... }
 \end{lstlisting}
-
-A simplified example of how the \texttt{belongs\_to} method is
-implemented using dynamic metaprogramming is shown in listing
-\vref{lst:rubydynmeta}, running some SQL and creating a collection of
-associated object dynamically.
 
 \begin{lstlisting}[float,caption={[Ruby dyn. metaprogramming example]Ruby dynamic metaprogramming example.},label=lst:rubydynmeta,language=Ruby]
 class ActiveRecord
@@ -1972,11 +2032,12 @@ A monkey patch is a way to extend or modify the runtime code of
 dynamic languages without altering the original source code. In DSL
 creation this can be used in much the same way as implicit
 conversions, by adding new functionality to built-in or other
-types. In the following code we re-implement with open classes/monkey
-patching the same example shown earlier with implicit type
-conversions:
+types. In the example in listing \vref{lst:rubymonkeypatch} code we
+re-implement with open classes/monkey patching the same example shown
+in section \vref{sec:implicit_type_conversion} with implicit type
+conversions, giving the integer class a new method \texttt{doubleIt}.
 
-\begin{lstlisting}[language=Ruby,caption={[Ruby ``monkey patching'' example]Ruby example showing ``monkey patching'' on open classes.}]
+\begin{lstlisting}[float,language=Ruby,caption={[Ruby ``monkey patching'' example]Ruby example showing ``monkey patching'' on open classes.},label=lst:rubymonkeypatch]
 class Integer
   def doubleIt
     self * 2
@@ -1985,6 +2046,8 @@ end
 
 ten = 5.doubleIt
 \end{lstlisting}
+
+TODO: DSL example?
 
 \section{Dynamic Dispatch -- Method Missing}
 
@@ -1999,15 +2062,18 @@ controlled by the programmer. The base class, that all other classes
 extend from, has a \texttt{method\_missing} method that is called by
 the dispatcher as a last resort when no other method is found to
 respond to a message. The default behaviour is to throw a
-\texttt{NoMethodError}, but this can be overridden by extending
-classes.
+\texttt{NoMethodError} (similar to what would happen in Java or other
+languages), but this can be overridden by extending classes.
 
 To see how this can be used in a DSL we can look at a simplified
 version of the \texttt{ActiveRecord} class from the \texttt{Rails}
-framework. It maps objects to database tables and allows dynamic
-querying through the DSL syntax:
+framework, as shown in listing \vref{lst:rubymethodmissing}. It maps
+objects to database tables and allows dynamic querying through the DSL
+syntax. In the example the method named \texttt{find\_by\_username} is
+mapped to data extraction functionality through the
+\texttt{method\_missing} implementation.
 
-\begin{lstlisting}[language=Ruby,caption=Ruby on Rails \texttt{ActiveRecord} example.]
+\begin{lstlisting}[language=Ruby,caption=Ruby on Rails \texttt{ActiveRecord} example.,label=lst:rubymethodmissing]
 class ActiveRecord
   # ...
   def self.method_missing(method_id, *arguments)
@@ -2024,6 +2090,11 @@ end
 # Query the database for person with given user name
 person = Person.find_by_username "eivindw"
 \end{lstlisting}
+
+This dynamic dispatch mechanism is another example where dynamic
+languages provide unique possibilities. With a static language the
+missing method would result in a compiler error, and hence not be
+possible to implement.
 
 \section{Summary}
 
