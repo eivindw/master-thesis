@@ -193,12 +193,13 @@ May 2010
 The goal of this chapter is to describe the problem at hand as
 detailed as possible. It has taken me a long time to clarify and
 understand the problem, and as such I think it is justified to spend
-quite a lot of time and space describing the background and why I
-think it is important. First the problem formulation is given, with a
-brief background and motivational description. The rest of the chapter
-describes the method followed and gives more detailed explanations of
-the programming languages used. The final section gives a brief
-outline of how the rest of the report is structured.
+quite a lot of time and space describing the background and why it is
+important. First the problem formulation is given, with a brief
+background and motivational description. The rest of the chapter
+describes the method followed, and gives more detailed explanations of
+the terminology and background of choices made regarding the problem
+formulation. The final section gives a brief outline of how the rest
+of the report is structured.
 
 \section{Problem Description}
 \label{sec:problemdescription}
@@ -222,10 +223,10 @@ problem domain. This thesis looks at embedding such DSLs into existing
 general-purpose programming languages, with a focus on several
 categories of languages with different features, and how these
 features are used. The scope is limited to the platform offered by the
-Java Virtual Machine, and the languages given in section
-\vref{sec:programminglanguages}. A more detailed definition of
-domain-specific languages, with my discussion, is given in section
-\vref{sec:dsls}.
+Java Virtual Machine, and a set of programming languages (Described
+further in chapter \vref{chp:examples}). A more detailed definition of
+domain-specific languages, with a discussion around scoping and
+requirements, is given in section \vref{sec:dsls}.
 
 \subsection{Motivation}
 \label{sec:motivation}
@@ -274,35 +275,45 @@ extensively to build a solid base for the experiments conducted, and
 try to critically conclude the work at the end:
 
 \begin{enumerate*}
-\item Create answerable questions -- Make sure the questions to
-  research are sound and possible to answer.
-\item Search existing literature -- Find literature to provide direct
-  answers to the questions, or to support assumptions needed to
-  sustain experiments.
-\item Critically appraise the literature evidence -- Make sure the
-  chosen literature actually provide valid evidence for its claims.
-\item Conduct experiments -- The major part of the thesis work is of
-  course related to the experiments conducted. The first three steps
-  are important to make sure the experiments are based on sound
-  evidence and former knowledge.
-\item Critical evaluation -- The experiments and results found must be
-  carefully evaluated. By being critical to my own results I hope to
-  improve the overall quality of the thesis deliverance.
+\item Identify requirement -- Make sure the questions to research are
+  sound and possible to answer.
+\item Search theory -- Find literature to provide direct answers to
+  the questions, or to support assumptions needed to sustain
+  experiments.
+\item Write example -- The major part of the thesis work is of course
+  related to the experiments conducted. The first three steps are
+  important to make sure the experiments are based on sound evidence
+  and former knowledge.
+\item Measure -- Measure results, if applicable.
+\item Conclude -- Make a conclusion based on the results found.
+\item Evaluate -- The experiments and results found must be carefully
+  evaluated. By being critical to my own results I hope to improve the
+  overall quality of the thesis deliverance.
 \end{enumerate*}
+
+The process is illustrated in figure \vref{fig:method}. Not all the
+phases are relevant for all requirements investigated. As shown with
+the dotted lines, a conclusion might be deducted directly from theory,
+and the measurement phase is not necessarily valid for all
+requirements. Note also that the method is used in cycles, after
+evaluation of the results new or modified requirements can be taken
+into consideration. This way of working is very good for a master
+thesis of a set time/size, as the method is simply run over and over
+again as many times as there is room for.
 
 \begin{figure}[h]
   \begin{center}
   \tikzstyle{line} = [draw, -latex']
-  \tikzstyle{cloud} = [rectangle, draw, fill=blue!20, text width=6em, text centered, rounded corners, node distance=4.5cm, minimum height=5em]
+  \tikzstyle{cloud} = [rectangle, draw, text width=6em, text centered, rounded corners, node distance=3.5cm, minimum height=5em]
   %\tikzstyle{cloud} = [draw, ellipse,fill=red!20, text width=5em, text centered, node distance=4.5cm, minimum height=5em]
   \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
-    \node [cloud] (requirement) {Identify requirement};
-    \node [cloud, right of=requirement, above of=requirement] (theory) {Search theory};
-    \node [cloud, right of=requirement, below of=requirement] (evaluate) {Evaluate};
-    \node [cloud, right of=theory] (example) {Write example};
-    \node [cloud, right of=evaluate] (conclude) {Conclude};
-    \node [cloud, right of=example, below of=example] (measure) {Measure};
+    \node [cloud, fill=blue!10] (requirement) {1. Identify requirement};
+    \node [cloud, fill=blue!20, right of=requirement, above of=requirement] (theory) {2. Search theory};
+    \node [cloud, fill=blue!60, right of=requirement, below of=requirement] (evaluate) {6. Evaluate};
+    \node [cloud, fill=blue!30, right of=theory] (example) {3. Write example};
+    \node [cloud, fill=blue!50, right of=evaluate] (conclude) {5. Conclude};
+    \node [cloud, fill=blue!40, right of=example, below of=example] (measure) {4. Measure};
     % Draw edges
     \path [line] (requirement) -- (theory);
     \path [line] (theory) -- (example);
@@ -310,6 +321,8 @@ try to critically conclude the work at the end:
     \path [line] (measure) -- (conclude);
     \path [line] (conclude) -- (evaluate);
     \path [line] (evaluate) -- (requirement);
+    \path [line, dotted] (theory) -- (conclude);
+    \path [line, dotted] (example) -- (conclude);
   \end{tikzpicture}
   \end{center}
   \caption{Illustration of method phases.\label{fig:method}}
@@ -324,8 +337,9 @@ try to critically conclude the work at the end:
   programming languages.''}\cite{mer05}
 
 DSLs are often categorized in two major types; external and embedded
-(or internal) DSLs. An external DSL is a separate programming language
-with custom syntax and a full parser, like SQL (domain of database
+(also referred to as internal) DSLs. An external DSL is a separate
+programming language with custom syntax and a full parser. Some
+well-known examples of external DSLs are SQL (domain of database
 queries), CSS (domain of HTML styles) and XML (domain of data
 exchange). An embedded DSL on the other hand, is created in a host
 language. Various capabilities in the host language are exploited to
@@ -338,7 +352,8 @@ various programming languages (described in section
 \vref{sec:programminglanguages}) solve these aspects. As described in
 the next section the exact definition of an embedded DSL is hard to
 find, and as such this thesis is just as much a study of different
-programming languages and what capabilities they provide.
+programming languages and what capabilities they provide. The embedded
+DSL focus provides examples used to visualize and compare results.
 
 \subsection{Embedded DSL or just Advanced Library Design?}
 \label{sec:embeddeddsl}
@@ -367,12 +382,12 @@ hardly covers the subject of embedding DSLs, but I feel that a lot of
 the DSL design is focused on understanding and expressing a particular
 domain and as such has a lot in common with the thoughts behind DDD.
 
-The reason I include the section with this discussion is to briefly
-try to demonstrate that the area of embedded DSLs is a complex and
-maybe not precisely defined. The activity of building an embedded DSL
-is tightly connected to the understanding of the domain at hand, and
-the capabilities required from the host language will vary strongly
-with that understanding. The next section gives a list of such
+The reason this discussion was included is to briefly try to
+demonstrate that the area of embedded DSLs is a complex and maybe not
+precisely defined one. The activity of building an embedded DSL is
+tightly connected to the understanding of the domain at hand, and the
+capabilities required from the host language will vary strongly with
+that understanding. The next section gives a list of such
 requirements.
 
 \subsection{Requirements of an Embedded DSL}
@@ -383,27 +398,31 @@ have considered in this work. The list provides a foundation for
 structuring the rest of this report:
 
 \begin{itemize}
-\item Syntax Conciseness/``fluency'' -- What capabilities does the
-  different languages provide in building fluent interfaces?
-\item Modularity/composition -- How can several DSLs be
+\item \textbf{Syntax Conciseness/``fluency''} -- What capabilities
+  does the different languages provide in building fluent interfaces?
+\item \textbf{Modularity/composition} -- How can several DSLs be
   combined/reused into new ones?
-\item Isolation/uniqueness -- How can unwanted features of the host
-  language be deprecated/removed? How can the host language be
-  extended to provide unique functionality?
-\item Use -- How can the DSL be used? What is the level of tool support
-  provided for the DSL? How are errors and exceptional situations
-  handled in the different languages?
-\item Performance -- How does the different languages facilitate
-  building DSLs with high requirement regarding
+\item \textbf{Isolation/uniqueness} -- How can unwanted features of
+  the host language be deprecated/removed? How can the host language
+  be extended to provide unique functionality?
+\item \textbf{Use} -- How can the DSL be used? What is the level of
+  tool support provided for the DSL? How are errors and exceptional
+  situations handled in the different languages?
+\item \textbf{Performance} -- How does the different languages
+  facilitate building DSLs with high requirement regarding
   throughput/performance?
 \end{itemize}
 
 \section{Report Structure}
 
 The rest of this report is structured around the requirements listed
-in section \vref{sec:requirements}. Each of the requirements are
-treated in separate chapters, with suggested techniques for solving
-them given in different programming languages.
+in section \ref{sec:requirements}. After a brief description of the
+programming languages used, and the examples studied, each of the
+requirements are treated in separate chapters. As described in the
+method section, each requirement is studied in terms of existing
+literature combined with examples. A summary is written for each
+chapter, concluding the results found related to the requirement
+covered by the chapter.
 
 Chapter \ref{chp:examples} <<Programming Languages and Examples>>
 describes the programming languages used and the example DSLs created
