@@ -328,6 +328,18 @@ again as many times as there is room for.
   \caption{Illustration of method phases.\label{fig:method}}
 \end{figure}
 
+\subsubsection{A Note on Theory/Literature}
+
+Many of the programming languages used in this thesis are relatively
+new, and not commonly studied in much academic research yet. Much of
+the most recent material written on or about the languages exist in
+less formal ways, typically as Internet articles or blog posts. I have
+tried to use scientific research papers as theory basis as much as
+possible, but a certain amount of references/footnotes will also refer
+to links on the Internet. Although not as reliable as scientific
+resources, I find it more honest to include the source of any
+ideas/inspiration.
+
 \section{Domain-Specific Languages}
 \label{sec:dsls}
 
@@ -443,11 +455,11 @@ some suggestions to further work.
 \chapter{Programming Languages and Examples}
 \label{chp:examples}
 
-This chapter introduces the alternative programming languages used in
-the thesis, and the DSL examples implemented. As described in the
-introduction the main focus has been on capabilities provided by a set
-of different programming languages, and how these capabilities sustain
-the development of various types of domain-specific languages. Some
+This chapter introduces the programming languages used in the thesis,
+and the DSL examples studied. As described in the introduction the
+main focus has been on capabilities provided by a set of different
+programming languages, and how these capabilities sustain the
+development of various types of domain-specific languages. Some
 examples have been developed as part of the work, while other examples
 have been taken from existing frameworks.
 
@@ -462,28 +474,28 @@ language itself is getting old, and many other languages have been
 written (or ported) for the JVM. So this thesis looks at how some of
 these languages provide various capabilities when building embedded
 DSLs. I have tried to look at languages that differ in many
-categories, as typing, paradigm or execution model. The languages I
-have studied are described and categorized in the next sections.
+categories, as typing, paradigm or execution model. The languages
+studied are described and categorized in the next section.
 
 \subsection{Categories of Languages}
 
 I have chosen to categorize the languages in three different ways:
 
 \begin{itemize}
-\item Typing (static/dynamic) -- Static typing means that the majority
-  of its type checking is enforced during compile-time, as opposed to
-  run-time. The opposite is dynamic typing which performs most of its
-  type checking during run-time.
-\item Paradigm (OO/FP) -- There are many different programming
-  paradigms. I have looked at object-oriented and functional
-  programming languages. Some of the languages (Ruby, Groovy and
-  Scala) are multi-paradigm languages, combining object-orientation
-  and functional programming techniques.
-\item Execution (compiled/interpreted) -- On the JVM an interesting
-  way to categorize programming languages is whether they are compiled
-  to byte-code and run directly on the virtual machine, or if the
-  language is interpreted and run by some extra layer on top of the
-  JVM.
+\item \textbf{Typing (static/dynamic)} -- Static typing means that the
+  majority of the type checking of the language is enforced during
+  compile-time, as opposed to run-time. The opposite is dynamic typing
+  which performs most of the type checking during run-time.
+\item \textbf{Paradigm (OO/FP)} -- There are many different
+  programming paradigms. I have looked at object-oriented and
+  functional programming languages. Some of the languages (Ruby,
+  Groovy and Scala) are multi-paradigm languages, combining
+  object-orientation and functional programming techniques.
+\item \textbf{Execution (compiled/interpreted)} -- On the JVM an
+  interesting way to categorize programming languages is whether they
+  are compiled to byte-code and run directly on the virtual machine,
+  or if the language is interpreted and run by some extra layer on top
+  of the JVM.
 \end{itemize}
 
 Table \vref{tab:plmatrix} shows the languages used in the thesis, and
@@ -520,19 +532,36 @@ sections.
 
 Java is naturally the most common programming language used on the
 JVM. It is a statically typed and compiled language supporting the
-object-oriented paradigm. It provides the baseline for my work, and
-will be used as example language where applicable. Much of my work
+object-oriented paradigm. It provides the baseline for the work, and
+will be used as example language where applicable. Much of the work
 however has gone in showing how other languages provide features
 useful when building DSLs, features not currently found in the Java
 language itself. So Java will also be used quite heavily for reference
-and comparison to the other languages.
+and comparison to the other languages. It is assumed that the reader
+has a certain knowledge about the Java language (because of its wide
+adoption in both academic and enterprise environments), and many Java
+concepts will only be described briefly or referred to without
+explanaition.
 
-\begin{lstlisting}[language=java,caption=Java ``hello world'' example.,label=lst:javahello]
-public class HelloWorld {
-  public static void main(String[] args) {
-    // A Java comment
-    System.out.println("Hello world!");
-  }
+Embedded DSLs can also be written in Java. A good background with
+examples can be found in\cite{fre06}, a paper describing the
+development of the testing framework \texttt{jMock} as an embedded DSL
+in Java. The techniques described in\cite{fre06} can be seen as a sort
+of baseline for what is possible in Java. The majority of work done in
+this report is showing what can be achieved using features from other
+languages, going beyond what is capable in the Java language. The
+example shown in listing \vref{lst:jmock} is from\cite{fre06}, showing
+the DSL syntax of mock object expectations used in a mock
+\texttt{Offer} class.
+
+\begin{lstlisting}[float,caption=Java jMock example.,label=lst:jmock,language=java]
+void testAcceptsOfferIfLowPrice() {
+  offer = mock(Offer.class);
+  offer.expects( once() )
+       .method( "buy" )
+       .with( eq(QUANTITY) )
+       .will( returnValue(receipt) );
+  ...
 }
 \end{lstlisting}
 
@@ -559,8 +588,11 @@ new Greet('world').salute()
 
 I have included Groovy in this thesis as it provides an interesting
 dynamically typed alternative to the Java language. It has some
-interesting syntax-capabilities making it well suited for building
-embedded DSLs.
+syntax-capabilities making it well suited for building embedded DSLs.
+
+\subsubsection{Groovy and Java}
+
+TODO: describe integration between Groovy and Java.
 
 \subsection{Ruby/JRuby}
 
@@ -594,6 +626,8 @@ end
 Greet.new("world").salute()
 \end{lstlisting}
 
+\subsubsection{JRuby and Java}
+
 JRuby can use classes from the standard Java API directly using the
 \texttt{include Java} statement. It can also import Java classes
 directly from jar files. So most Java libraries and APIs can be reused
@@ -617,8 +651,8 @@ frame.setVisible(true)
 Clojure is a dynamically typed and compiled language supporting the
 functional programming paradigm. It is a modern dialect of the Lisp
 programming language compiling to Java bytecode. It is the only
-language not supporting object-orientation directly, and it also the
-youngest and least mature language included in my work.
+language not supporting object-orientation directly, and also the
+youngest and possibly the least mature language included in my work.
 
 The reason I have looked at Clojure is the amount of embedded DSL
 papers written using functional programming languages (for
@@ -640,6 +674,8 @@ world'' in the functional world):
   )
 )
 \end{lstlisting}
+
+\subsubsection{Clojure and Java}
 
 Clojure is the language studied that has the least in common with
 Java, with regards to syntax and appearance. Many people not being
@@ -663,8 +699,9 @@ way, Java might not feel so consistent anymore.
   \caption{Example comparing syntax consistency of Clojure and Java side by side.\label{fig:cljjava}}
 \end{figure}
 
-Clojure integrates with Java using macros and the dot operator, as
-shown in the examples given in listing \vref{lst:clojurejava}.
+Clojure integrates with Java using some special macros like
+\texttt{import} and \texttt{new}, and the dot operator, as shown in
+the examples given in listing \vref{lst:clojurejava}.
 
 \begin{lstlisting}[float,caption=Clojure -- Java integration.,label=lst:clojurejava,language=lisp]
 ; Get a system property
@@ -706,10 +743,8 @@ adoption of the JVM. Code written in Scala can be run on any JVM
 version 1.5 or newer, and can utilize any library written in Java. It
 can thus be seen as a ``best of both worlds'' language.
 
-The following sections describe properties of Scala that make it
-suited for building embedded DSLs on the JVM. For more detailed
-information about Scala please refer to\cite{ode08},\cite{scala}
-or\cite{scalatour}.
+For more detailed information about Scala please refer
+to\cite{ode08},\cite{scala} or\cite{scalatour}.
 
 \subsubsection{Scala and Java}
 \label{sec:scalajava}
@@ -802,8 +837,10 @@ operations can be performed with a simple and straightforward syntax.
 
 A major actor in the art of Image Processing is the product \matlab{}
 from the company MathWorks\texttrademark. They provide the user with a
-DSL for doing advanced Image Processing operations. I have tried to
-create a similar DSL (with limited functionality) in Scala.
+DSL for doing advanced Image Processing operations. The goal of this
+example is to create a similar DSL (with a limited amount of
+functionality) running on a JVM. This DSL was implemented in Scala,
+mostly due to performance requirements.
 
 As an example consider the operation of blurring an image using an
 average filter mask show in figures \vref{fig:eximg} and
@@ -820,9 +857,9 @@ imgAvg = medfilt2(img);
 imwrite(imgAvg, 'cell_avg.jpg');
 \end{lstlisting}
 
-My goal is to create a Scala DSL to achieve the same result. A
-suggested Scala-solution to the problem will look something like the
-example shown in listing \vref{lst:scalaimgproc}.
+A Scala-solution to the same problem is shown in listing
+\vref{lst:scalaimgproc}. The rest of this section describes how this
+was implemented, with regards to syntax and class/object composition.
 
 \begin{lstlisting}[float,caption=Scala image processing example.,label=lst:scalaimgproc]
 // Imports...
@@ -848,16 +885,21 @@ TODO: Replace image with something I have taken myself.
     filtering with a 3x3 neighbourhood.\label{fig:exavg}}
 \end{figure}
 
-The rest of this section describes how I implemented this, and what
-the results where with regards to the performance (how efficient the
-implementation is).
-
 \subsubsection{Syntax}
+
+This section briefly describes the syntax and implementation of the
+example. Some Scala features are used that will be further explained
+in the next chapter, and are only described here with short footnotes.
 
 The methods to load and save the image, as well as the \texttt{Square}
 definition of structuring element, are all member functions in classes
 \texttt{SImageIO} and \texttt{StrElType}. These can be imported with
-the \texttt{.\_} notation in Scala, and are then available directly:
+the \texttt{.\_} notation in Scala, and are then available
+directly\footnote{The Scala member import is similar to the static
+  member import found in Java, making static methods in a class
+  directly available.}. An example is shown in listing
+\vref{lst:scalaipsyn}, where the comments show how the statements
+would look without using the static member import.
 
 \begin{lstlisting}[caption=Scala image processing syntax example.,label=lst:scalaipsyn]
 import io.SImageIO._
@@ -878,22 +920,33 @@ To create the structuring element, the \texttt{StrEl} trait has a
   or \texttt{class}\cite{ode08}.} with an \texttt{apply} method
 (described in section \vref{sec:applymethod}. This gives a very
 compact syntax, combined with the import of the available structuring
-element types as shown above:
+element types as shown above. An example is shown in listing
+\vref{lst:scalacompobj}.
 
 \begin{lstlisting}[caption=Scala companion object example.,label=lst:scalacompobj]
+// Definition of companion object StrEl
 object StrEl {
   import StrElType._
   def apply(t: StrElType, num: Int) = Array2DStrEl(t, num)
 }
 
+// Example of use - from previous example
 val se = StrEl(Square, 3)
 \end{lstlisting}
 
-Using traits, we are able to compose image objects with the operations
-we want. The operations are implemented in separate traits which are
-mixed in with the image on creation. This is using self-type
-annotations to specify that the trait can only be mixed in with
-classes of type \texttt{GrayScaleImage}:
+Using traits\footnote{Traits are an object-oriented mechanism allowing
+  mixin-composition of objects. This can be seen as a form of basic
+  multiple inheritance.}, we are able to compose image objects with
+the operations we want. The operations are implemented in separate
+traits which are mixed in with the image on creation. This is using
+self-type annotations\footnote{Self-type annotation is a way to give a
+  trait a specific type. A trait with a given self-type can only be
+  mixed in with objects of that type.} to specify that the trait can
+only be mixed in with classes of type \texttt{GrayScaleImage}. See
+listing \vref{lst:scalaimgtraits} for a small example, where the trait
+\texttt{Standard} implements a function \texttt{avg} that will be
+available on instances of \texttt{GrayScaleImage} having the trait
+mixed in (as is done in the \texttt{Image} object in the example).
 
 \begin{lstlisting}[caption=Scala image processing traits.,label=lst:scalaimgtraits]
 trait Standard { this: GrayScaleImage =>
@@ -920,8 +973,10 @@ With images larger than a certain size, the operations performed in
 the image analysis are bound to be heavy in terms of the number of
 computations that need to be executed. This opens up a demand for
 exploiting the capabilities found in modern computers with regard to
-parallelization and concurrency. Parallelizing the image processing
-DSL is explored in section \vref{sec:concurrency}.
+parallelization and concurrency. As such the image processing DSL
+provides the basis for studying the performance of Scala running on
+the JVM. Parallelizing the image processing DSL will be explored in
+section \vref{sec:concurrency}, in chapter \ref{chp:performance}.
 
 \subsection{Statistics DSL}
 
@@ -1142,20 +1197,7 @@ framework \texttt{jMock} a carefully designed set of interfaces and
 factory builder objects allow method chaining maintaining the wanted
 order of method calls. The referred paper is a very good read
 demonstrating how to design and build a library as an embedded DSL in
-Java. The example shown in listing \vref{lst:jmock} is from this
-paper, showing the DSL syntax of mock object expectations used in a
-mock \texttt{Offer} class.
-
-\begin{lstlisting}[float,caption=Java jMock example.,label=lst:jmock,language=java]
-void testAcceptsOfferIfLowPrice() {
-  offer = mock(Offer.class);
-  offer.expects( once() )
-       .method( "buy" )
-       .with( eq(QUANTITY) )
-       .will( returnValue(receipt) );
-  ...
-}
-\end{lstlisting}
+Java.
 
 Function chaining is available in most programming languages. In
 functional programming it is a fundamental concept, while in
