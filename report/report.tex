@@ -2130,32 +2130,33 @@ create new ones.
 
 With modular composition I mean structuring a program such that the
 implementation is spread over several separate modules. A modular
-design can be useful when creating a DSL. With a loosely coupled
-modular implementation the DSL can easily be extended by implementing
-new modules, or customized by specifying a subset of modules to be
-included. In the following subsections two different ways to create a
-modular composition is shown and discussed. First an object-oriented
-technique involving mixin-composition using traits is shown, and
-secondly functional composition using decorators is shown.
+design can be useful when creating a DSL for a number of reasons. With
+a loosely coupled modular implementation the DSL can easily be
+extended by implementing new modules, or customized by specifying a
+subset of modules to be included. In the following subsections two
+different ways to create a modular composition is shown and
+discussed. First an object-oriented technique involving
+mixin-composition using traits is shown, and secondly functional
+composition using decorators is shown.
 
 \subsection{Traits - Polymorphic Abilities}
 
-Scala has support for virtual types (abstract type members) and
-family polymorphism\cite{ode03}, mixin composition\cite{ode05} and
+Scala has support for virtual types (abstract type members) and family
+polymorphism\cite{ode03}, mixin composition\cite{ode05} and
 higher-order genericity\cite{moo08}. These are all powerful features
-that support polymorphic embedding of DSLs\cite{hof08}.
-
-This allows building DSLs that can have several different
-interpretations as reusable components. It can also be used to
-effectively combine different DSLs into new ones. The paper
-``Polymorphic Embedding of DSLs''\cite{hof08} describes this in detail
-with examples.
+that support polymorphic embedding of DSLs\cite{hof08}. This allows
+building DSLs that can have several different interpretations as
+reusable components. It can also be used to effectively combine
+different DSLs into new ones. The paper ``Polymorphic Embedding of
+DSLs''\cite{hof08} describes this in detail with examples.
 
 A use of traits can be to split functionality in several traits and
 create classes/objects with only the methods that we need. In the
 example given in listing \vref{lst:scalatraits} the \texttt{Matrix}
 class does not have any methods, but instances of the class can be
-mixed in with traits containing various methods.
+mixed in with traits containing various methods. Notice how the three
+instances created at the end of the example all have different methods
+available, because of the way they mix in different traits.
 
 \begin{lstlisting}[float,caption=Scala traits example.,label=lst:scalatraits]
 class Matrix {} // No methods
@@ -2179,10 +2180,14 @@ val m3 = new Matrix with AvgMtx with MorphMtx
 
 Mixin composition is also available in Groovy and Ruby. In Groovy
 there is a general mixin meta-class function available, making it
-possible to combine several classes into one. Because of the dynamic
-typing the \texttt{name} variable of the \texttt{Base} class is
-available in the mixin-classes, as if they were subclassing the base
-class. This is shown in listing \vref{lst:groovymixins}.
+possible to combine several classes into one. An example of using this
+mechanism in Groovy is shown in listing
+\vref{lst:groovymixins}. Because of the dynamic typing the
+\texttt{name} variable of the \texttt{Base} class is available in the
+mixin-classes, as if they were subclassing the base class. This is
+different from the Scala traits example, where self-type annotation
+has to be used if the traits need to access any members of the classes
+they are mixed in with.
 
 \begin{lstlisting}[float,caption=Groovy mixing composition example.,label=lst:groovymixins,language=java]
 class Base {
@@ -2249,10 +2254,13 @@ base.extra() # ..and an extra() function
 \end{lstlisting}
 
 Using the modular composition techniques it is possible to extract
-parts of a DSL as a new one, by only including the traits (or modules)
-wanted. An optimizing compiler could also utilize this composition to
-only include the parts of a DSL that are actually used, thus
-optimizing the size of the bytecode produced.
+parts of a DSL as a new one, by only including the traits (or
+mixins/modules) wanted. An optimizing compiler could also utilize this
+composition to only include the parts of a DSL that are actually used,
+thus optimizing the size of the bytecode produced. This would be
+useful if compiling the DSL for a computer with a limited amount of
+resources (memory and storage), for example a mobile or other small
+device having support for running Java applications.
 
 \subsection{Functional Composition}
 
@@ -2290,12 +2298,13 @@ section we will look at how implicits can be used to combine
 functionality from two different DSLs. The concept is demonstrated
 with an example.
 
-The following code shows a simple DSL for statistics in use. Typically
-some kind of data-set is created with numeric values (in this example
-only integer values for simplicity). The data-set implements the
-methods \texttt{average}, \texttt{minValue} and \texttt{maxValue}. In
-the most basic form it can be used directly to compute the average,
-minimum and maximum values of a series of integers:
+The following code shows the use of the simple DSL for
+statistics. Typically some kind of data-set is created with numeric
+values (in this example only integer values for simplicity). The
+data-set implements the methods \texttt{average}, \texttt{minValue}
+and \texttt{maxValue}. In the most basic form it can be used directly
+to compute the average, minimum and maximum values of a series of
+integers:
 
 \begin{lstlisting}[caption=Scala statistics DSL basic example.]
 val ds = DataSet(1, 2, 3, 4, 5, 6, 7, 8, 9)
@@ -2313,7 +2322,7 @@ average, minimum and maximum word lengths. The data-set is created
 using the length of the strings as input, in the implicit function
 \texttt{str2DS}. It is then possible to call data-set methods on the
 string-array as if it was an instance of a data-set (which in fact it
-is as the compiler implicitly converts it to one on demand). An
+is as the compiler implicitly converts it to one on demand). The
 example is shown in listing \vref{lst:scalawordstats}.
 
 \begin{lstlisting}[float,caption=Scala word statistics example.,label=lst:scalawordstats]
@@ -2358,7 +2367,41 @@ is to mix in the functionality of one DSL with another. One could
 imagine a whole environment built from small DSLs, each describing a
 specialized part of the domain. For example an environment for various
 numeric analysis could be built combining DSLs for image processing,
-statistics, charting etc.
+statistics, charting etc. The image processing DSL can also be
+combined with the charting DSL, to visualize properties with
+images. The example in listing \vref{lst:scalaipchart} loads an image,
+an uses the charting DSL to draw an area diagram of its data. An
+implicit conversion creates the dataset needed for the charting DSL,
+counting pixels of the various values, thus resulting in a sort of
+histogram over the various gray values found in the picture. Figure
+\vref{fig:iphistogram} shows the image used together with the
+histogram produced.
+
+\begin{lstlisting}[float,caption=Scala image histogram example,label=lst:scalaipchart]
+val img = loadImageCP("/numbers.png")
+
+implicit def img2DS(img: GrayScaleImage) = {
+  val dataset = new DefaultCategoryDataset
+  val imgData = img.data.toList
+  for(i <- img.min to img.max) {
+    dataset.setValue(imgData.count(_ == i), "img", i)
+  }
+  dataset
+}
+
+createShowWindow(
+  "Histogram Window",
+  ChartFactory.createAreaChart(
+    "Image Histogram", "Value", "Number", img, PlotOrientation.VERTICAL, false, true, true))
+\end{lstlisting}
+
+\begin{figure}[h]
+  \subfigure[Image]{\includegraphics[width=0.49\textwidth]{images/numbers}}
+  \hfill
+  \subfigure[Histogram]{\includegraphics[width=0.49\textwidth]{images/numbers_hist}}
+  \caption{An image together with the generated histogram, showing the
+    distribution of gray levels in the image.\label{fig:iphistogram}}
+\end{figure}
 
 \subsection{Package Templates}
 \label{sec:packagetemplates}
@@ -2401,7 +2444,7 @@ template ImageProcessing {
   }
 }
 
-inst Statistics with Operations => ImageStatistics
+inst Statistics with DataSet => ImageStatistics
 inst ImageProcessing with Image => ImageStatistics
 
 class ImageStatistics with Operations {
@@ -2409,7 +2452,7 @@ class ImageStatistics with Operations {
 }
 
 // Examples of use, an ImageStatistics object has both blur() and avg() methods:
-Image img = ...
+ImageStatistics img = ...
 img.blur();
 int average = img.avg();
 \end{lstlisting}
