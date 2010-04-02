@@ -592,7 +592,11 @@ syntax-capabilities making it well suited for building embedded DSLs.
 
 \subsubsection{Groovy and Java}
 
-TODO: describe integration between Groovy and Java.
+Groovy is very tightly integrated with Java. In most cases, an
+existing Java code file can be renamed to \texttt{.groovy} and run
+directly. This is due to the fact that Groovy supports most of the
+native Java syntax, as well as all the ``new'' dynamic style
+syntax. All Java classes can be imported and used directly in Groovy.
 
 \subsection{Ruby/JRuby}
 
@@ -1233,11 +1237,12 @@ Java.
 Function chaining is available in most programming languages. In
 functional programming it is a fundamental concept, while in
 object-oriented languages more a design choice (as in the example
-above).
+above). In\cite{hud96}, a technique using monads in Haskell is used to
+create functions that can be combined in various ways to create
+embedded DSLs. Similar examples could be created in Clojure and Scala
+to run on the JVM.
 
 TODO: more about interfaces/ordering of method calls.
-
-TODO: functional example, using monads?
 
 \section{Static Methods/Singleton Objects}
 
@@ -1567,7 +1572,20 @@ val iBy2 = (i: Int) => i * 2 // Return value Int is inferred from int parameter
 val dBy2 = (i: Double) => i * 2 // Return value Double is inferred from int parameter
 \end{lstlisting}
 
-TODO: dynamic language example for comparison.
+This makes the code similar to that of a dynamically typed
+language. An advantage when working with embedded DSLs in dynamic
+languages is that there is no need to explicitly write the types. With
+Ruby or Groovy the first two definitions in the example above could
+simply be written as in listing \vref{lst:rubyvariabledefs} (not even
+needing the \texttt{val} used in Scala). Type errors would, however,
+not be discovered until runtime. With Scala the type errors will still
+be captured at compile-time, so type inference is a way to write more
+concise code without loosing the safety-net provided by the compiler.
+
+\begin{lstlisting}[language=ruby,caption=Ruby/Groovy variable definitions.,label=lst:rubyvariabledefs]
+i = 42
+d = i + 2.1
+\end{lstlisting}
 
 In the image processing DSL there is extensive use of the type
 inference mechanism. As we can see from the example in listing
@@ -1620,9 +1638,24 @@ Scala. A good example is found in the ScalaTest example shown in
 section \vref{sec:methodnames}, where the \texttt{String} type is used
 as if it had defined the methods \texttt{should} and \texttt{in}. The
 value returned from the \texttt{pop} operation on the stack being
-tested is treated the same way:
+tested is treated the same way. The relavant parts of the example is
+shown in the bottom part of listing
+\vref{lst:scalatestimplicitconversion}. What makes this possible is
+implicit conversions, shown in the upper part of the same code
+listing. For the \texttt{String} class the \texttt{should} method is
+defined in a class called \texttt{StringShouldWrapper}, which is
+implicitly available since there is defined a conversion from
+\texttt{String}. The value popped off the stack is converted to a
+\texttt{AnyShouldMatcher} with a similar implicit conversion,
+including a generic type parameter.
 
-\begin{lstlisting}[caption={[ScalaTest implicit conversion example]ScalaTest example using implicit type conversions.},label=lst:scalatestimplicitconversion]
+\begin{lstlisting}[float,caption={[ScalaTest implicit conversion example]ScalaTest example using implicit type conversions.},label=lst:scalatestimplicitconversion]
+// Method definitions
+implicit override def convertToStringShouldWrapper(o: String): StringShouldWrapper
+
+implicit def convertToAnyShouldWrapper[T](o: T): AnyShouldWrapper[T]
+
+// Usage example showing relevant parts
 ...
 "A Stack" should "pop values in last-in-first-out order" in {
 ...
@@ -1634,24 +1667,32 @@ it should "throw NoSuchElementException if an empty stack is popped" in {
 ...
 \end{lstlisting}
 
-What makes this possible is implicit conversions. For the
-\texttt{String} class the \texttt{should} method is defined in a class
-called \texttt{StringShouldWrapper}, which is implicitly available
-since there is defined a conversion from \texttt{String}. The value
-popped off the stack is converted to a \texttt{AnyShouldMatcher} with
-a similar implicit conversion, including a generic type parameter:
-
-\begin{lstlisting}[caption={[ScalaTest implicit definitions]ScalaTest implicit type conversion definitions.},label=lst:scalatestimplicitconversiondef]
-implicit override def convertToStringShouldWrapper(o: String): StringShouldWrapper
-
-implicit def convertToAnyShouldWrapper[T](o: T): AnyShouldWrapper[T]
-\end{lstlisting}
-
 In dynamic languages a mechanism that can give much the same results
 is Monkey Patching described in
 section \vref{sec:monkey_patching}. Implicit conversions are also very
 useful when combining DSLs. This is described in
 section \vref{sec:combining_dsls}.
+
+\section{By-name Parameters}
+\label{sec:bynameparams}
+
+In Scala, parameters to methods can be defined as by-value or
+by-name. By-value is the default, and means that the parameter is
+evaluated before the method is invoked. By-name is the contrast to
+by-value, and means that the evaluation of the parameter happens every
+time the method implementation refers to the name.
+
+An example where this feature is used is shown in listing
+\vref{lst:scalabyname}. The method \texttt{times} in the class
+\texttt{DoIntTimes} has a by-name parameter \texttt{body} of type
+\texttt{Unit} (means no value, much the same as \texttt{null} in
+Java). The class wraps an integer value \texttt{n}, which is used in
+the \texttt{times} method to evaluate the by-name parameter n
+times. In the example the class is combined with an implicit
+conversion from \texttt{Int}, to provide the handy DSL syntax
+\lstinline{2 times ... }.
+
+\lstinputlisting[float,caption={[Scala by-name parameter examples]Scala example combining implicit conversion with by-name parameter.},label=lst:scalabyname]{../examples/by-name-param/ByName.scala}
 
 \section{Lambda Expressions/Anonymous Functions}
 
@@ -1668,10 +1709,10 @@ To show how anonymous functions work consider the following
 example. The goal is to filter all even numbers from a list, typically
 done with the modulo operator (\%). Writing this code in Java, which
 does not support anonymous functions, would result in something
-similar to this using a \texttt{for-loop} combined with an
-\texttt{if-statement}:
+similar to the example in listing \vref{lst:javaforloop} using a
+\texttt{for-loop} combined with an \texttt{if-statement}.
 
-\begin{lstlisting}[language=java,caption=Java simple for-loop/if example]
+\begin{lstlisting}[float,language=java,caption=Java simple for-loop/if example,label=lst:javaforloop]
 List<Integer> numbers = ... // Make instance of list of integers
 List<Integer> evenNumbers = new ArrayList<Integer>();
 
@@ -1683,8 +1724,8 @@ for(int number : numbers) {
 In a language supporting anonymous functions, the \texttt{List} class
 could have a \texttt{filter} method taking a function as parameter
 which is used to decide what values should be returned in a new
-list. In Scala, for example, the above example could be implemented as
-follows:
+list. In Scala, the example in listing \ref{lst:javaforloop} could be
+implemented as follows:
 
 \begin{lstlisting}[caption=Scala basic anonymous function example]
 val numbers = ... // Make instance of list of integers
@@ -1766,10 +1807,6 @@ the next version of Java\footnote{Several different proposals for
   documented as ``Project Lambda'' at the OpenJDK:
   \url{http://openjdk.java.net/projects/lambda/}.}.
 
-\section{Named Parameters}
-
-TODO: write. body: => Unit
-
 \section{Anonymous Types}
 
 Anonymous types allow the construction of types without a name, based
@@ -1779,7 +1816,7 @@ the implementation of LINQ (as described in an earlier section).
 Scala also supports anonymous types. An example of using anonymous
 types together with type inference:
 
-\begin{lstlisting}[caption=Scala anonymous types example]
+\begin{lstlisting}[caption=Scala anonymous types example.]
 val person = new { val name = "John"; val age = 26 }
 
 println(person.name + " is " + person.age + " years old..")
@@ -1788,13 +1825,22 @@ println(person.name + " is " + person.age + " years old..")
 In LINQ this is used to allow selection of fields from a database or
 other data structure:
 
-\begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ example using anonymous types]
+\begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ example using anonymous types.]
 var results = 
   ... // Some query
   select new {c.SomeProperty, c.OtherProperty};
 \end{lstlisting}
 
-TODO: clojure example data structure. Same as Scala example with person?
+In the functional world of Clojure, all data-structures are basically
+anonymous types. They are defined as maps of key-value pairs. The
+``person'' type shown in the Scala example above can be defined very
+similarly in Clojure:
+
+\begin{lstlisting}[language=lisp,caption=Clojure data structure example.]
+(def person {:name "john" :age 25})
+
+(println (str (person :name) " is " (person :age) " years old.."))
+\end{lstlisting}
 
 \section{Object Initializer}
 
@@ -1803,7 +1849,7 @@ while instantiating it. In C\# this can look like the following, and
 is also used to select objects of a given class instead of anonymous
 types from LINQ:
 
-\begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ object initializer example]
+\begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ object initializer example.]
 val results =
   ... // Some query
   select new Person { Name = c.SomeProperty, Age = c.OtherProperty }
@@ -2623,7 +2669,7 @@ you want to extend the various host languages.
 \subsection{Compiler Plugins}
 
 The compiler plugin mechanism described in \vref{sec:compilerplugins}
-could of course also be used to extend the language. Some of the new
+may of course also be used to extend the language. Some of the new
 functionality added to Scala is first introduced as compiler plugins,
 and then later added to the main distribution after being tested. An
 example of this is the continuations support that will be added to
@@ -2648,11 +2694,12 @@ when it comes to extending the language.
 
 With functional languages it is possible to create control structures
 that look like built-in keywords, but are simply first-class
-functions. In Scala functions can be defined with ``pass by name''
+functions. In Scala functions can be defined with ``pass by-name''
 parameter passing, and single parameter functions can be called using
-curly braces instead of parenthesis to specify the parameter. As an
-example consider the definition of a new while construct shown in
-listing \vref{lst:scalabuiltinkeywords}
+curly braces instead of parenthesis to specify the parameter (an
+example was shown in section \vref{sec:bynameparams}). As an example
+consider the definition of a new while construct shown in listing
+\vref{lst:scalabuiltinkeywords}
 
 \begin{lstlisting}[float,caption={[Scala built-in keyword functions]Scala example making functions look like built-in keywords.},label=lst:scalabuiltinkeywords]
 def mywhile(cond: => Boolean)(body: => Unit) {
@@ -3075,8 +3122,8 @@ One of the language categorizations that potentially has a lot of
 impact on the performance on the JVM is whether the language is
 dynamically of statically typed. While static languages typically
 perform type checking at compile-time, dynamic languages will postpone
-most type checking until runtime. The JVM does however not support
-runtime type checking very well at the present version, although some
+most type checking until runtime. The JVM does, however, not support
+runtime type checking very well in the current version, although some
 work is being done to improve this. The next version of Java will most
 likely have much better support for dynamic languages\footnote{The
   Java Community Process is developing <<JSR-292: Supporting
