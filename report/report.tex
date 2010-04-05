@@ -2420,8 +2420,12 @@ an uses the charting DSL to draw an area diagram of its data. An
 implicit conversion creates the dataset needed for the charting DSL,
 counting pixels of the various values, thus resulting in a sort of
 histogram over the various gray values found in the picture. Figure
-\vref{fig:iphistogram} shows the image used together with the
-histogram produced.
+\vref{fig:iphistogram} shows two images together with their
+histograms, produced with the given code. As we can see, histograms
+are a useful visalization of the pixel distribution in an image. The
+low contrast of the first image is clearly shown with a narrow peak in
+the histogram, while the better contrast of the second image is shown
+with a more evenly distributed histogram.
 
 \begin{lstlisting}[float,caption=Scala image histogram example,label=lst:scalaipchart]
 val img = loadImageCP("/numbers.png")
