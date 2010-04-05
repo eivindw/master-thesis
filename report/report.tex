@@ -1515,7 +1515,7 @@ implementation of the DSL relies on a number of language features
 expressions -- see sections below) in addition to the query syntax
 itself. An example is shown in listing \vref{lst:linq}.
 
-\begin{lstlisting}[float,language={[Sharp]C},caption=C\# LINQ example.,label=lst:linq]
+\begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ example.,label=lst:linq]
 // Query syntax:
 var results = 
   from c in SomeCollection
@@ -1553,9 +1553,22 @@ queries\cite{spi09}. Both mechanisms rely on monadic behaviour
 constructed by combining a set of basic functions (as shown in the
 examples above).
 
-TODO: write about Clojure relational algebra support on sets?
+Clojure supports a mechanism that is similar to the query languages
+described above, namely relational algebra on the \texttt{Set}
+data-structures\cite{hal09}. As with the Scala for-comprehensions the
+whole system relies on a small number of functions (set union, set
+difference, rename, selection, projection and cross product), that can
+be combined in various ways. Code listing \vref{lst:cljrelalg} shows a
+small example of use (taken from\cite{hal09}), extracting data from
+sets containing information about compositions, composers and nations.
 
-TODO: ref. monads described in sec 3.1 (also todo). Ref to Hudak monad paper.
+\begin{lstlisting}[language=lisp,caption=Clojure relational algebra example.,label=lst:cljrelalg]
+(project
+  (join
+    (select #(= (:name %) "Requiem") compositions)
+    composers)
+  [:country])
+\end{lstlisting}
 
 \section{Type Inference}
 
@@ -1603,7 +1616,7 @@ implementation details from the user of the DSL. With type inference
 the user does not need to be aware of the types returned (what traits
 are used and so forth).
 
-\begin{lstlisting}[float,caption=Scala type inference example.,label=lst:scalatypeinference]
+\begin{lstlisting}[caption=Scala type inference example.,label=lst:scalatypeinference]
 val img = loadImageFile("cell.jpg")
 val se = StrEl(Square, 3)
 val blurredImg = img.avg(se)
@@ -1715,7 +1728,7 @@ does not support anonymous functions, would result in something
 similar to the example in listing \vref{lst:javaforloop} using a
 \texttt{for-loop} combined with an \texttt{if-statement}.
 
-\begin{lstlisting}[float,language=java,caption=Java simple for-loop/if example,label=lst:javaforloop]
+\begin{lstlisting}[language=java,caption=Java simple for-loop/if example,label=lst:javaforloop]
 List<Integer> numbers = ... // Make instance of list of integers
 List<Integer> evenNumbers = new ArrayList<Integer>();
 
@@ -1787,9 +1800,10 @@ These implementations should look familiar to anyone with a knowledge
 of image processing, which is the target user domain of the
 DSLs. Users of the image processing DSL would never have to see the
 anonymous functions, but could use the function \texttt{blur},
-\texttt{erode} and \texttt{dilate} directly:
+\texttt{erode} and \texttt{dilate} directly, as shown in listing
+\vref{lst:scalaipanonfunc}.
 
-\begin{lstlisting}[caption={[Scala IP anonymous functions]Scala image processing functions implemented using anonymous functions.}]
+\begin{lstlisting}[float,caption={[Scala IP anonymous functions]Scala image processing functions implemented using anonymous functions.},label=lst:scalaipanonfunc]
 val image = ... // Obtain image instance
 val se = StrEl(Square, 3) // Create 3x3 structuring element
 val blurredImage = image.blur(se)
@@ -1870,7 +1884,13 @@ class Person {
 val person = new Person { name = "John"; age = 26 }
 \end{lstlisting}
 
-TODO: say something about DSL use?
+In embedded DSLs this can be useful when building query-like syntaxes
+like that shown for LINQ. If the properties used to construct the
+objects vary, it would mean a lot of extra code if special
+constructors need to be written for every combination of
+properties. Just the two properties \texttt{name} and \texttt{age}
+used in the above examples would result in 4 different constructors
+(none, one x 2 or both properties given).
 
 \section{Metaprogramming}
 \label{sec:metaprogramming}
@@ -1925,7 +1945,7 @@ address. This relationship is mapped using annotations. With these
 annotations in place, Hibernate will generate the mapping (SQL-code)
 needed to extract correct data from the database.
 
-\begin{lstlisting}[float,caption=Java metaprogramming with annotations.,label=lst:javameta,language=java]
+\begin{lstlisting}[caption=Java metaprogramming with annotations.,label=lst:javameta,language=java]
 @Entity
 public class Person {
   @Column(name="person_name", length=100)
@@ -1971,7 +1991,7 @@ class is changed to a not-so-random implementation useful for unit
 testing or other environments where you want to have full control of
 returned values.
 
-\begin{lstlisting}[float,caption=Groovy metaprogramming example.,label=lst:groovymeta,language=java]
+\begin{lstlisting}[caption=Groovy metaprogramming example.,label=lst:groovymeta,language=java]
 // Add a "shout" method to the Java String class
 String.metaClass.shout = {
   println delegate.toUpperCase()
@@ -2122,7 +2142,7 @@ syntax. In the example the method named \texttt{find\_by\_username} is
 mapped to data extraction functionality through the
 \texttt{method\_missing} implementation.
 
-\begin{lstlisting}[language=Ruby,caption=Ruby on Rails \texttt{ActiveRecord} example.,label=lst:rubymethodmissing]
+\begin{lstlisting}[float,language=Ruby,caption=Ruby on Rails \texttt{ActiveRecord} example.,label=lst:rubymethodmissing]
 class ActiveRecord
   # ...
   def self.method_missing(method_id, *arguments)
