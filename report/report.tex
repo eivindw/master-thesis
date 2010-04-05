@@ -834,10 +834,11 @@ GitHub\footnote{GitHub repositories website --
 \subsubsection{Description}
 
 Image Processing is an area involving series of computationally heavy
-operations performed on images. Many practitioners in the area have
-more mathematical than computer science oriented background. This
-leads to the need for DSLs where complicated and computationally heavy
-operations can be performed with a simple and straightforward syntax.
+operations performed on images\cite{gon08}. Many practitioners in the
+area have more mathematical than computer science oriented
+background. This leads to the need for DSLs where complicated and
+computationally heavy operations can be performed with a simple and
+straightforward syntax.
 
 A major actor in the art of Image Processing is the product \matlab{}
 from the company MathWorks\texttrademark. They provide the user with a
@@ -848,8 +849,8 @@ mostly due to performance requirements.
 
 As an example consider the operation of blurring an image using an
 average filter mask show in figures \vref{fig:eximg} and
-\vref{fig:exavg}. This is a basic operation, but serves good as an
-example of using the DSLs.
+\vref{fig:exavg}. This is a basic operation, documented
+in\cite{gon08}, but serves good as an example of using the DSLs.
 
 The \matlab{} code to perform the operation could
 typically look like this:
@@ -863,7 +864,9 @@ imwrite(imgAvg, 'cell_avg.jpg');
 
 A Scala-solution to the same problem is shown in listing
 \vref{lst:scalaimgproc}. The rest of this section describes how this
-was implemented, with regards to syntax and class/object composition.
+was implemented, with regards to syntax and class/object
+composition. The DSL also implements basic morphological operations
+like erode, dilate, open and close\cite{gon08}.
 
 \begin{lstlisting}[float,caption=Scala image processing example.,label=lst:scalaimgproc]
 // Imports...
@@ -952,7 +955,7 @@ listing \vref{lst:scalaimgtraits} for a small example, where the trait
 available on instances of \texttt{GrayScaleImage} having the trait
 mixed in (as is done in the \texttt{Image} object in the example).
 
-\begin{lstlisting}[caption=Scala image processing traits.,label=lst:scalaimgtraits]
+\begin{lstlisting}[float,caption=Scala image processing traits.,label=lst:scalaimgtraits]
 trait Standard { this: GrayScaleImage =>
   def avg(se: StrEl[Int]) = { ... }
 }
