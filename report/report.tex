@@ -90,7 +90,7 @@
 
 \renewcommand{\lstlistlistingname}{List of Code Listings}
 
-\hypersetup{pdfborder={0 0 0},colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
+\hypersetup{pdfborder={0 0 0},colorlinks=false,linkcolor=blue,urlcolor=blue,citecolor=blue}
 
 \newcommand{\matlab}{\textsc{Matlab}\textregistered}
 
@@ -2511,11 +2511,12 @@ createShowWindow(
   \subfigure[Image II]{\includegraphics[width=0.49\textwidth]{images/cell}}
   \hfill
   \subfigure[Histogram II]{\includegraphics[width=0.49\textwidth]{images/cell_hist}}
-  \caption{Two different images together with their generated
-    histograms, showing the distribution of gray levels in the
-    images. It clear from the histogram that Image II uses a much
-    larger part of the pixel values available, which means it has a
-    higher contrast, than Image I.\label{fig:iphistogram}}
+  \caption[Two different images with generated histograms]{Two
+    different images together with their generated histograms, showing
+    the distribution of gray levels in the images. It clear from the
+    histogram that Image II uses a much larger part of the pixel
+    values available, which means it has a higher contrast, than Image
+    I.\label{fig:iphistogram}}
 \end{figure}
 
 \subsection{Package Templates}
