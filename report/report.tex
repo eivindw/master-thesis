@@ -2067,13 +2067,48 @@ Rails could never have been written in a static language.
 \subsection{Functional Metaprogramming}
 
 In Clojure, the only ``pure'' functional language used in this thesis,
-there is no big separation between code and data. As such the whole
-concept of metaprogramming is really just an integrated part of the
-language, and not necessarily seen as a ``different'' concept (as in
-the other languages). The macro mechanism in Clojure is the key to this.
+there is no big separation between code and data. It is a
+``homoiconic'' language, meaning that Clojure code is composed of
+Clojure data\cite{hal09}. As such the whole concept of metaprogramming
+is really just an integrated part of the language, and not necessarily
+seen as a separate concept (as in the other languages). The macro
+mechanism in Clojure is the key to this.
 
-TODO: describe Clojure macros. Syntax quote, unquote and splicing
-unquote.
+Clojure has a programmatic macro system which allows the compiler to
+be extended by user
+code\footnote{\url{http://clojure.org/macros}}. This means that we can
+write code that produces code, which was the definition of
+metaprogramming given earlier. The Clojure macros are processed in two
+steps. First the macro expands/executes, and substitutes the result
+back into the program. This is called \textit{macro expansion
+  time}. Then it continues with the normal \textit{compile
+  time}\cite{hal09}.
+
+The code in listing \vref{lst:cljmacro} shows a Clojure macro example
+(from\cite{hal09}). The \texttt{bench} macro is a simple benchmarking
+tool to time how long an expression takes to complete, returning a map
+containing both the result of the expression and the time it took to
+execute (in nanoseconds). The \texttt{let} expression binds the
+start-time to the \texttt{start\#} name, and the results of the
+expression given to the \texttt{result\#} name. The symbols \texttt{`}
+and \texttt{~} are used to quote and un-quote symbols in the macro
+expansion. It finishes off by returning the result together with the
+computed time difference. It may not look that impressive, but it is a
+powerful mechanism that will not find anything similar to in any of
+the other languages. In fact, much of the Clojure library is written
+as macros, even the \texttt{defmacro} definition used to define macros
+is itself a macro.
+
+\begin{lstlisting}[float,language=lisp,caption=Simple Clojure macro example.,label=lst:cljmacro]
+(defmacro bench [expr]
+  `(let [start# (System/nanoTime)
+         result# ~expr]
+     {:result result# :elapsed (- (System/nanoTime) start#)}))
+
+; Example usage
+(bench (+ 2 3))
+; Output: {:result 5, :elapsed 27000}
+\end{lstlisting}
 
 Clojure also has some explicit functions to work with metadata --
 \texttt{meta} and \texttt{with-meta}. Some examples of use are shown
