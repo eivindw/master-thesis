@@ -32,7 +32,7 @@
 \setlength\textheight{9.0in}
 \setlength\textwidth{6.5in}
 \setlength\oddsidemargin{0in}
-\setlength\evensidemargin{0in}
+\setlength\evensidemargin{-0.25in}
 \setlength\parindent{0in}
 \setlength\parskip{0.10in}
 \setlength\partopsep{0in}
@@ -159,8 +159,7 @@ of Informatics, Faculty of Mathematics and Natural Sciences,
 University of Oslo.
 
 I want to thank my wonderful wife Anniken for the support and
-understanding she has shown during this process. Her polite reminders
-when my geeky interests go out of bounds are invaluable.
+understanding she has shown during this process.
 
 My thanks and thoughts also go to the memory of my grandfather Bjarne
 A. Waaler. His constant search for knowledge and truth has been an
@@ -219,7 +218,7 @@ problem domain. This thesis looks at embedding such DSLs into existing
 general-purpose programming languages, with a focus on several
 categories of languages with different features, and how these
 features are used. The scope is limited to the platform offered by the
-Java Virtual Machine, and a set of programming languages (Described
+Java Virtual Machine, and a set of programming languages (described
 further in chapter \vref{chp:examples}). A more detailed definition of
 domain-specific languages, with a discussion around scoping and
 requirements, is given in section \vref{sec:dsls}.
@@ -277,11 +276,13 @@ try to critically conclude the work at the end:
   the questions, or to support assumptions needed to sustain
   experiments.
 \item Write example -- The major part of the thesis work is of course
-  related to the experiments conducted. The first three steps are
+  related to the experiments conducted. The first two steps are
   important to make sure the experiments are based on sound evidence
   and former knowledge.
-\item Measure -- Measure results, if applicable.
-\item Conclude -- Make a conclusion based on the results found.
+\item Measure -- Measure results, if applicable. Those results that
+  produce some kind of measurable unit will be included in this phase.
+\item Conclude -- Make a preliminary conclusion based on the results
+  found so far.
 \item Evaluate -- The experiments and results found must be carefully
   evaluated. By being critical to my own results I hope to improve the
   overall quality of the thesis deliverance.
@@ -291,11 +292,11 @@ The process is illustrated in figure \vref{fig:method}. Not all the
 phases are relevant for all requirements investigated. As shown with
 the dotted lines, a conclusion might be deducted directly from theory,
 and the measurement phase is not necessarily valid for all
-requirements. Note also that the method is used in cycles, after
-evaluation of the results new or modified requirements can be taken
-into consideration. This way of working is very good for a master
-thesis of a set time/size, as the method is simply run over and over
-again as many times as there is room for.
+requirements. Note also that the method is used iteratively, in
+cycles, after evaluation of the results new or modified requirements
+can be taken into consideration. This way of working is very good for
+a master thesis of a set time/size, as the method is simply run over
+and over again as many times as there is room for.
 
 \begin{figure}[h]
   \begin{center}
@@ -304,12 +305,12 @@ again as many times as there is room for.
   %\tikzstyle{cloud} = [draw, ellipse,fill=red!20, text width=5em, text centered, node distance=4.5cm, minimum height=5em]
   \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
-    \node [cloud, fill=blue!10] (requirement) {1. Identify requirement};
-    \node [cloud, fill=blue!20, right of=requirement, above of=requirement] (theory) {2. Search theory};
-    \node [cloud, fill=blue!60, right of=requirement, below of=requirement] (evaluate) {6. Evaluate};
-    \node [cloud, fill=blue!30, right of=theory] (example) {3. Write example};
-    \node [cloud, fill=blue!50, right of=evaluate] (conclude) {5. Conclude};
-    \node [cloud, fill=blue!40, right of=example, below of=example] (measure) {4. Measure};
+    \node [cloud, fill=blue!5] (requirement) {1. Identify requirement};
+    \node [cloud, fill=blue!10, right of=requirement, above of=requirement] (theory) {2. Search theory};
+    \node [cloud, fill=blue!30, right of=requirement, below of=requirement] (evaluate) {6. Evaluate};
+    \node [cloud, fill=blue!15, right of=theory] (example) {3. Write example};
+    \node [cloud, fill=blue!25, right of=evaluate] (conclude) {5. Conclude};
+    \node [cloud, fill=blue!20, right of=example, below of=example] (measure) {4. Measure};
     % Draw edges
     \path [line] (requirement) -- (theory);
     \path [line] (theory) -- (example);
@@ -344,7 +345,7 @@ ideas/inspiration.
   expressiveness and ease of use compared with general-purpose
   programming languages.''}\cite{mer05}
 
-DSLs are often categorized in two major types; external and embedded
+DSLs are often categorized in two major types; external or embedded
 (also referred to as internal) DSLs. An external DSL is a separate
 programming language with custom syntax and a full parser. Some
 well-known examples of external DSLs are SQL (domain of database
@@ -412,12 +413,12 @@ structuring the rest of this report:
   combined/reused into new ones?
 \item \textbf{Isolation/uniqueness} -- How can unwanted features of
   the host language be deprecated/removed? How can the host language
-  be extended to provide unique functionality?
-\item \textbf{Use} -- How can the DSL be used? What is the level of
-  tool support provided for the DSL? How are errors and exceptional
+  be extended to provide new functionality?
+\item \textbf{Use} -- How can embedded DSLs be used? What is the level
+  of tool support provided for the DSL? How are errors and exceptional
   situations handled in the different languages?
 \item \textbf{Performance} -- How does the different languages
-  facilitate building DSLs with high requirement regarding
+  facilitate building DSLs with high demands regarding
   throughput/performance?
 \end{itemize}
 
@@ -429,13 +430,13 @@ programming languages used, and the examples studied, each of the
 requirements are treated in separate chapters. As described in the
 method section, each requirement is studied in terms of existing
 literature combined with examples. A summary is written for each
-chapter, concluding the results found related to the requirement
+chapter, concluding the results found related to the requirements
 covered by the chapter.
 
 Chapter \ref{chp:examples} <<Programming Languages and Examples>>
 describes the programming languages used and the example DSLs created
-in this thesis.  Chapter \ref{chp:syntax} <<Syntax>> looks at
-techniques for creating concise and ``fluent'' syntax.  Chapter
+or studied in this thesis.  Chapter \ref{chp:syntax} <<Syntax>> looks
+at techniques for creating concise and ``fluent'' syntax.  Chapter
 \ref{chp:composition} <<Composition>> handles composition of DSLs.
 Chapter \ref{chp:advancedtechniques} <<Advanced Techniques>> describes
 advanced DSL techniques like pruning (removing features from) and
@@ -455,9 +456,9 @@ This chapter introduces the programming languages used in the thesis,
 and the DSL examples studied. As described in the introduction the
 main focus has been on capabilities provided by a set of different
 programming languages, and how these capabilities sustain the
-development of various types of domain-specific languages. Some
-examples have been developed as part of the work, while other examples
-have been taken from existing frameworks.
+development of various types of embedded domain-specific
+languages. Some examples have been developed as part of the work,
+while other examples have been taken from existing frameworks.
 
 \section{JVM Programming Languages}
 \label{sec:programminglanguages}
@@ -471,7 +472,7 @@ written (or ported) for the JVM. So this thesis looks at how some of
 these languages provide various capabilities when building embedded
 DSLs. I have tried to look at languages that differ in many
 categories, as typing, paradigm or execution model. The languages
-studied are described and categorized in the next section.
+studied are described and categorized in the next sections.
 
 \subsection{Categories of Languages}
 
@@ -2746,7 +2747,7 @@ Scala 2.8\footnote{A Taste of 2.8: Continuations --
 
 The mechanisms described in section \vref{sec:dynlangprune} can just
 as well be used to extend the host language with new methods. Examples
-of this was shown in section \vref{sec:monkey_patching}.
+of this were shown in section \vref{sec:monkey_patching}.
 
 \subsection{Functional Languages}
 
@@ -2810,7 +2811,44 @@ a macro shown in listing \vref{lst:cljunless}.
   (list 'if expr nil form))
 \end{lstlisting}
 
-TODO: clojure macro reversing the order of given statements?
+To further examplify the power Clojure macros bring when it comes to
+extending the host language, consider the macro in listing
+\vref{lst:cljmacroreverse}. What it does is revert the order of the
+statements given as arguments. The \texttt{let} statement in the
+beginning defines a temporary value \texttt{rev\#} as the reverse
+value of the list of arguments (\texttt{\& body}). This reversed list
+is then splice-quoted back as code together with a Clojure \texttt{do}
+statement. An example using the macro is shown in listing
+\vref{lst:cljmacroreverseuse}. As we can see the list of statements
+first provides a multiplication of two values (\texttt{x} and
+\texttt{y}), then the values are defined.
+
+\begin{lstlisting}[language=lisp,caption=Clojure macro reverting order of statements,label=lst:cljmacroreverse]
+(defmacro rev [& body]
+  (let [rev# (reverse body)]
+    `(do ~@rev#)))
+\end{lstlisting}
+
+\begin{lstlisting}[language=lisp,caption=Clojure reverse statements example,label=lst:cljmacroreverseuse]
+(def result
+  (rev
+    (* x y)
+    (def y 4)
+    (def x 3)))
+
+(println (str "Result: " result))
+; Result: 12
+\end{lstlisting}
+
+The example with the reverse macro shown above might seem pretty
+useless, and it probably is. However, it was included here just to
+show the amazing power released by the Clojure macro support. It would
+probably prove extremely difficult to write anything like that in any
+of the other languages studied in this report. Clojure gives you huge
+possibilities in extending/changing the host language. The uniform and
+simple syntax together with the macro system lets you build your own
+language, however you want it. Just about any control structure can be
+built straight into the language using macros.
 
 \section{Summary}
 
