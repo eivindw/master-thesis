@@ -1929,7 +1929,8 @@ Java has a wide range of mechanisms associated with metaprogramming:
     Java. Some of the most popular AOP frameworks in Java are AspectJ
     (\url{http://www.eclipse.org/aspectj/}), JBossAOP
     (\url{http://www.jboss.org/jbossaop}) and Qi4j
-    (\url{http://www.qi4j.org/}).}.
+    (\url{http://www.qi4j.org/}).}. An article that covers the use of
+  AOP and metaprogramming is found in\cite{hua08}.
 \end{itemize}
 
 An example of an embedded DSL in Java relying heavily on annotations
@@ -2500,7 +2501,7 @@ createShowWindow(
     "Image Histogram", "Value", "Number", img, PlotOrientation.VERTICAL, false, true, true))
 \end{lstlisting}
 
-\begin{figure}[h]
+\begin{figure}[p]
   \subfigure[Image I]{\includegraphics[width=0.49\textwidth]{images/numbers}}
   \hfill
   \subfigure[Histogram I]{\includegraphics[width=0.49\textwidth]{images/numbers_hist}}
@@ -3108,7 +3109,7 @@ for programming in a visual environment, utilizing an embedded REPL
 for writing and executing commands. Figure \vref{fig:kojoss} shows a
 screen-shot of Kojo, with the embedded REPL in the bottom left window.
 
-\begin{figure}
+\begin{figure}[h]
   \includegraphics[width=1.0\textwidth]{images/kojo_ss}
   \caption{Screen-shot from Kojo, a programming learning environment with
     an embedded DSL-REPL.\label{fig:kojoss}}
@@ -3140,7 +3141,7 @@ tools for, as much of the functionality is to some degree based on
 type evaluations (for example code completion, error notifications and
 refactoring).
 
-\begin{figure}
+\begin{figure}[h]
   \includegraphics[width=1.0\textwidth]{images/intellij_ss}
   \caption{Screen-shot from IntelliJ IDEA, an Integrated Development
     Environment having good support for Scala.\label{fig:intellijss}}
@@ -3172,9 +3173,86 @@ a commonly used open source tool for building Java-projects.
 
 \section{Error Handling}
 
-How well does the different host languages support custom error
-handling on the DSL level? Separate/different chapter? Compile-time
-error handling. Dynamic versus static typing (type-safety).
+This section discusses error handling possibilities in the different
+programming languages. When embedding a DSL it is important to control
+how exceptional situations are handled, and how errors are presented
+to the user of the DSL. The first sub-section shows how the different
+languages relate to the exception mechanism found in Java, and the
+following sections discuss differences related to language category.
+
+\subsection{Exception Handling}
+
+The Java programming language uses exceptions to handle errors and
+other exceptional
+events\footnote{\url{http://java.sun.com/docs/books/tutorial/essential/exceptions/index.html}}. It
+is a basic mechanism where code can be wrapped in a \texttt{try}
+block, and any exception thrown can be handled in separate
+\texttt{catch} blocks (one for each type of exception). Additionally
+one can use a \texttt{finally} for code that must be run no matter if
+an exception has been thrown or not. There are two main types of
+exceptions: checked exceptions that \textit{must} be caught by the
+calling code (failing to do so will lead to a compile error in Java),
+and unchecked exceptions that \textit{can} be caught by the calling
+code. This section will not go into details about the exception
+mechanism in Java, but will show how the different alternative
+programming languages relate to the exception mechanism.
+
+In Scala, exceptions can be thrown in the same way as in
+Java\cite{ode08}. Instead of returning a value, one can throw an
+exception. The catching of exceptions, however, is a little
+different. Scala uses its \textit{pattern matching}
+functionality\cite{wam09} to group several exception types together in
+the same \texttt{catch} block. The \texttt{finally} block is similar
+to that found in Java. Other differences in Scala exception handling
+is that all exceptions are treated as unchecked. Even checked
+exceptions from Java APIs will be converted to unchecked exceptions by
+Scala. A last point to note is that the try/catch/finally structure in
+Scala is able to yield a value, which is more ``correct'' according to
+functional programming as all code should yield values and use of
+mutable data-structures is discouraged. An example is shown in listing
+\vref{lst:scalaexception} (function creating a \texttt{URL} object
+from a \texttt{String} path, with default values returned on
+exception), demonstrating both the pattern matching and yielding of
+values.
+
+\begin{lstlisting}[float,caption=Scala exception example.,label=lst:scalaexception]
+def urlFor(path: String) =
+  try {
+    new URL(path)
+  } catch {
+    case mue: MalformedURLException => new URL("http://www.uio.no")
+    case unknown => new URL("http://exceptionworld.com")
+  }
+\end{lstlisting}
+
+JRuby has a similar approach to the checked/unchecked separation as
+Scala. All exceptions are treated like unchecked exceptions, and do
+not have to be caught. Exceptions that you want to handle can be done
+with the \texttt{begin-rescue} block in JRuby. An example is shown in
+listing \vref{lst:rubyexception}, giving the exception-part of
+functionality similar to that shown for Scala in the previous example.
+
+\begin{lstlisting}[float,language=ruby,caption=JRuby exception example.,label=lst:rubyexception]
+begin
+  url = URL.new(path)
+rescue MalformedURLException => mue
+  url = URL.new("http://www.uio.no")
+end
+\end{lstlisting}
+
+The Groovy syntax for handling exceptions is the same as that of
+Java. The only difference is that, like both JRuby and Scala, all
+exception catching is optional. They are all treated as unchecked
+exceptions that can, but do not have to, be caught.
+
+Clojure will also, like the three other languages, treat all
+exceptions as unchecked and optional\cite{hal09}. There are two
+special forms, \texttt{try} and \texttt{throw}, that can be used to
+handle exceptions as in the other languages. The \texttt{try} special
+form includes \texttt{catch} and \texttt{finally} as argument
+clauses. An example is shown in listing TODO: finish.
+
+TODO: Scala loan pattern vs. try/finally. General FP discussion. Clojure with-open.
 
 \subsection{Compiler- or Runtime Errors?}
 
@@ -3288,7 +3366,7 @@ matrix I ended up testing a few different variants:
   matrix is by using Scala \texttt{Lists}. The idea for this
   implementation was inspired by a blog post by Jonathan
   Merritt\cite{mer08}. A simple example of using a list of lists is
-  shown in figure \vref{lst:listoflist}. However, this implementation
+  shown in listing \vref{lst:listoflist}. However, this implementation
   proves to be very slow in specific element access and iteration.
 \item \textbf{2D Array} -- In Scala an \texttt{Array} will usually be
   faster than \texttt{List} because it is compiled to a native array
@@ -3296,7 +3374,7 @@ matrix I ended up testing a few different variants:
   rather than an array of arrays. This gives a much more efficient
   implementation with regards to element access and iteration. The
   implementation becomes slightly less straight-forward as we need to
-  calculate the element positions in the array, as shown in figure
+  calculate the element positions in the array, as shown in listing
   \vref{lst:2darray}.
 \end{itemize}
 
@@ -3332,7 +3410,7 @@ val m = new Matrix(2, Array(1, 2, 3, 4))
 Many Image Processing operations require some kind of calculation
 performed for every element in the underlying matrix. As an example,
 consider the neighbour average operation implemented using a general
-structuring-element operation show in figure
+structuring-element operation show in listing
 \vref{lst:strelavg}. Having as efficient implementation of the
 \texttt{seOp} method as possible is critical for large matrices. So
 having some way of efficiently iterating over all elements of the
@@ -3345,10 +3423,10 @@ matrix is essential. Scala provides two basic forms of iterating;
   \texttt{map} and \texttt{flatMap}. This is a very powerful structure
   allowing compact and readable code. An example of implementing a
   general structuring-element operation based on for comprehensions is
-  show in figure \vref{lst:forcomp}.
+  show in listing \vref{lst:forcomp}.
 \item \textbf{while loops} -- For regular loops Scala provides the
   \texttt{while} keyword. Using this instead of the for comprehensions
-  gives a much more iterative implementation, as shown in figure
+  gives a much more iterative implementation, as shown in listing
   \vref{lst:whileloop}.
 \end{itemize}
 
@@ -3518,7 +3596,7 @@ The primary concurrency construct in Scala is actors. Actors are
 basically concurrent processes that communicate by exchanging
 messages\cite{hal06}. My first attempt at making the Image Processing
 DSL parallel was by making a generic executor using the Actors
-API. The result, with an example of simple usage, is shown in figure
+API. The result, with an example of simple usage, is shown in listing
 \vref{lst:actorexecutor}. Isolated parts of the processing can be
 split into separate functions that are distributed over a set of
 executors. So my example with a String operation is easily extended to
@@ -3569,7 +3647,7 @@ Actors may communicate using futures where requests are handled
 asynchronously, but return a representation (the future) that allows
 to await the reply. This is better suited for the parallel processing
 we are trying to achieve. An example similar to the pure actor example
-in the previous section using futures is shown in figure
+in the previous section using futures is shown in listing
 \vref{lst:futureex}.
 
 \begin{lstlisting}[float,caption={[Scala futures example]An example using \texttt{Futures} to execute a function in a separate thread.},label=lst:futureex]
@@ -3587,7 +3665,7 @@ println("Result: " + fut())
 
 Futures also support waiting for an array of functions to
 complete. This is the mechanism used in the Image Processing DSL. See
-figure \vref{lst:futureipex} for a complete example of how futures are
+listing \vref{lst:futureipex} for a complete example of how futures are
 used to run several operation in parallel and merge the results once
 all futures have finished running. The \texttt{Splittable} identifier
 is simply a trait specifying \texttt{split} and \texttt{merge} methods
@@ -3749,7 +3827,7 @@ Scala API exists which enables Scala programs to make use of the
 possibilities offered by OpenCL -- ScalaCL\cite{scalacl}.
 
 A simple example using ScalaCL to add two arrays of integers is shown
-in figure \vref{lst:scalacl}.
+in listing \vref{lst:scalacl}.
 
 \begin{lstlisting}[float,caption=Add two arrays of integers using ScalaCL.,label=lst:scalacl]
 import scalacl.{Dim, Program}
