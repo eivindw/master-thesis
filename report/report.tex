@@ -3250,9 +3250,58 @@ exceptions as unchecked and optional\cite{hal09}. There are two
 special forms, \texttt{try} and \texttt{throw}, that can be used to
 handle exceptions as in the other languages. The \texttt{try} special
 form includes \texttt{catch} and \texttt{finally} as argument
-clauses. An example is shown in listing TODO: finish.
+clauses. An example is shown in listing \vref{lst:cljexception}, again
+implementing the same example as shown for Scala and JRuby.
 
-TODO: Scala loan pattern vs. try/finally. General FP discussion. Clojure with-open.
+\begin{lstlisting}[language=lisp,caption=Clojure exception example.,label=lst:cljexception]
+(defn urlFor [path]
+  (try
+    (URL. path)
+    (catch MalformedURLException _ (URL. "http://www.uio.no"))))
+\end{lstlisting}
+
+\subsubsection{Functional Alternatives}
+
+Even though the functional languages Scala and Clojure support normal
+exception handling, there are other alternatives in many cases that
+might be better. \cite{ode08} describes the \textit{loan pattern},
+where a control-abstraction function opens a resource and ``loans'' it
+to a function before it closes the resource. The exception handling
+would then be done in this function providing a control-abstraction,
+and not by the calling function. An example is shown in listing
+\vref{lst:scalaloanpattern}, using the \texttt{withPrintWriter}
+abstraction to write a date to a file ("date.txt") without handling
+exceptions. This would be valuable in a DSL setting where we might
+want to hide ``complicated'' exception handling from the user.
+
+\begin{lstlisting}[caption=Scala control-abstraction function example.,label=lst:scalaloanpattern]
+// Control-abstraction function
+def withPrintWriter(file: File, op: PrintWriter => Unit) {
+  val writer = new PrintWriter(file)
+  try {
+    op(writer)
+  } finally {
+    writer.close()
+  }
+}
+
+// Example of use
+withPrintWriter(
+  new File("date.txt"),
+  writer => writer.println(new java.util.Date)
+)
+\end{lstlisting}
+
+Similar to the example shown for Scala can be done with Clojure. There
+is a macro called \texttt{with-open} which provides a general
+control-abstraction for opening, using and safely closing
+resources. An example, similar to that shown for Scala, is shown in
+listing \vref{lst:cljwithopen}.
+
+\begin{lstlisting}[language=lisp,caption=Clojure with-open example.,label=lst:cljwithopen]
+(with-open [f (new java.io.FileWriter "date.txt")]
+  (.write f (str (new java.util.Date))))
+\end{lstlisting}
 
 \subsection{Compiler- or Runtime Errors?}
 
