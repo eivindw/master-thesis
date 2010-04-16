@@ -3303,13 +3303,40 @@ listing \vref{lst:cljwithopen}.
   (.write f (str (new java.util.Date))))
 \end{lstlisting}
 
-\subsection{Compiler- or Runtime Errors?}
+These examples show that there are good alternatives available in the
+functional world when it comes to exception handling. Providing users
+of an embedded DSL with good control-abstractions is an easy to
+understand way to hide exceptional situations.
 
-TODO: write?
+\subsection{Static or Dynamic Typing -- Compiler- or Runtime Errors?}
 
-\subsection{Type Errors -- Dynamic or Static Typing?}
+There is a significant difference between compiled and interpreted
+languages, when it comes to helping the user of the language in
+discovering errors in code. The compiled languages are run through a
+two-step process; first the compiler will check as much as possible
+while generating the bytecode without actually running the code, then
+the JVM will run the bytecode. Many basic errors, related to typing,
+syntax and similar, will be resolved by the compiler before the code
+is run. With an interpreted language all errors, even the basic ones,
+will go through to the actual running/interpreting of the code. This
+difference might be important for some kinds of DSLs.
 
-TODO: write?
+The major difference between compiling or not is of course related to
+the typing dicipline of the language. The statically typed languages
+are type-checked at compile-time, while the dynamically typed
+languages are type-checked at runtime. One aspect with this that is
+interesting is that many projects using dynamically typed languages
+seem to rely on automated unit testing to a much larger extent than
+similar projects using statically typed languages. This has been
+somewhat documented through studies of projects carried out by BEKK,
+in a master thesis by Hans-Christian Fjeldberg\cite{fje08}. Projects
+based on Ruby on Rails have, in many cases, just as much code in
+automated tests as in production code. So one could say that the
+fantastic capabilities earned by using Rails (dynamic metaprogramming,
+method-missing and similar shown in chapter\vref{chp:syntax}) comes at
+the cost of having to write code to prevent errors the compiler
+usually would deal with in statically typed languages like Java and
+Scala.
 
 \section{Summary}
 
