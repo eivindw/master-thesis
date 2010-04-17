@@ -2149,7 +2149,23 @@ end
 ten = 5.doubleIt
 \end{lstlisting}
 
-TODO: DSL example?
+In a DSL monkey patching will typically be used to add functionality
+to base classes, similar to what was shown with implicit conversions
+in listing \vref{lst:scalatestimplicitconversion}. With the implicit
+conversion in Scala the \texttt{String} type was converted to
+\texttt{StringShouldWrapper}, making it seem like it had a
+\texttt{should} method. With monkey patching in Ruby it is possible to
+add the method directly to the \texttt{String} class. A small example,
+suggesting how the signature would look, is shown in listing
+\vref{lst:rubymonkeypatchshould}.
+
+\begin{lstlisting}[language=Ruby,caption=Ruby \texttt{should} method added to String.,label=lst:rubymonkeypatchshould]
+class String
+  def should(arg)
+    ...
+  end
+end
+\end{lstlisting}
 
 \section{Dynamic Dispatch -- Method Missing}
 
