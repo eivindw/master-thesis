@@ -335,7 +335,9 @@ tried to use scientific research papers as theory basis as much as
 possible, but a certain amount of references/footnotes will also refer
 to links on the Internet. Although not as reliable as scientific
 resources, I find it more honest to include the source of any
-ideas/inspiration.
+ideas/inspiration. As a general rule I have tried to put URLs sources
+directly as footnotes, while more scientific resources are used as
+references.
 
 \section{Domain-Specific Languages}
 \label{sec:dsls}
@@ -3458,7 +3460,7 @@ possible on the JVM.
 
 One of the language categorizations that potentially has a lot of
 impact on the performance on the JVM is whether the language is
-dynamically of statically typed. While static languages typically
+dynamically or statically typed. While static languages typically
 perform type checking at compile-time, dynamic languages will postpone
 most type checking until runtime. The JVM does, however, not support
 runtime type checking very well in the current version, although some
@@ -3517,11 +3519,12 @@ matrix I ended up testing a few different variants:
 
 \begin{itemize}
 \item \textbf{List of Lists} -- A very logical implementation of
-  matrix is by using Scala \texttt{Lists}. The idea for this
+  matrix can be made by using Scala \texttt{Lists}. The idea for this
   implementation was inspired by a blog post by Jonathan
-  Merritt\cite{mer08}. A simple example of using a list of lists is
-  shown in listing \vref{lst:listoflist}. However, this implementation
-  proves to be very slow in specific element access and iteration.
+  Merritt\footnote{\url{http://jsmerritt.blogspot.com/2008/07/matrix-multiplication-in-scala.html}}. A
+  simple example of using a list of lists is shown in listing
+  \vref{lst:listoflist}. However, this implementation proves to be
+  very slow in specific element access and iteration.
 \item \textbf{2D Array} -- In Scala an \texttt{Array} will usually be
   faster than \texttt{List} because it is compiled to a native array
   in bytecode. It is also faster to implement as one flat array,
@@ -3577,7 +3580,7 @@ matrix is essential. Scala provides two basic forms of iterating;
   \texttt{map} and \texttt{flatMap}. This is a very powerful structure
   allowing compact and readable code. An example of implementing a
   general structuring-element operation based on for comprehensions is
-  show in listing \vref{lst:forcomp}.
+  shown in listing \vref{lst:forcomp}.
 \item \textbf{while loops} -- For regular loops Scala provides the
   \texttt{while} keyword. Using this instead of the for comprehensions
   gives a much more iterative implementation, as shown in listing
@@ -3664,32 +3667,32 @@ for <<autoboxing>>, an implicit conversion between primitives and
 their wrapper types.
 
 However, there are performance issues related to the wrapper
-classes. Using primitives is much faster than using wrappers: ``It is
-not appropriate to use autoboxing and unboxing for scientific
-computing, or other performance-sensitive numerical code. An Integer
-is not a substitute for an int; autoboxing and unboxing blur the
-distinction between primitive types and reference types, but they do
-not eliminate
-it.''\footnote{\url{http://java.sun.com/j2se/1.5.0/docs/guide/language/autoboxing.html}}
+classes. Using primitives is much faster than using wrappers:
+\textit{It is not appropriate to use autoboxing and unboxing for
+  scientific computing, or other performance-sensitive numerical
+  code. An Integer is not a substitute for an int; autoboxing and
+  unboxing blur the distinction between primitive types and reference
+  types, but they do not eliminate
+  it}\footnote{\url{http://java.sun.com/j2se/1.5.0/docs/guide/language/autoboxing.html}}.
 As stated in the quote, it is critical to ensure that primitives are
 used for numerical code, like the image processing DSL in this thesis.
 
 With languages like Scala and Clojure, there are no primitive types in
 the syntax. Every value is an object (even in Clojure, being
 implemented on the JVM). The Scala compiler will try to optimize where
-possible, as stated in\cite{ode08}: ``The Scala compiler uses Java
-arrays, primitive types, and native arithmetic where possible in the
-compiled code.'' However, it is not allways obvious when this
-optimization will be performed. Typically will generic collection have
-some problems, even though the type parameter used is a primitive like
-\texttt{Int}. Scala 2.8 will introduce some more features to help
+possible, as stated in\cite{ode08}: \textit{The Scala compiler uses
+  Java arrays, primitive types, and native arithmetic where possible
+  in the compiled code.} However, it is not allways obvious when this
+optimization will be performed. Typically will generic collections
+have some problems, even though the type parameter used is a primitive
+like \texttt{Int}. Scala 2.8 will introduce some more features to help
 write code that ensures the use of primitives at the bytecode
 level. Most notably is the \texttt{@specialized} annotation, making
-the compiler produce specialized versions of generic classes. As an
-example consider the following code, defining a class \texttt{MyList}
-with type parameter \texttt{T}. The compiler will produce two specific
-implementations of the class, one for \texttt{Int} and one for
-\texttt{Double}:
+the compiler produce specialized versions of generic
+classes\cite{dra09}. As an example consider the following code,
+defining a class \texttt{MyList} with type parameter \texttt{T}. The
+compiler will produce two specific implementations of the class, one
+for \texttt{Int} and one for \texttt{Double}:
 
 \begin{lstlisting}
 class MyList[@specialized(Int, Double) T] ...
@@ -3887,7 +3890,7 @@ benefits when working with functional programming languages. This
 section shows how mechanisms for concurrency can be utilized in
 Clojure, with some simple examples.
 
-One of the ways Clojure integrated with Java is in making all
+One of the ways Clojure integrates with Java is in making all
 functions implement the \texttt{java.lang.Runnable} and
 \texttt{java.util.concurrent.Callable} interfaces, from the concurrent
 classes added to the JDK from version 1.5. This allows all Clojure
@@ -3938,7 +3941,7 @@ memoized version runs roughly 3 times faster as it is actually only
 run two times for the given values:
 
 \begin{lstlisting}[language=]
-\$ clj-orig memo.clj 
+\$ clj memo.clj 
 (slow-double) "Elapsed time: 602.931 msecs"
 (mem-double) "Elapsed time: 200.744 msecs"
 \end{lstlisting}
@@ -3973,12 +3976,13 @@ hardware optimized for matrices and image processing, so it should be
 very interesting to utilize this possibility to speed up the
 operations in a Image Processing library.
 
-OpenCL\texttrademark\cite{opencl} is an open standard for parallel
-programming that utilizes the power of the GPU to perform
-calculations. OpenCL is being created by the Khronos Group with the
-participation of many industry-leading companies and institutions. A
-Scala API exists which enables Scala programs to make use of the
-possibilities offered by OpenCL -- ScalaCL\cite{scalacl}.
+OpenCL\texttrademark\footnote{\url{http://www.khronos.org/opencl/}} is
+an open standard for parallel programming that utilizes the power of
+the GPU to perform calculations. OpenCL is being created by the
+Khronos Group with the participation of many industry-leading
+companies and institutions. A Scala API exists which enables Scala
+programs to make use of the possibilities offered by OpenCL --
+ScalaCL\footnote{\url{http://code.google.com/p/nativelibs4java/wiki/OpenCL}}.
 
 A simple example using ScalaCL to add two arrays of integers is shown
 in listing \vref{lst:scalacl}.
