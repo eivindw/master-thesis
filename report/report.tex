@@ -362,7 +362,9 @@ various programming languages (described in section
 the next section the exact definition of an embedded DSL is hard to
 find, and as such this thesis is just as much a study of different
 programming languages and what capabilities they provide. The embedded
-DSL focus provides examples used to visualize and compare results.
+DSL focus provides examples used to visualize and compare results. A
+good introduction to DSL design on the JVM is the book <<DSLs in
+Action>> by Debasish Ghosh\cite{gho09}.
 
 \subsection{Embedded DSL or just Advanced Library Design?}
 \label{sec:embeddeddsl}
@@ -2382,9 +2384,25 @@ device having support for running Java applications.
 
 \subsection{Functional Composition}
 
-Multi-method example shown in \vref{lst:cljmm}.
+Obtaining modular composition is typically dependent on some kind of
+dynamic dispatch mechanism, as the polymorphism described with the use
+of traits in the previous section (TODO: referanse til
+polymorfisme). Clojure, being a functional language, supports a
+different mechanism to obtain similar effects. This is called
+\textit{multimethods}\cite{hal09}, and is basically a kind of dynamic
+dispatch where you specify a function to perform the dispatch rather
+than only the type as is done in polymorphism. Instead of the type
+itself providing some implementation of an interface, the whole
+dispatch is done outside using the type as a parameter. A very basic
+example is shown in listing \vref{lst:cljmm}. The \texttt{my-print}
+function uses the \texttt{class} function, which returns the class of
+an object, to dispatch on the argument. So the method can be called on
+objects of type \texttt{String} or \texttt{Number} (supertype for
+numeric types in Java). This example does basically the same as
+object-oriented languages do with polymorphism, it dispatches based on
+the type of the argument.
 
-\begin{lstlisting}[language=lisp,caption=Clojure multi-method example,label=lst:cljmm]
+\begin{lstlisting}[float,language=lisp,caption=Clojure multi-method example,label=lst:cljmm]
 (defmulti my-print class)
 
 (defmethod my-print String [s]
@@ -2394,13 +2412,37 @@ Multi-method example shown in \vref{lst:cljmm}.
   (.write *out* (.toString n)))
 \end{lstlisting}
 
-TODO: write with clojure examples
+Multimethods, however, are not limited to only dispatching on the type
+of an object. They can dispatch on any function, and can use more than
+one parameter when dispatching. In \cite{hal09} a part of the Clojure
+core API using multimethods is explained, namely the
+\textit{inspector}
+mechanism\footnote{\url{http://richhickey.github.com/clojure/clojure.inspector-api.html}}. This
+can be seen as a kind of DSL to provide quick views of data organized
+in a tree-like structure. The interesting part of this is that the
+data-structures used can be anything you want. The only thing that
+needs to be done to add support for a new type in the structure is to
+define with multimethods how the type should respond to the
+tree-operations \texttt{is-leaf}, \texttt{get-child} and
+\texttt{get-child-count}.
 
-\begin{itemize}
-\item Multi-methods with \texttt{defmulti} and \texttt{defmethod}.
-\item Metaprogramming
-\item Macro decorators
-\end{itemize}
+A challenge when dealing with dispatch mechanisms that are so flexible
+is how conflicts should be resolved. This is the same problem found
+when dealing with multiple inheritance in object-oriented
+languages. If two or more implementations are found in the dispatch
+process, which one should be chosen? The Scala traits solve this with
+linerization\cite{ode08}, where the order the traits are given in
+decides which one ``wins''. With Clojure multimethods the user can
+specify resolution to such conflicts programatically using a macro
+called \texttt{prefer-method}, that explicitly specifies which
+implementation should be used when several qualify based on the
+dispatch.
+
+All in all the multimethods mechanism can be seen as an extremely
+powerful way to customize the way functions are dynamically dispatched
+in a DSL. It is a complicated mechanism that probably should be used
+with care, but the possibilities it provides are not found in any of
+the other languages studied in this thesis.
 
 \section{Combining DSLs}
 \label{sec:combining_dsls}
