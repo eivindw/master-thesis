@@ -476,6 +476,37 @@ DSLs. I have tried to look at languages that differ in many
 categories, as typing, paradigm or execution model. The languages
 studied are described and categorized in the next sections.
 
+The tight relationship between the programming languages and the JVM
+has a number of advantages:
+
+\begin{itemize}
+\item \textbf{Cross-platform distribution} -- Code written in any of
+  the languages can be run on any platform supporting JVM 1.5 or
+  newer.
+\item \textbf{Stability and standards} -- The JVM is a stable platform
+  with good support for internationalization (Unicode support ++) and
+  localization (supports local languages and standards).
+\item \textbf{Access to libraries} -- The JVM has a wide range of
+  libraries available, many being Open Source.
+\item \textbf{High performance} -- The JVM has been proven to be a
+  high performance Virtual Machine, with a large number of tuning
+  possibilities.
+\end{itemize}
+
+There are also disadvantages with such a tight coupling to the JVM:
+
+\begin{itemize}
+\item \textbf{Limitations in bytecode} -- Many of the languages have
+  features that are not directly supported by the JVM. Examples
+  include tail call optimization useful for recursive programming and
+  dynamic dispatching of functions.
+\item \textbf{Generics implemented with erasure} -- This was a design
+  choice when generics were implemented for the JVM, removing the type
+  information at compiletime. For example for Scala, a language which
+  implements generics with erasure to be 100\% compliant with Java,
+  this leads to some limitations\cite{emi06}.
+\end{itemize}
+
 \subsection{Categories of Languages}
 
 I have chosen to categorize the languages in three different ways:
@@ -566,11 +597,11 @@ void testAcceptsOfferIfLowPrice() {
 
 \subsection{Groovy}
 
-Groovy is a dynamically typed and compiled language supporting the
-object-oriented paradigm. It is tightly integrated with Java and can
-leverage existing Java libraries directly. An example of a simple
-object-oriented ``Hello World!'' program is shown in the following
-example:
+Groovy is a dynamically typed and interpreted (or compiled) language
+supporting the object-oriented paradigm. It is tightly integrated with
+Java and can leverage existing Java libraries directly. An example of
+a simple object-oriented ``Hello World!'' program is shown in listing
+\vref{lst:groovyhello}.
 
 \begin{lstlisting}[language=java,caption=Groovy ``hello world'' example.,label=lst:groovyhello]
 class Greet {
@@ -635,7 +666,7 @@ JRuby can use classes from the standard Java API directly using the
 \texttt{include Java} statement. It can also import Java classes
 directly from jar files. So most Java libraries and APIs can be reused
 when working with JRuby on the JVM. An example of this is shown in
-listing \vref{lst:rubyjava} (creating a Java Swing application).
+listing \vref{lst:rubyjava}, creating a small Java Swing application.
 
 \begin{lstlisting}[float,caption=Ruby Java integration example.,label=lst:rubyjava,language=ruby]
 # Special include to make standard Java API available
@@ -659,11 +690,11 @@ youngest and possibly the least mature language included in my work.
 
 The reason I have looked at Clojure is the amount of embedded DSL
 papers written using functional programming languages (for
-example\cite{hud96}), making Clojure an interesting language with
-respect to embedding DSLs on the JVM. Below is an example of the
-``hello world'' function in Clojure, as well as an example
-implementation of the Fibonacci function (a more common ``hello
-world'' in the functional world):
+example\cite{hud96} and \cite{hud98}), making Clojure an interesting
+language with respect to embedding DSLs on the JVM. Below is an
+example of the ``hello world'' function in Clojure, as well as an
+example implementation of the Fibonacci function (a more common
+``hello world'' in the functional world):
 
 \begin{lstlisting}[language=lisp,caption=Clojure Fibonacci example.,label=lst:clojurefibonacci]
 ; A kind of hello world function
@@ -677,6 +708,18 @@ world'' in the functional world):
   )
 )
 \end{lstlisting}
+
+Clojure has big collection of features not found in any of the other
+languages, many which will be explained in more detail where
+relevant. In LISP (and thus in Clojure), the most important fact is
+the simplicity of the basics in the language. There are very few
+special forms requiring specific syntax. All code is organized in
+lists, meaning that code is made up of data and vise versa, making
+Clojure a ``homoiconic''\cite{hal09}. The macro system utilizes this
+fact, making it possible to seamlessly mix code and data to provide
+new control structures. Clojure macros will be used with examples
+several places in this report, together with other exciting features
+such as multimethods and built-in immutable data structures.
 
 \subsubsection{Clojure and Java}
 
@@ -706,7 +749,7 @@ Clojure integrates with Java using some special macros like
 \texttt{import} and \texttt{new}, and the dot operator, as shown in
 the examples given in listing \vref{lst:clojurejava}.
 
-\begin{lstlisting}[float,caption=Clojure -- Java integration.,label=lst:clojurejava,language=lisp]
+\begin{lstlisting}[caption=Clojure -- Java integration.,label=lst:clojurejava,language=lisp]
 ; Get a system property
 (System/getProperty "java.vm.version")
 ; Call "toUpperCase" on the String "clojure"
@@ -744,7 +787,9 @@ thesis is the combination of powerful programming structures (both
 object-oriented and functional) with the cross-platform and wide
 adoption of the JVM. Code written in Scala can be run on any JVM
 version 1.5 or newer, and can utilize any library written in Java. It
-can thus be seen as a ``best of both worlds'' language.
+can thus be seen as a ``best of both worlds'' language. For this
+reason Scala has been used as the main language in this thesis, and as
+example language when implementing the DSL examples.
 
 For more detailed information about Scala please refer
 to\cite{ode08},\cite{scala} or\cite{scalatour}.
@@ -786,37 +831,6 @@ illustrated in figure \vref{fig:scalajava}.
     Java.\label{fig:scalajava}}
 \end{figure}
 
-The tight relationship with Java has a number of advantages when using
-Scala:
-
-\begin{itemize}
-\item Cross-platform distribution -- Code written in Scala can be run
-  on any platform supporting JVM 1.5 or newer.
-\item Stability and standards -- The JVM is a stable platform with
-  good support for internationalization (Unicode support ++) and
-  localization (supports local languages and standards).
-\item Access to libraries -- The JVM has a wide range of libraries
-  available, many being Open Source.
-\item High performance -- The JVM has been proven to be a high
-  performance Virtual Machine, with a large number of tuning
-  possibilities.
-\end{itemize}
-
-There are also disadvantages with such a tight coupling to the JVM:
-
-\begin{itemize}
-\item Limitations in bytecode -- Scala, being a functional language,
-  would benefit from features not present in the current version of
-  the JVM. Most notably is the (lack of) support for full tail call
-  optimization, which would improve performance of recursive
-  functions.
-\item Generics implemented with erasure -- Scala uses an erasure
-  scheme to implement generics, to be 100\% compatible with
-  Java. However, the implementation of the Scala compiler
-  (\texttt{scalac}) has some advanced solution to many of the problems
-  Java has regarding erasure\cite{emi06}.
-\end{itemize}
-
 \section{Examples Implemented}
 
 This section describes the main examples written and researched in the
@@ -839,20 +853,22 @@ background. This leads to the need for DSLs where complicated and
 computationally heavy operations can be performed with a simple and
 straightforward syntax.
 
-A major actor in the art of Image Processing is the product \matlab{}
-from the company MathWorks\texttrademark. They provide the user with a
-DSL for doing advanced Image Processing operations. The goal of this
-example is to create a similar DSL (with a limited amount of
-functionality) running on a JVM. This DSL was implemented in Scala,
+A major actor in the art of Image Processing is the company
+MathWorks\texttrademark with their product \matlab{}. They provide the
+user with a DSL for doing advanced Image Processing operations. The
+goal of this example is to create a similar DSL (with a limited amount
+of functionality) running on a JVM. This DSL was implemented in Scala,
 mostly due to performance requirements.
 
 As an example consider the operation of blurring an image using an
-average filter mask show in figures \vref{fig:eximg} and
+average filter mask shown in figures \vref{fig:eximg} and
 \vref{fig:exavg}. This is a basic operation, documented
 in\cite{gon08}, but serves good as an example of using the DSLs.
 
-The \matlab{} code to perform the operation could
-typically look like this:
+The \matlab{} code to perform the operation could typically look like
+that of listing \vref{lst:matlabimgproc}. An image is read from file,
+blurred with the \texttt{medfilt2} method, and the result saved back
+as a new file.
 
 \begin{lstlisting}[language=matlab,caption=\matlab{} image processing example.,label=lst:matlabimgproc]
 img = imread('cell.jpg');
@@ -867,7 +883,7 @@ was implemented, with regards to syntax and class/object
 composition. The DSL also implements basic morphological operations
 like erode, dilate, open and close\cite{gon08}.
 
-\begin{lstlisting}[float,caption=Scala image processing example.,label=lst:scalaimgproc]
+\begin{lstlisting}[caption=Scala image processing example.,label=lst:scalaimgproc]
 // Imports...
 val img = loadImageCP("/cell.jpg")
 val se = StrEl(Square, 3)
@@ -907,7 +923,7 @@ directly\footnote{The Scala member import is similar to the static
 \vref{lst:scalaipsyn}, where the comments show how the statements
 would look without using the static member import.
 
-\begin{lstlisting}[caption=Scala image processing syntax example.,label=lst:scalaipsyn]
+\begin{lstlisting}[float,caption=Scala image processing syntax example.,label=lst:scalaipsyn]
 import io.SImageIO._
 import structs.StrElType._
 
@@ -929,7 +945,7 @@ compact syntax, combined with the import of the available structuring
 element types as shown above. An example is shown in listing
 \vref{lst:scalacompobj}.
 
-\begin{lstlisting}[caption=Scala companion object example.,label=lst:scalacompobj]
+\begin{lstlisting}[float,caption=Scala companion object example.,label=lst:scalacompobj]
 // Definition of companion object StrEl
 object StrEl {
   import StrElType._
@@ -991,7 +1007,8 @@ calculation environments. For example in image analysis, statistical
 models are used intensively for pattern recognition (ie. finding text
 or other figures in images). In this respect it is interesting to have
 a DSL for statistical operations that can be used together with the
-image processing DSL to create a DSL environment for image analysis.
+image processing DSL to create a more complete DSL environment for
+image analysis.
 
 A minimal DSL for statistics has been created in Scala for this
 work. It only has a very basic data structure, with a few rudimentary
@@ -1005,7 +1022,7 @@ and \texttt{maxValue}. There is also a \texttt{DataSet} companion
 object acting as a factory for building data-sets. The source code is
 given in listing \vref{lst:statsdsl}.
 
-\begin{lstlisting}[float,caption={[Scala statistics DSL]Minimal statistics DSL implemented in Scala.},label=lst:statsdsl]
+\begin{lstlisting}[caption={[Scala statistics DSL]Minimal statistics DSL implemented in Scala.},label=lst:statsdsl]
 class DataSet(private val intArr: Array[Int]) {
    def average = intArr.reduceLeft(_ + _) / intArr.size.toDouble
 
@@ -1033,12 +1050,12 @@ println("Dice average: " + dice.average)
 
 \subsection{Charting DSL}
 
-Another feature needed when working with numeric calculations is the
-ability to create charts displaying results, statistics or just a more
-visual representation of the data. As with the statistics DSL
-described above charting is important when working with image
-analysis, typically creating histograms of images, visualizing
-statistical distributions and many other uses.
+Another feature that can be useful when working with numeric
+calculations is the ability to create charts displaying results,
+statistics or just a more visual representation of the data. As with
+the statistics DSL described above charting is important when working
+with image analysis, typically creating histograms of images,
+visualizing statistical distributions and many other uses.
 
 The DSL created for charting is also a minimal one, as with the
 statistics DSL. It provides the third and last important piece when
@@ -1054,7 +1071,7 @@ An example creating a basic pie chart is shown in listing
 \vref{lst:chartdsl}, resulting in the chart shown in figure
 \vref{fig:piechartex}.
 
-\begin{lstlisting}[float,caption={[Scala charting DSL]Scala charting DSL -- create a basic pie chart.},label=lst:chartdsl]
+\begin{lstlisting}[caption={[Scala charting DSL]Scala charting DSL -- create a basic pie chart.},label=lst:chartdsl]
 createPieChart("Pie Chart",
    pieData(
       ("One", 43.2D),
@@ -1075,7 +1092,10 @@ createPieChart("Pie Chart",
 
 This section describes some other DSLs used as examples. They have not
 been written as part of the work, but are used as examples as they are
-popular DSLs being used.
+popular Open Source frameworks being used in many enterprise
+projects. They also exercise some exciting features in the host
+languages to obtain some of the features that make the suited for the
+domains they provide solutions for.
 
 \subsection{Ruby on Rails}
 
@@ -1088,7 +1108,7 @@ shown in listing \vref{lst:activerecordex} (from\cite{rails}). The
 relationship between tables in the database is directly mapped to Ruby
 classes, using a very specific syntax.
 
-\begin{lstlisting}[float,language=ruby,caption={[Ruby on Rails \texttt{ActiveRecord} example]Example using the Ruby on Rails \texttt{ActiveRecord} database querying classes.},label=lst:activerecordex]
+\begin{lstlisting}[language=ruby,caption={[Ruby on Rails \texttt{ActiveRecord} example]Example using the Ruby on Rails \texttt{ActiveRecord} database querying classes.},label=lst:activerecordex]
 class Client < ActiveRecord::Base
   has_one :address
   has_one :mailing_address
@@ -1116,13 +1136,13 @@ end
 
 Hibernate is a so called object-relational-mapping (ORM) framework
 written in Java. It provides much the same functionality as the
-\texttt{ActiveRecord} mechanism described in the previous sections,
-but implemented in Java using annotations. In listing
+\texttt{ActiveRecord} mechanism described in the previous section, but
+implemented in Java using annotations. In listing
 \vref{lst:javahibernate}, the \texttt{Client} class from the Ruby on
 Rails example given in \vref{lst:activerecordex} is implemented in
 Java using Hibernate.
 
-\begin{lstlisting}[float,language=java,caption=Java Hibernate example,label=lst:javahibernate]
+\begin{lstlisting}[language=java,caption=Java Hibernate example,label=lst:javahibernate]
 @Entity
 public class Client
 
@@ -2485,7 +2505,7 @@ string-array as if it was an instance of a data-set (which in fact it
 is as the compiler implicitly converts it to one on demand). The
 example is shown in listing \vref{lst:scalawordstats}.
 
-\begin{lstlisting}[float,caption=Scala word statistics example.,label=lst:scalawordstats]
+\begin{lstlisting}[caption=Scala word statistics example.,label=lst:scalawordstats]
 val words = Array("eivind", "test", "oslo", "bekk", "scala", "elephant", "cat")
 
 implicit def str2DS(str: Array[String]) = {
@@ -2507,7 +2527,7 @@ could say that we have defined a new ``statistical image processing
 DSL'' combining the two existing DSL, all without writing any other
 code than the actual conversion. A simple example is shown below:
 
-\begin{lstlisting}[caption={[Scala implicit conv. DSL combine example]Scala example using implicit conversion to combine DSL for statistics with DSL for image processing.}]
+\begin{lstlisting}[float,caption={[Scala implicit conv. DSL combine example]Scala example using implicit conversion to combine DSL for statistics with DSL for image processing.}]
 val img = Image(Matrix(3, List(
   9, 8, 7,
   6, 5, 6,
@@ -2559,7 +2579,7 @@ createShowWindow(
     "Image Histogram", "Value", "Number", img, PlotOrientation.VERTICAL, false, true, true))
 \end{lstlisting}
 
-\begin{figure}[p]
+\begin{figure}[h]
   \subfigure[Image I]{\includegraphics[width=0.49\textwidth]{images/numbers}}
   \hfill
   \subfigure[Histogram I]{\includegraphics[width=0.49\textwidth]{images/numbers_hist}}
