@@ -4074,34 +4074,41 @@ best possible way.
 
 This chapter first provides a conclusion of the results
 found. Secondly follows a section providing a critical discussion of
-the work performed. A separate section is devoted to showing
-particular research contributions, that are believed to be new ideas
-created during the thesis work. At last a section suggesting future
-work is given.
+the work performed, and the method/scope followed. At last a section
+suggesting future work is given.
 
 \section{Conclusion}
 
 This section concludes the results found during the work of the
-thesis. It is divided into subsection grouping related results.
+thesis. It is divided into subsection grouping related results on the
+same structure as the main chapters in the report. At the end follows
+a small section highlighting the research contributions of this thesis
+work.
 
 \subsection{Language Categories and Embedded DSLs}
 
-There is no doubt that all the languages studied in this thesis work
-provide much features that are not found in the Java language. This
-section tries to summarize when (for what kind of tasks) the different
-languages would be a good match.
+There is no doubt that all the languages studied in this thesis
+provide many features that are not found in the Java
+language. Features that enable new and exciting capabilities regarding
+embedded DSL development on the JVM platform. This section summarizes
+when (for what kind of tasks) the different languages would be a good
+match.
 
 The dynamic object-oriented languages (Groovy and Ruby) offer a very
 concise coding-style, a central requirement when developing embedded
-DSLs. Code looks very clean without information about types
-included. Another extremely powerful mechanism only available in the
-dynamic languages is the dynamic metaprogramming described in section
+DSLs. Code looks very clean without information about types included,
+something that is valuable for many types of DSLs. A mathematician
+would maybe not care if the numbers are stored as doubles or ints, as
+long as the results are correct and as expected. Another extremely
+powerful mechanism only available in the dynamic languages is the
+dynamic metaprogramming described in section
 \vref{sec:dynamicmetaprogramming}. Code that dynamically generates new
-code provides a basis for popular DSL environments like the Ruby on
-Rails framework.
+code, combined with dynamic dispatch in the form of the
+\texttt{method\_missing} feature and monkey patching, provides a basis
+for popular DSL environments like the Ruby on Rails framework.
 
 The multi-paradigm language Scala, combining object-orientation with
-functional programming, offer a huge set of new capabilities when it
+functional programming, offers a huge set of new capabilities when it
 comes to embedded DSL design (compared to the Java language). Features
 like implicit conversions, type inference and operator notation on
 regular methods are just some examples. Being statically typed and
@@ -4121,6 +4128,48 @@ language is maybe one of the best suited for writing narrow and
 specific DSLs, as it can be adjusted to exactly the way you want
 it. The language was included in the project as an ``outsider'', but
 proved its worth very quickly.
+
+\subsection{Composition}
+
+Mixin-composition is a powerful mechanism enabling code reuse and
+modular design in a more precise way than in Java which only supports
+polymorphism through interfaces. All the object-oriented languages
+(Ruby, Groovy and Scala) support some form of mixin-composition. Most
+thouroughly studied was the traits in Scala, which were used to build
+the DSL for image processing.
+
+Clojure supports multimethods. A mechanism enabling a much more
+detailed dynamic dispatch than that found in
+polymorphism. Multimethods can be used outside the object structure,
+giving the types new structure without altering them at all.
+
+When it comes to combining DSLs the implicit conversion mechanism in
+Scala proved very concise and easy to use. With only a few lines of
+code, converting from one data-structure to another, we are able to
+combine several different separate DSLs into one environment.
+
+\subsection{Modifying the Host Language}
+
+The languages studied offer a wide range of ways to modify the
+behaviour of their core functionality. For a DSL this is interesting,
+either to remove (prune) unwanted features or to add new control
+structures or other basic functionality.
+
+In Scala, compiler plugins can be written to provide new or remove
+existing functionality. In addition, ``pass by-name'' parameters
+combined with functional style programming and member imports is a
+good way to write functions appearing as new control structures.
+
+The dynamic languages support mofifications of classes at
+runtime. This includes both removing methods from, and adding methods
+to, existing classes, even core Java classes marked as \texttt{final}.
+
+The Clojure macro system is the most flexible way to build new control
+structures. Most of the core Clojure system is made up of macros
+written in Clojure itself, and can be redefined by the user if
+needed. With the macro system, it should be possible to create an
+embedded DSL appearing to be a separate programming language (like an
+external DSL).
 
 \subsection{Usage}
 
@@ -4145,23 +4194,32 @@ the example DSLs of image processing, statistics and charting.
 An advantage all the languages share is the ability to utilize the
 existing tools and frameworks on the JVM. Java is an extremely popular
 language, and there are thousands of useful open source or other
-easily available tools to choose from.
+easily available tools to choose from. A good example is the charting
+DSL that was written in Scala, but almost entirely based on an
+existing Java open source framework (JFreeChart).
+
+When it comes to error handling all the languages support the
+exception mechanism being used in Java. In addition the functional
+languages support other ways to create control-abstractions, making
+the user less dependent on handling exceptions directly.
 
 \subsection{Performance}
 
 The biggest difference in performance between the language types is
-that between dynamic and static languages. Dynamic languages running
-on the JVM are significantly slower, because of synthetic types. This
-might change in future versions of the JVM, as the
-\texttt{invokedynamic} instruction is added to the JVM. But at the
-moment a DSL that needs effective code, like those adding thousands of
-numbers or similar, should probably be implemented in static languages
-(like Java or Scala).
+most likely that between dynamic and static languages. Dynamic
+languages running on the JVM are significantly slower, largely because
+of the use of synthetic types and reflection. This is due to the fact
+that the JVM was not written with dynamic languages in mind, but might
+change in future versions of the JVM, as the \texttt{invokedynamic}
+instruction is added to the JVM. But at the moment a DSL that needs
+effective code, like those adding thousands of numbers or similar (as
+the image processing examples designed in this thesis), should
+probably be implemented in static languages (like Java or Scala).
 
 The functional languages provide ways to create very concise
 code. However, some of these features seem to cost quite a lot when it
 comes to performance. Some examples include for-comprehensions and
-pattern matching in Scala, that are much slower than while-loops or
+pattern matching in Scala, that are much slower than while-loops and
 general if-else statements. So there is a trade-off between concise
 code and high performance. Scala 2.8 might improve this a little, with
 better support for JVM primitives and annotations to create effective
@@ -4173,6 +4231,29 @@ programming makes it very easy to create threads that cooperate in
 solving problems. The biggest advantage is that they make concurrency
 easy to implement without risks for deadlocks and other common
 problems when working with Java concurrency.
+
+A final note on performance is the support for GPU programming that is
+becoming available, even on the JVM. An example was shown were Scala
+was used to add arrays of integers using the power of the GPU instead
+of the main processor. This is something that potentially can make a
+lot of software run faster, as most modern computers are equipped with
+advanced GPUs capable of high numbers of numeric calculations.
+
+\subsection{Research Contributions}
+
+The following list summarized what I believe are research
+contributions made in the progress of writing this thesis:
+
+\begin{itemize*}
+\item Suggesting using the package template mechanism of the
+  \textsc{swat} project to combine embedded DSLs.
+\item Embedding high-performance DSLs on the JVM. Finding a good
+  combination of concise syntax and good performance, utilizing
+  parallel programming, seems to be quite a new area.
+\item Image processing on the JVM using Scala.
+\item The language comparison focus with regards to embedding DSLs on
+  the JVM.
+\end{itemize*}
 
 \section{Evaluation and Discussion}
 
@@ -4196,76 +4277,43 @@ research contribution of the thesis could have been bigger with a
 slightly more narrow focus.
 
 Secondly one could also question the domain-specific language
-focus. As it turned out, this work is much more focused on general
-capabilities in different programming languages than it is focused on
-domain-specific languages. Although these things are closely related,
-as language features certainly are important when implementing
-domain-specific languages. Maybe a more pure focus on programming
-language comparison would have been better?
+focus. As it turned out, this thesis is just as much focused on
+general capabilities in different programming languages than it is
+focused on domain-specific languages. Although these things are
+closely related, as language features certainly are important when
+implementing domain-specific languages. Maybe a more pure focus on
+programming language comparison would have been better?
 
 All in all I am still quite happy with the results of this thesis
 work. I have learned many new programming languages, and certainly
 gained a new understanding of what it means to work in a
-research-oriented setting. As shown in section \vref{sec:futurework},
-I feel that this thesis could be used as a basis for several new
-master-assignments, all narrowing down on parts that the wide scope
-did not allow detailing further in this report.
-
-\section{Research Contributions}
-
-This section summarizes research contributions made in the thesis
-work. As much of the results are not new in terms of research, and
-also are scattered throughout the report, it is important to gather
-all the key findings in one place. The following subsections each
-describe a perceived research contribution made by this thesis work.
-
-\subsection{Package Templates for Embedded DSL Composition}
-
-As described in section \vref{sec:packagetemplates}, package templates
-is a newly researched mechanism suggesting an exiting new way to
-compose Java-programs. Using this mechanism in a domain-specific
-language setting is an interesting idea.
-
-\subsection{Dynamic Features in Statically Typed Languages}
-
-Dynamic languages have advantages with regards to metaprogramming, as
-members and types can be invoked without actually existing at
-compile-time. Adding some kind of dynamic support to an advanced
-static language like Scala would be a very interesting experiment.
-
-\subsection{Embedding High-Performance DSLs on the JVM}
-
-The whole performance section, with a focus on high-performance DSL
-code running in a JVM, provides a new view. Much of the JVM-DSL
-related research material that has been written is entirely focused
-around syntax-capabilities. The performance focus is also important
-and is one of the areas suggested for further research in the sections
-to follow.
-
-\subsection{Basic Elements of Image Processing DSL in Scala}
-
-The general idea of using Scala to build an image processing DSL also
-seems like an area where there is not much research existing from
-before.
+research-oriented setting. As described in the final section of this
+chapter, I feel that this thesis could be used as a basis for several
+new master-assignments, all narrowing down on parts that the wide
+scope did not allow detailing further in this report.
 
 \section{Suggestions for Future Work}
 \label{sec:futurework}
 
-As this thesis has a quite general of wide-spread focus, there are
+As this thesis has a quite general and wide-spread focus, there are
 several areas that could be worth researching further and in more
-details. This section is divided into subsections, each describing a
-separate area that deserves more attention. I believe several new
-master thesis can be written from each of the suggested areas
-below. The topics have been identified from working with embedded
-DSLs, but are presented as more general features.
+detail. This section is divided into subsections, each describing a
+separate area that deserves more attention. The topics have been
+identified from working with embedded DSLs, but are presented as more
+general features.
 
 \subsection{Implementing Package Templates in Scala}
 
 The package template mechanism described in\cite{axe09} by the
 \textsc{swat} project is an advanced object-oriented mechanism that
-could be implemented in Scala. Writing compiler plugins is an
-available and well documented feature (discussed in section
-\vref{sec:compilerplugins}) that could be utilized in this work.
+could be implemented in Scala. Some of the functionality presented in
+package templates is already present in Scala, in the form of traits,
+package objects and implicit conversions. But the dynamic capabilities
+enabled by the AOP mechanisms pointcut and advice are not matched, and
+would make an interesting task looking deeper into. Writing compiler
+plugins is an available and well documented feature (discussed in
+section \vref{sec:compilerplugins}) that could be utilized in this
+work.
 
 \subsection{Add Support for a Dynamic Type in a Statically Typed Language}
 
@@ -4287,7 +4335,8 @@ metaprogramming mechanisms. It would certainly be interesting to
 research further the possibilities of adding similar support to Scala
 or another statically typed language on the JVM. This task could be
 done in parallel with the dynamic type support described in the
-previous section.
+previous section, as dynamic typing is a key factor to some of the
+most exciting capabilities provided by dynamic metaprogramming.
 
 \subsection{Create Image Processing DSL in Clojure}
 
