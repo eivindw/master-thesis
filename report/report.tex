@@ -3483,24 +3483,77 @@ using regular static types instead. However, a thorough knowledge of
 the languages and their compilers is needed to know exactly what code
 will be optimized and how it should be written.
 
-No particular benchmarks have been performed in this thesis, but
-several existing ones have been studied to verify that the above
-statements about dynamic languages being slower are actually
-true\footnote{Several language benchmarks are published on the
-  Internet, an example:
-  \url{http://shootout.alioth.debian.org/}}. Most tests show that
-dynamic languages are significantly slower than the static ones. The
-languages studied in this thesis seem to come up in this order when
-compared:
+Several existing benchmarks have been studied to verify that the above
+statements about dynamic languages being slower are actually true. It
+is a problem that there are very few official benchmarks
+available. The ones studied here are published on various Internet
+sites\footnote{\url{http://shootout.alioth.debian.org/}}
+\footnote{\url{http://pegolon.wordpress.com/2008/01/24/quick-ruby-groovy-performance-comparison/}}
+\footnote{\url{http://www.mikeperham.com/2008/12/13/clojure-vs-ruby/}}
+\footnote{\url{http://www.fischerlaender.net/perl/poor-groovy-performance}}.
+Discussions seem to indicate that it is difficult to create objective
+benchmarks. JIT-compilation on the JVM makes the platform unreliable
+when running small standalone tests, and the techniques used to create
+examples vary. However, most tests show that dynamic languages are
+significantly slower than the static ones.
+
+A mini-benchmark was created with the languages studied in this
+thesis, trying to show that dynamic languages are indeed slower than
+the static ones. The code is extremely simple, just adding numbers in
+a loop of 10 million iterations. The implementations for the different
+languages are shown in figure \vref{fig:jvmbenchmark}. The goal was to
+make the implementations as similar as possible. This succeeded for
+all languages except Clojure, which does not really have variables
+that can be updated, that I simply made do the same number of
+additions with the \texttt{time} macro. So it is really difficult to
+say if the Clojure measurement is comparable or not. The Clojure
+example was also optimized with the \texttt{int} (type-hint)
+statements helping the compiler optimize the operation.
+
+\begin{figure}[t]
+  \subfigure[Java]{\lstinputlisting[nolol,language=java,linewidth=0.47\textwidth]{../examples/dyn-stat-performance/Add.java}}
+  \hspace{25pt}
+  \subfigure[Groovy]{\lstinputlisting[nolol,language=java,linewidth=0.47\textwidth]{../examples/dyn-stat-performance/GroovyAdd.groovy}}
+  \\
+  \subfigure[JRuby]{\lstinputlisting[nolol,language=ruby,linewidth=0.32\textwidth]{../examples/dyn-stat-performance/RubyAdd.rb}}
+  \hspace{28pt}
+  \subfigure[Scala]{\lstinputlisting[nolol,linewidth=0.34\textwidth]{../examples/dyn-stat-performance/ScalaAdd.scala}}
+  \hspace{25pt}
+  \subfigure[Clojure]{\lstinputlisting[nolol,language=lisp,linewidth=0.23\textwidth]{../examples/dyn-stat-performance/ClojureAdd.clj}}
+  \caption{Mini benchmark -- implementation in 5 languages.\label{fig:jvmbenchmark}}
+\end{figure}
+
+When running the code it seems that there are big differences between
+the dynamic and static languages. All code has been run directly from
+the command line, and without any kinds of optimizations. Running the
+code samples with a small bash-script gives the following output:
+
+\begin{lstlisting}[language=]
+Java time: 8ms
+Groovy time: 398ms
+JRuby time: 1071ms
+Scala time: 18ms
+Clojure "Elapsed time: 185.542 msecs"
+\end{lstlisting}
+
+The tests were run on a standard MacBook (2 GHz Intel Core 2 Duo
+processor, with 2 GB DDR3 memory). The languages studied in this
+thesis seem to come up in this order when compared, the version of the
+language used is shown in parenthesis:
 
 \begin{enumerate*}
-\item Java -- original bytecode is the fastest.
-\item Scala -- nearly as fast as Java in many cases.
-\item Clojure -- uncertain about this one, but the tight coupling to
-  Java suggest best performance of the three dynamic languages.
-\item JRuby -- significantly slower than Java, faster than Groovy.
-\item Groovy -- the slowest of all the languages studied.
+\item Java (1.6.0) -- original bytecode is the fastest.
+\item Scala (2.7.7) -- nearly as fast as Java.
+\item Clojure (1.1.0) -- uncertain about this one, but it seems a bit
+  faster than the other dynamic languages.
+\item Groovy (1.7.2) -- significantly slower than Java, faster than JRuby.
+\item JRuby (1.4.0) -- the slowest of all the languages studied.
 \end{enumerate*}
+
+Both my own and other results clearly show that the dynamic languages
+are much slower on the JVM. This might change, as mentioned in the
+beginning of this section, with new features on the JVM and more
+optimized compilers.
 
 \section{Code Efficiency}
 
