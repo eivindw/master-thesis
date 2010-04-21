@@ -2904,7 +2904,7 @@ statement. An example using the macro is shown in listing
 first provides a multiplication of two values (\texttt{x} and
 \texttt{y}), then the values are defined.
 
-\begin{lstlisting}[language=lisp,caption=Clojure macro reverting order of statements,label=lst:cljmacroreverse]
+\begin{lstlisting}[language=lisp,caption=Clojure macro reverting statements order.,label=lst:cljmacroreverse]
 (defmacro rev [& body]
   (let [rev# (reverse body)]
     `(do ~@rev#)))
@@ -3354,7 +3354,7 @@ abstraction to write a date to a file ("date.txt") without handling
 exceptions. This would be valuable in a DSL setting where we might
 want to hide ``complicated'' exception handling from the user.
 
-\begin{lstlisting}[caption=Scala control-abstraction function example.,label=lst:scalaloanpattern]
+\begin{lstlisting}[caption=Scala control-abstraction example.,label=lst:scalaloanpattern]
 // Control-abstraction function
 def withPrintWriter(file: File, op: PrintWriter => Unit) {
   val writer = new PrintWriter(file)
@@ -3561,7 +3561,8 @@ When performing the same operation a large number of times, as is the
 case with many algorithms for Image Processing, there are various
 implementation related things that need to be considered. In this
 section I summarize the lessons learned with regards to tuning the
-code for maximum performance.
+code for maximum performance. As such most of this section will be
+targeted towards Scala.
 
 \subsection{Choice of data structures}
 \label{sec:datastructures}
@@ -3587,6 +3588,24 @@ matrix I ended up testing a few different variants:
   calculate the element positions in the array, as shown in listing
   \vref{lst:2darray}.
 \end{itemize}
+
+Some very basic comparison measurements were made, comparing a matrix
+based on an array vs. a matrix based on list. The output is shown
+below. On a 200x1000 element matrix the list based matrix was nearly
+10 times slower than the equivalent array implementation when
+performing an anonymous structuring-element operation. When performing
+simple subtractions on the same structures the list implementation was
+a bit faster. However, it is quite clear that implementation of a
+matrix needs to be done using arrays to obtain anything close to
+acceptable performance for advanced operations.
+
+\begin{lstlisting}[language=]
+Matrix rows:200 cols:1000
+# Block "Array Matrix SeOp" completed, time taken: 778 ms (0.778 s)
+# Block "List Matrix SeOp" completed, time taken: 6540 ms (6.54 s)
+# Block "Array Matrix -" completed, time taken: 146 ms (0.146 s)
+# Block "List Matrix -" completed, time taken: 98 ms (0.098 s)
+\end{lstlisting}
 
 \begin{lstlisting}[float,caption={[Scala matrix list of lists]Matrix implementation based on List of Lists.},label=lst:listoflist]
 class Matrix[T](val elements: List[List[T]]) {
@@ -3619,7 +3638,8 @@ val m = new Matrix(2, Array(1, 2, 3, 4))
 
 Many Image Processing operations require some kind of calculation
 performed for every element in the underlying matrix. As an example,
-consider the neighbour average operation implemented using a general
+consider the neighbour average operation (explained in section
+\vref{sec:dslimageprocessing}) implemented using a general
 structuring-element operation show in listing
 \vref{lst:strelavg}. Having as efficient implementation of the
 \texttt{seOp} method as possible is critical for large matrices. So
@@ -3639,6 +3659,33 @@ matrix is essential. Scala provides two basic forms of iterating;
   gives a much more iterative implementation, as shown in listing
   \vref{lst:whileloop}.
 \end{itemize}
+
+A small test was constructed comparing three different
+implementations. The two implementations shown in the bullets above
+are compared, as well as a special version of the for-comprehension
+without yielding values. This version without yielding values still
+uses the for-comprehension to build the loop structure, but depends on
+imperative code with variables (like that of the while-loop) to keep
+track of the results. So in a way one could say that the three
+examples are showing steps in doing more or less functional style
+programming. The pure for-comprehension with yielding values is purely
+functional, with all values being constants. The while-loop is purely
+imperative, and the last one is something in between. The results
+below show clearly the performance cost of using
+for-comprehensions. Dropping the yield statements improves performance
+quite alot, but the while-loop implementation is by far the most
+efficient. This example was done on a 1000x1000 matrix. Increasing the
+matrix size also increased the differences in efficiency. From these
+results it is safe to conclude that the nice code you can write with
+the functional programming features of Scala might come at the price
+of efficiency.
+
+\begin{lstlisting}[language=]
+1000x1000 matrix
+# Block "While loops" completed, time taken: 1865 ms (1.865 s)
+# Block "For comprehensions w/o yield" completed, time taken: 3507 ms (3.507 s)
+# Block "For comprehensions" completed, time taken: 8090 ms (8.09 s)
+\end{lstlisting}
 
 \begin{lstlisting}[float,caption={[Scala matrix neighbour average]Implementing matrix neighbour average using a general structuring-element operation.},label=lst:strelavg]
 class Matrix ... {
@@ -3783,21 +3830,51 @@ classpath of the programming language in use.
 
 In the following sections we look at different mechanisms available
 from the Scala language to achieve better performance through
-utilization of the hardware resources available in the computer. The
-first two sections discuss mechanisms for concurrent programming on a
-multi-core/-processor environment, while the third section discuss a
-mechanism for parallelization using the GPU (Graphics Processing
-Unit).
+utilization of the hardware resources available in the computer. One
+of the claimed benefits using functional programming languages is that
+concurrent programming is made easier and more available. After a
+quick discussion on the Java mechanisms to support concurrent
+programming the different functional paradigms are explored.
 
 \subsection{Java Concurrency}
 
-TODO: write?
+Java supports various abstractions that can be used when working with
+concurrency, all dealing with threads in some way or
+another\footnote{\url{http://java.sun.com/docs/books/tutorial/essential/concurrency/}}.
+Several threads can exist within a process, sharing resources like
+memory and files. This opens up possibilities for more efficient
+programming, but also opens up for errors regarding access to shared
+resources. With multithreaded programming there are many problems that
+can occur, like deadlocks/livelocks (two threads blocking eachother
+forever), starvation (thread waits for resource that is never made
+available) or data inconsistencies (several threads change shared
+memory without synchronizing with eachother).
 
-\begin{itemize}
-\item Java multi-threading
-\item Java futures
-\item Java fork \& join in Java 7?
-\end{itemize}
+The main mechanisms provided in Java can be summerized in the
+following list:
+
+\begin{itemize*}
+\item \textbf{Synchronization} -- This is the lowest level of
+  abstraction. Access to resources is synchronized so that only one
+  thread can access it.
+\item \textbf{Immutable Objects} -- This is more a programming
+  style. If all programming is done in an immutable style, there will
+  be no need to synchronize access to them as they can not be changed
+  anyway.
+\item \textbf{Lock Objects} -- More specific locking possibilities
+  than using synchronization directly.
+\item \textbf{Executors} -- Allocate pools of threads which are
+  assigned tasks. This is a management facility, as synchronization
+  between threads still needs to be taken care of.
+\item \textbf{Concurrent Collections} -- Special collections that
+  support atomic operations to add, change or remove values.
+\item \textbf{Atomic Variables} -- Special objects that guarantee that
+  changes will be performed in atomic operations.
+\end{itemize*}
+
+The next sections will explore how Scala and Clojure, the two
+functional programming languages, expand the possibilities on the JVM
+when it comes to concurrent programming.
 
 \subsection{Actors API}
 \label{sec:actors}
@@ -3924,6 +4001,31 @@ val doubledList = parallel (
 ).asInstanceOf[MyList]
 \end{lstlisting}
 
+The general parallelization mechanism based on futures was used to
+implement concurrent support in the image processing DSL. The full
+code is too much to include here, but is available on GitHub. The
+\texttt{Matrix}
+trait\footnote{\url{http://github.com/eivindw/simage/blob/master/src/main/scala/simage/structs/Matrix.scala}}
+was made splittable, and could then be used to implement parallel
+operations on images. The code in listing \vref{lst:scalaparallelip}
+shows both a parallel and a non-parallel version of the average
+operation discussed several places earlier in this report. Worth
+noting is the very small code difference needed to make it
+parallel. In a way one could say that the parallel mechanism itself is
+a small DSL for enabling parallelization in Scala.
+
+\begin{lstlisting}[caption=Scala parallel image processing operations.,label=lst:scalaparallelip]
+trait Standard { this: GrayScaleImage =>
+  def avg(se: StrEl[Int]) = {
+    doParallelSeOp(data.seOpWin(se, (seq: Seq[Int]) => seq.reduceLeft(_ + _) / seq.size) _)
+  }
+
+  def avgSimple(se: StrEl[Int]) = {
+    Image(data.seOp(se, (seq) => seq.reduceLeft(_ + _) / seq.size))
+  }
+}
+\end{lstlisting}
+
 \subsection{Functional Concurrency with Clojure}
 
 An important factor in all functional programming is the strict
@@ -4038,7 +4140,12 @@ programs to make use of the possibilities offered by OpenCL --
 ScalaCL\footnote{\url{http://code.google.com/p/nativelibs4java/wiki/OpenCL}}.
 
 A simple example using ScalaCL to add two arrays of integers is shown
-in listing \vref{lst:scalacl}.
+in listing \vref{lst:scalacl}. The \texttt{IntsVar} type is a special
+multi-dimensional data-structure storing integers (similar structures
+are available for floats and other data types), and the \texttt{:=}
+operator provides special operations that can be performed on the
+datastructures. In the example two 5-dimensional arrays are created
+and added together.
 
 \begin{lstlisting}[float,caption=Add two arrays of integers using ScalaCL.,label=lst:scalacl]
 import scalacl.{Dim, Program}
@@ -4066,6 +4173,12 @@ prog !
 println("First: " + prog.output.get(0)) // Print 6
 \end{lstlisting}
 
+The ScalaCL library is still very new and limited in functionality,
+but works for small examples. It is a new and exiting domain that will
+be important to keep up with in the future. Programs leveraging the
+power of the GPU will have vastly more computing power available than
+those who do not.
+
 \section{JVM Tuning -- JVM Arguments}
 
 The JVM supports a wide variety of tuning/configuration options that
@@ -4089,10 +4202,6 @@ the JVM provides automatic garbage collection, setting memory limits
 directly control how often the garbage collector will run. Parameters
 are also available to control how the garbage collectors
 run\footnote{\url{http://java.sun.com/docs/hotspot/gc5.0/gc_tuning_5.html}}.
-
-\subsection{Configuring for Specific Programming Languages}
-
-TODO: write.
 
 \section{Summary}
 
