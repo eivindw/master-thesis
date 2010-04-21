@@ -893,7 +893,7 @@ val imgAvg = img.avg(se)
 saveImage(imgAvg, "/cell_avg.jpg")
 \end{lstlisting}
 
-TODO: Replace image with something I have taken myself.
+% TODO: Replace image with something I have taken myself.
 
 \begin{figure}
   \subfigure[Original]{\includegraphics[width=0.49\textwidth]{images/cell}}
@@ -1266,7 +1266,7 @@ create functions that can be combined in various ways to create
 embedded DSLs. Similar examples could be created in Clojure and Scala
 to run on the JVM.
 
-TODO: more about interfaces/ordering of method calls.
+% TODO: more about interfaces/ordering of method calls.
 
 \section{Static Methods/Singleton Objects}
 
@@ -1536,7 +1536,7 @@ implementation of the DSL relies on a number of language features
 expressions -- see sections below) in addition to the query syntax
 itself. An example is shown in listing \vref{lst:linq}.
 
-\begin{lstlisting}[language={[Sharp]C},caption=C\# LINQ example.,label=lst:linq]
+\begin{lstlisting}[float,language={[Sharp]C},caption=C\# LINQ example.,label=lst:linq]
 // Query syntax:
 var results = 
   from c in SomeCollection
@@ -1729,7 +1729,7 @@ times. In the example the class is combined with an implicit
 conversion from \texttt{Int}, to provide the handy DSL syntax
 \lstinline{2 times ... }.
 
-\lstinputlisting[float,caption={[Scala by-name parameter examples]Scala example combining implicit conversion with by-name parameter.},label=lst:scalabyname]{../examples/by-name-param/ByName.scala}
+\lstinputlisting[caption={[Scala by-name parameter examples]Scala example combining implicit conversion with by-name parameter.},label=lst:scalabyname]{../examples/by-name-param/ByName.scala}
 
 \section{Lambda Expressions/Anonymous Functions}
 
@@ -1749,7 +1749,7 @@ does not support anonymous functions, would result in something
 similar to the example in listing \vref{lst:javaforloop} using a
 \texttt{for-loop} combined with an \texttt{if-statement}.
 
-\begin{lstlisting}[language=java,caption=Java simple for-loop/if example,label=lst:javaforloop]
+\begin{lstlisting}[float,language=java,caption=Java simple for-loop/if example,label=lst:javaforloop]
 List<Integer> numbers = ... // Make instance of list of integers
 List<Integer> evenNumbers = new ArrayList<Integer>();
 
@@ -1925,7 +1925,7 @@ programming paradigms in how they provide metaprogramming, how it is
 used and what you can do with it. The next sub-sections describe some
 of these differences with examples.
 
-TODO: references on metaprogramming definitions?
+% TODO: references on metaprogramming definitions?
 
 \subsection{Metaprogramming in Static Languages}
 
@@ -1967,7 +1967,7 @@ address. This relationship is mapped using annotations. With these
 annotations in place, Hibernate will generate the mapping (SQL-code)
 needed to extract correct data from the database.
 
-\begin{lstlisting}[caption=Java metaprogramming with annotations.,label=lst:javameta,language=java]
+\begin{lstlisting}[float,caption=Java metaprogramming with annotations.,label=lst:javameta,language=java]
 @Entity
 public class Person {
   @Column(name="person_name", length=100)
@@ -2163,7 +2163,7 @@ re-implement with open classes/monkey patching the same example shown
 in section \vref{sec:implicit_type_conversion} with implicit type
 conversions, giving the integer class a new method \texttt{doubleIt}.
 
-\begin{lstlisting}[float,language=Ruby,caption={[Ruby ``monkey patching'' example]Ruby example showing ``monkey patching'' on open classes.},label=lst:rubymonkeypatch]
+\begin{lstlisting}[language=Ruby,caption={[Ruby ``monkey patching'' example]Ruby example showing ``monkey patching'' on open classes.},label=lst:rubymonkeypatch]
 class Integer
   def doubleIt
     self * 2
@@ -2183,7 +2183,7 @@ add the method directly to the \texttt{String} class. A small example,
 suggesting how the signature would look, is shown in listing
 \vref{lst:rubymonkeypatchshould}.
 
-\begin{lstlisting}[language=Ruby,caption=Ruby \texttt{should} method added to String.,label=lst:rubymonkeypatchshould]
+\begin{lstlisting}[float,language=Ruby,caption=Ruby \texttt{should} method added to String.,label=lst:rubymonkeypatchshould]
 class String
   def should(arg)
     ...
@@ -2406,23 +2406,25 @@ device having support for running Java applications.
 
 \subsection{Functional Composition}
 
+% TODO: referanse til polymorfisme
+
 Obtaining modular composition is typically dependent on some kind of
 dynamic dispatch mechanism, as the polymorphism described with the use
-of traits in the previous section (TODO: referanse til
-polymorfisme). Clojure, being a functional language, supports a
-different mechanism to obtain similar effects. This is called
-\textit{multimethods}\cite{hal09}, and is basically a kind of dynamic
-dispatch where you specify a function to perform the dispatch rather
-than only the type as is done in polymorphism. Instead of the type
-itself providing some implementation of an interface, the whole
-dispatch is done outside using the type as a parameter. A very basic
-example is shown in listing \vref{lst:cljmm}. The \texttt{my-print}
-function uses the \texttt{class} function, which returns the class of
-an object, to dispatch on the argument. So the method can be called on
-objects of type \texttt{String} or \texttt{Number} (supertype for
-numeric types in Java). This example does basically the same as
-object-oriented languages do with polymorphism, it dispatches based on
-the type of the argument.
+of traits in the previous section. Clojure, being a functional
+language, supports a different mechanism to obtain similar
+effects. This is called \textit{multimethods}\cite{hal09}, and is
+basically a kind of dynamic dispatch where you specify a function to
+perform the dispatch rather than only the type as is done in
+polymorphism. Instead of the type itself providing some implementation
+of an interface, the whole dispatch is done outside using the type as
+a parameter. A very basic example is shown in listing
+\vref{lst:cljmm}. The \texttt{my-print} function uses the
+\texttt{class} function, which returns the class of an object, to
+dispatch on the argument. So the method can be called on objects of
+type \texttt{String} or \texttt{Number} (supertype for numeric types
+in Java). This example does basically the same as object-oriented
+languages do with polymorphism, it dispatches based on the type of the
+argument.
 
 \begin{lstlisting}[float,language=lisp,caption=Clojure multi-method example,label=lst:cljmm]
 (defmulti my-print class)
