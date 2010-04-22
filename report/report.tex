@@ -504,7 +504,7 @@ There are also disadvantages with such a tight coupling to the JVM:
   dynamic dispatching of functions.
 \item \textbf{Generics implemented with erasure} -- This was a design
   choice when generics were implemented for the JVM, removing the type
-  information at compiletime. For example for Scala, a language which
+  information at compile-time. For example for Scala, a language which
   implements generics with erasure to be 100\% compliant with Java,
   this leads to some limitations\cite{emi06}.
 \end{itemize}
@@ -573,7 +573,7 @@ and comparison to the other languages. It is assumed that the reader
 has a certain knowledge about the Java language (because of its wide
 adoption in both academic and enterprise environments), and many Java
 concepts will only be described briefly or referred to without
-explanaition.
+explanation.
 
 Embedded DSLs can also be written in Java. A good background with
 examples can be found in\cite{fre06}, a paper describing the
@@ -1675,7 +1675,7 @@ Scala. A good example is found in the ScalaTest example shown in
 section \vref{sec:methodnames}, where the \texttt{String} type is used
 as if it had defined the methods \texttt{should} and \texttt{in}. The
 value returned from the \texttt{pop} operation on the stack being
-tested is treated the same way. The relavant parts of the example is
+tested is treated the same way. The relevant parts of the example is
 shown in the bottom part of listing
 \vref{lst:scalatestimplicitconversion}. What makes this possible is
 implicit conversions, shown in the upper part of the same code
@@ -2421,7 +2421,7 @@ a parameter. A very basic example is shown in listing
 \vref{lst:cljmm}. The \texttt{my-print} function uses the
 \texttt{class} function, which returns the class of an object, to
 dispatch on the argument. So the method can be called on objects of
-type \texttt{String} or \texttt{Number} (supertype for numeric types
+type \texttt{String} or \texttt{Number} (super-type for numeric types
 in Java). This example does basically the same as object-oriented
 languages do with polymorphism, it dispatches based on the type of the
 argument.
@@ -2555,12 +2555,12 @@ statistics, charting etc. The image processing DSL can also be
 combined with the charting DSL, to visualize properties with
 images. The example in listing \vref{lst:scalaipchart} loads an image,
 an uses the charting DSL to draw an area diagram of its data. An
-implicit conversion creates the dataset needed for the charting DSL,
+implicit conversion creates the data-set needed for the charting DSL,
 counting pixels of the various values, thus resulting in a sort of
 histogram over the various gray values found in the picture. Figure
 \vref{fig:iphistogram} shows two images together with their
 histograms, produced with the given code. As we can see, histograms
-are a useful visalization of the pixel distribution in an image. The
+are a useful visualization of the pixel distribution in an image. The
 low contrast of the first image is clearly shown with a narrow peak in
 the histogram, while the better contrast of the second image is shown
 with a more evenly distributed histogram.
@@ -2894,7 +2894,7 @@ a macro shown in listing \vref{lst:cljunless}.
   (list 'if expr nil form))
 \end{lstlisting}
 
-To further examplify the power Clojure macros bring when it comes to
+To further exemplify the power Clojure macros bring when it comes to
 extending the host language, consider the macro in listing
 \vref{lst:cljmacroreverse}. What it does is revert the order of the
 statements given as arguments. The \texttt{let} statement in the
@@ -3404,7 +3404,7 @@ will go through to the actual running/interpreting of the code. This
 difference might be important for some kinds of DSLs.
 
 The major difference between compiling or not is of course related to
-the typing dicipline of the language. The statically typed languages
+the typing discipline of the language. The statically typed languages
 are type-checked at compile-time, while the dynamically typed
 languages are type-checked at runtime. One aspect with this that is
 interesting is that many projects using dynamically typed languages
@@ -3784,7 +3784,7 @@ the syntax. Every value is an object (even in Clojure, being
 implemented on the JVM). The Scala compiler will try to optimize where
 possible, as stated in\cite{ode08}: \textit{The Scala compiler uses
   Java arrays, primitive types, and native arithmetic where possible
-  in the compiled code.} However, it is not allways obvious when this
+  in the compiled code.} However, it is not always obvious when this
 optimization will be performed. Typically will generic collections
 have some problems, even though the type parameter used is a primitive
 like \texttt{Int}. Scala 2.8 will introduce some more features to help
@@ -3800,7 +3800,7 @@ for \texttt{Int} and one for \texttt{Double}:
 class MyList[@specialized(Int, Double) T] ...
 \end{lstlisting}
 
-Clojure also has some support for specifying primitive types, dispite
+Clojure also has some support for specifying primitive types, despite
 the dynamic typing used throughout the language. This is called giving
 the compiler ``type hints''\cite{hal09}, and can be used for
 optimization. A very simple example is shown adding two integers,
@@ -3820,7 +3820,7 @@ used with type hints that will make the code much more efficient:
 
 With code that requires maximum performance on numerical calculations
 it is very important to be aware of these mechanisms. A good thing is
-that one can allways write code without thinking about performance
+that one can always write code without thinking about performance
 first, and then add specializations, type hints or other mechanisms
 whenever you see a need to improve the performance. Another approach
 that could be done is to write the performance-critical code parts in
@@ -3846,13 +3846,13 @@ another\footnote{\url{http://java.sun.com/docs/books/tutorial/essential/concurre
 Several threads can exist within a process, sharing resources like
 memory and files. This opens up possibilities for more efficient
 programming, but also opens up for errors regarding access to shared
-resources. With multithreaded programming there are many problems that
-can occur, like deadlocks/livelocks (two threads blocking eachother
+resources. With multi-threaded programming there are many problems that
+can occur, like deadlocks/livelocks (two threads blocking each other
 forever), starvation (thread waits for resource that is never made
 available) or data inconsistencies (several threads change shared
-memory without synchronizing with eachother).
+memory without synchronizing with each other).
 
-The main mechanisms provided in Java can be summerized in the
+The main mechanisms provided in Java can be summarized in the
 following list:
 
 \begin{itemize*}
@@ -4146,7 +4146,7 @@ in listing \vref{lst:scalacl}. The \texttt{IntsVar} type is a special
 multi-dimensional data-structure storing integers (similar structures
 are available for floats and other data types), and the \texttt{:=}
 operator provides special operations that can be performed on the
-datastructures. In the example two 5-dimensional arrays are created
+data-structures. In the example two 5-dimensional arrays are created
 and added together.
 
 \begin{lstlisting}[float,caption=Add two arrays of integers using ScalaCL.,label=lst:scalacl]
@@ -4299,7 +4299,7 @@ Mixin-composition is a powerful mechanism enabling code reuse and
 modular design in a more precise way than in Java which only supports
 polymorphism through interfaces. All the object-oriented languages
 (Ruby, Groovy and Scala) support some form of mixin-composition. Most
-thouroughly studied was the traits in Scala, which were used to build
+thoroughly studied was the traits in Scala, which were used to build
 the DSL for image processing.
 
 Clojure supports multimethods. A mechanism enabling a much more
@@ -4324,7 +4324,7 @@ existing functionality. In addition, ``pass by-name'' parameters
 combined with functional style programming and member imports is a
 good way to write functions appearing as new control structures.
 
-The dynamic languages support mofifications of classes at
+The dynamic languages support modifications of classes at
 runtime. This includes both removing methods from, and adding methods
 to, existing classes, even core Java classes marked as \texttt{final}.
 
@@ -4577,4 +4577,17 @@ interpreter consoles ++) on top.
 % LocalWords:  rubyundefmethod hei cljredefcore cljbinding noprint buf cljjava
 % LocalWords:  dynlangprune invokedynamic linewidth scalastatsdsluse Kojo IDE
 % LocalWords:  kojoss refactoring effectivity IDEs intellijss jps jstat jstack
-% LocalWords:  javap unix sbt leiningen futurework packagetemplates
+% LocalWords:  javap unix sbt leiningen futurework packagetemplates Debasish
+% LocalWords:  Ghosh groovyhello nolol matlabimgproc scalaipsyn scalacompobj
+% LocalWords:  scalaimgtraits javahibernate getMailingAddress getOrders mixins
+% LocalWords:  ManyToMany getRoles scalaimgsingleton javastaticimport rubyparam
+% LocalWords:  cljrelalg rubyvariabledefs scalabyname DoIntTimes javaforloop
+% LocalWords:  scalaipanonfunc cljmacro nanoTime rubymonkeypatch scalaipchart
+% LocalWords:  rubymonkeypatchshould rubymethodmissing iphistogram dataset mue
+% LocalWords:  DefaultCategoryDataset createShowWindow ChartFactory urlFor url
+% LocalWords:  createAreaChart PlotOrientation bynameparams cljmacroreverse txt
+% LocalWords:  cljmacroreverseuse scalaexception MalformedURLException JIT GHz
+% LocalWords:  rubyexception cljexception scalaloanpattern withPrintWriter DDR
+% LocalWords:  PrintWriter cljwithopen Fjeldberg jvmbenchmark MacBook unboxing
+% LocalWords:  autoboxing livelocks scalaparallelip doParallelSeOp seOpWin
+% LocalWords:  avgSimple
