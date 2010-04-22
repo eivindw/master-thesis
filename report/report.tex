@@ -355,7 +355,9 @@ queries), CSS (domain of HTML styles) and XML (domain of data
 exchange). An embedded DSL on the other hand, is created in a host
 language. Various capabilities in the host language are exploited to
 create interfaces that look and behave almost like a particular
-programming language.
+programming language. There are also research contributions working on
+the border between external and embedded DSL, combining elements from
+both, an example shown in\cite{bra04}.
 
 In this thesis I have identified different requirements of embedded
 DSLs running on the Java Virtual Machine (JVM), and looked at how
@@ -692,10 +694,10 @@ youngest and possibly the least mature language included in my work.
 
 The reason I have looked at Clojure is the amount of embedded DSL
 papers written using functional programming languages (for
-example\cite{hud96} and \cite{hud98}), making Clojure an interesting
-language with respect to embedding DSLs on the JVM. Below is an
-example of the ``hello world'' function in Clojure, as well as an
-example implementation of the Fibonacci function (a more common
+example\cite{hud96},\cite{hud98} and\cite{atk09}), making Clojure an
+interesting language with respect to embedding DSLs on the JVM. Below
+is an example of the ``hello world'' function in Clojure, as well as
+an example implementation of the Fibonacci function (a more common
 ``hello world'' in the functional world):
 
 \begin{lstlisting}[language=lisp,caption=Clojure Fibonacci example.,label=lst:clojurefibonacci]
@@ -2104,7 +2106,9 @@ metaprogramming given earlier. The Clojure macros are processed in two
 steps. First the macro expands/executes, and substitutes the result
 back into the program. This is called \textit{macro expansion
   time}. Then it continues with the normal \textit{compile
-  time}\cite{hal09}.
+  time}\cite{hal09}. Clojure macros provide similar DSL capabilities
+to those achieved with ``C++ Template Metaprogramming'', described
+in\cite{cza04}.
 
 The code in listing \vref{lst:cljmacro} shows a Clojure macro example
 (from\cite{hal09}). The \texttt{bench} macro is a simple benchmarking
@@ -4014,7 +4018,10 @@ shows both a parallel and a non-parallel version of the average
 operation discussed several places earlier in this report. Worth
 noting is the very small code difference needed to make it
 parallel. In a way one could say that the parallel mechanism itself is
-a small DSL for enabling parallelization in Scala.
+a small DSL for enabling parallelization in Scala. The next version of
+Java will most likely include a similar mechanism to that developed
+here with Scala, namely the Fork/Join framework described
+in\cite{lea00}.
 
 \begin{lstlisting}[caption=Scala parallel image processing operations.,label=lst:scalaparallelip]
 trait Standard { this: GrayScaleImage =>
