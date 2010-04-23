@@ -111,22 +111,18 @@
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-The Java Virtual Machine is an extremely popular software
-platform\footnote{According to Sun there are over 4.5 billion
-  JVM-enabled devices in the world --
-  \url{http://www.java.com/en/about/}} capable of running programs in
-the intermediate language called Java bytecode. The JVM supports a
-wide range of languages\footnote{Wikipedia: List of JVM languages --
-  \url{http://en.wikipedia.org/wiki/List_of_JVM_languages}} with
-different typing, programming paradigm and compilation approach. This
-thesis examines some of the most popular of these languages, with a
-focus on embedding domain-specific languages. It is demonstrated how
-various languages provide radically different possibilities, with
-regard to syntax, composition, usage and performance. Examples are
-given showing what programming languages are suited to particular
-domain-specific tasks, and further research is suggested in the form
-of new language features and new ways to utilize existing language
-features.
+The Java Virtual Machine is an extremely popular software platform
+capable of running programs in the intermediate language called Java
+bytecode. The JVM supports a wide range of languages with different
+approach to typing, programming paradigm and compilation. This thesis
+examines some of the most popular of these languages, with a focus on
+their support for embedding domain-specific languages. It is
+demonstrated how various languages provide radically different
+possibilities, with regard to syntax, composition, usage and
+performance. Examples are given showing what programming languages are
+suited to particular domain-specific tasks, and further research is
+suggested in the form of new language features and new ways to utilize
+existing language features.
 
 \cleardoublepage
 \addcontentsline{toc}{chapter}{Contents}
@@ -150,13 +146,12 @@ features.
 \chapter*{Preface}
 \addcontentsline{toc}{chapter}{Preface}
 
-This is a master-thesis of 60 credits\footnote{Prescribed to one year
-  of full time study.} in the field of Informatics. It was written for
-the Object-orientation, Modelling, and Languages research
-group\footnote{OMS research group website --
-  \url{http://www.ifi.uio.no/research/groups/oms/}} at the Department
-of Informatics, Faculty of Mathematics and Natural Sciences,
-University of Oslo.
+This is a master-thesis of 60 credits in the field of Informatics. It
+was supervised by the Object-orientation, Modelling, and Languages
+research
+group\footnote{\url{http://www.ifi.uio.no/research/groups/oms/}} at
+the Department of Informatics, Faculty of Mathematics and Natural
+Sciences, University of Oslo.
 
 I want to thank my wonderful wife Anniken for the support and
 understanding she has shown during this process.
@@ -185,10 +180,10 @@ May 2010
 \label{chp:introduction}
 }\pagestyle{fancy}
 
-The goal of this chapter is to describe the problem at hand as
-detailed as possible. It has taken me a long time to clarify and
-understand the problem, and as such I think it is justified to spend
-quite a lot of time and space describing the background and why it is
+The goal of this chapter is to describe the problem as detailed as
+possible. It has taken me a long time to clarify and understand the
+problem, and as such I think it is justified to spend quite a lot of
+time and space describing the background and why it is
 important. First the problem formulation is given, with a brief
 background and motivational description. The rest of the chapter
 describes the method followed, and gives more detailed explanations of
@@ -213,15 +208,15 @@ of the report is structured.
 
 A domain-specific language (DSL\footnote{Also known as
   problem-oriented or special-purpose programming language in computer
-  literature.}) is a programming language dedicated to a particular
-problem domain. This thesis looks at embedding such DSLs into existing
-general-purpose programming languages, with a focus on several
-categories of languages with different features, and how these
-features are used. The scope is limited to the platform offered by the
-Java Virtual Machine, and a set of programming languages (described
-further in chapter \vref{chp:examples}). A more detailed definition of
-domain-specific languages, with a discussion around scoping and
-requirements, is given in section \vref{sec:dsls}.
+  literature.}) is a programming (or modeling) language dedicated to a
+particular problem domain. This thesis looks at embedding programming
+DSLs into existing general-purpose programming languages, with a focus
+on several categories of languages with different features, and how
+these features are used. The scope is limited to the platform offered
+by the Java Virtual Machine, and a set of programming languages
+(described further in chapter \vref{chp:examples}). A more detailed
+definition of domain-specific languages, with a discussion around
+scoping and requirements, is given in section \vref{sec:dsls}.
 
 \subsection{Motivation}
 \label{sec:motivation}
@@ -290,7 +285,7 @@ try to critically conclude the work at the end:
 
 The process is illustrated in figure \vref{fig:method}. Not all the
 phases are relevant for all requirements investigated. As shown with
-the dotted lines, a conclusion might be deducted directly from theory,
+the dotted lines, a conclusion may be deducted directly from theory,
 and the measurement phase is not necessarily valid for all
 requirements. Note also that the method is used iteratively, in
 cycles, after evaluation of the results new or modified requirements
@@ -381,9 +376,9 @@ DSL? What kind of syntax qualifies for DSL use? Answering questions
 like these is difficult, and in my opinion not contributing to a
 fruitful discussion. I have tried to turn my focus toward interesting
 capabilities different languages have, and the problems they solve. As
-such some of the examples I will be using might not qualify as
-embedded DSLs, but merely as libraries/interfaces with nontraditional,
-or in other ways interesting, use of the host language.
+such some of the examples I will be using may not qualify as embedded
+DSLs, but merely as libraries/interfaces with nontraditional, or in
+other ways interesting, use of the host language.
 
 Martin Fowler and Eric Evans have defined the name ``fluent
 interface''\cite{fow05} to describe interfaces which provide a more
@@ -474,7 +469,7 @@ The goal platform of this thesis is the Java Virtual Machine
 programming language has made the JVM one of the most widespread
 multi-language platforms in the world. At the same time the Java
 language itself is getting old, and many other languages have been
-written (or ported) for the JVM. So this thesis looks at how some of
+created (or ported) for the JVM. So this thesis looks at how some of
 these languages provide various capabilities when building embedded
 DSLs. I have tried to look at languages that differ in many
 categories, as typing, paradigm or execution model. The languages
@@ -484,8 +479,8 @@ The tight relationship between the programming languages and the JVM
 has a number of advantages:
 
 \begin{itemize}
-\item \textbf{Cross-platform distribution} -- Code written in any of
-  the languages can be run on any platform supporting JVM 1.5 or
+\item \textbf{Cross-platform distribution} -- Code implemented in any
+  of the languages can be run on any platform supporting JVM 1.5 or
   newer.
 \item \textbf{Stability and standards} -- The JVM is a stable platform
   with good support for internationalization (Unicode support ++) and
@@ -565,19 +560,18 @@ sections.
 \subsection{Java}
 
 Java is naturally the most common programming language used on the
-JVM. It is a statically typed and compiled language supporting the
-object-oriented paradigm. It provides the baseline for the work, and
-will be used as example language where applicable. Much of the work
-however has gone in showing how other languages provide features
-useful when building DSLs, features not currently found in the Java
-language itself. So Java will also be used quite heavily for reference
-and comparison to the other languages. It is assumed that the reader
-has a certain knowledge about the Java language (because of its wide
-adoption in both academic and enterprise environments), and many Java
-concepts will only be described briefly or referred to without
-explanation.
+JVM. It is a statically typed and compiled object-oriented
+language. It provides the baseline for the work, and will be used as
+example language where applicable. Much of the work however has gone
+in showing how other languages provide features useful when building
+DSLs, features not currently found in the Java language itself. So
+Java will also be used quite heavily for reference and comparison to
+the other languages. It is assumed that the reader has a certain
+knowledge about the Java language (because of its wide adoption in
+both academic and enterprise environments), and many Java concepts
+will only be described briefly or referred to without explanation.
 
-Embedded DSLs can also be written in Java. A good background with
+Embedded DSLs can also be implemented in Java. A good background with
 examples can be found in\cite{fre06}, a paper describing the
 development of the testing framework \texttt{jMock} as an embedded DSL
 in Java. The techniques described in\cite{fre06} can be seen as a sort
@@ -601,10 +595,10 @@ void testAcceptsOfferIfLowPrice() {
 
 \subsection{Groovy}
 
-Groovy is a dynamically typed and interpreted (or compiled) language
-supporting the object-oriented paradigm. It is tightly integrated with
-Java and can leverage existing Java libraries directly. An example of
-a simple object-oriented ``Hello World!'' program is shown in listing
+Groovy is a dynamically typed and interpreted (or compiled)
+object-oriented language. It is tightly integrated with Java and can
+leverage existing Java libraries directly. An example of a simple
+object-oriented ``Hello World!'' program is shown in listing
 \vref{lst:groovyhello}.
 
 \begin{lstlisting}[language=java,caption=Groovy ``hello world'' example.,label=lst:groovyhello]
@@ -634,12 +628,11 @@ syntax. All Java classes can be imported and used directly in Groovy.
 
 \subsection{Ruby/JRuby}
 
-Ruby is a dynamically typed and interpreted language supporting the
-object-oriented paradigm. JRuby is a Java implementation of the Ruby
-language on the JVM, thus acting as an interpreter for Ruby on the
-JVM. The latest versions of JRuby also support some notions of
-just-in-time compilation, as well as regular ahead-of-time
-compilation.
+Ruby is a dynamically typed and interpreted object-oriented
+language. JRuby is a Java implementation of the Ruby language on the
+JVM, thus acting as an interpreter for Ruby on the JVM. The latest
+versions of JRuby also support some notions of just-in-time
+compilation, as well as regular ahead-of-time compilation.
 
 The main reason for my inclusion of Ruby in this thesis is the ``Ruby
 on Rails'' framework\cite{rails}, an extraordinary DSL running on the
@@ -686,11 +679,11 @@ frame.setVisible(true)
 
 \subsection{Clojure}
 
-Clojure is a dynamically typed and compiled language supporting the
-functional programming paradigm. It is a modern dialect of the Lisp
-programming language compiling to Java bytecode. It is the only
-language not supporting object-orientation directly, and also the
-youngest and possibly the least mature language included in my work.
+Clojure is a dynamically typed and compiled functional language. It is
+a modern dialect of the Lisp programming language compiling to Java
+bytecode. It is the only language not supporting object-orientation
+directly, and also the youngest and possibly the least mature language
+included in my work.
 
 The reason I have looked at Clojure is the amount of embedded DSL
 papers written using functional programming languages (for
@@ -713,8 +706,8 @@ an example implementation of the Fibonacci function (a more common
 )
 \end{lstlisting}
 
-Clojure has big collection of features not found in any of the other
-languages, many which will be explained in more detail where
+Clojure has a big collection of features not found in any of the other
+languages, many of which will be explained in more detail where
 relevant. In Lisp (and thus in Clojure), the most important fact is
 the simplicity of the basics in the language. There are very few
 special forms requiring specific syntax. All code is organized in
@@ -729,7 +722,7 @@ such as multimethods and built-in immutable data structures.
 
 Clojure is the language studied that has the least in common with
 Java, with regards to syntax and appearance. Many people not being
-used to the syntax of Lisp might find Clojure difficult to read, with
+used to the syntax of Lisp may find Clojure difficult to read, with
 all the parenthesis being a central part of the structure. Figure
 \vref{fig:cljjava} shows a basic example with a variable, function and
 some output, implemented side by side in Clojure and Java. In many
@@ -740,7 +733,9 @@ the definition of the variable in Clojure is the same as the
 definition of the function, and that the comparison operator used in
 the if statement in Java is also just a regular function in the same
 form as the definitions in Clojure. Once you get used to the Clojure
-way, Java might not feel so consistent anymore.
+way, Java may not feel so consistent anymore.
+
+% TODO: explain (fn x y ..)
 
 \begin{figure}[t]
   \subfigure[Clojure]{\lstinputlisting[nolol,language=lisp,linewidth=0.48\textwidth]{../examples/clj-java/ex.clj}}
@@ -789,8 +784,8 @@ Scala is a relatively new language (first version released
 Java Virtual Machine (JVM). The main reason for choosing Scala in this
 thesis is the combination of powerful programming structures (both
 object-oriented and functional) with the cross-platform and wide
-adoption of the JVM. Code written in Scala can be run on any JVM
-version 1.5 or newer, and can utilize any library written in Java. It
+adoption of the JVM. Code implemented in Scala can be run on any JVM
+version 1.5 or newer, and can utilize any library implemented in Java. It
 can thus be seen as a ``best of both worlds'' language. For this
 reason Scala has been used as the main language in this thesis, and as
 example language when implementing the DSL examples.
@@ -835,11 +830,11 @@ illustrated in figure \vref{fig:scalajava}.
     Java.\label{fig:scalajava}}
 \end{figure}
 
-\section{Examples Implemented}
+\section{Examples}
 
-This section describes the main examples written and researched in the
-thesis. The DSLs are described, and details about implementation and
-key features given. Some source code being central in the
+This section describes the main examples implemented and researched in
+the thesis. The DSLs are described, and details about implementation
+and key features given. Some source code being central in the
 implementation is shown in the text. Full source code for all the
 examples can be downloaded from my repositories at
 GitHub\footnote{GitHub repositories website --
@@ -944,7 +939,7 @@ To create the structuring element, the \texttt{StrEl} trait has a
 ``companion object''\footnote{A companion object is a singleton
   \texttt{object} having the same name as an associated \texttt{trait}
   or \texttt{class}\cite{ode08}.} with an \texttt{apply} method
-(described in section \vref{sec:applymethod}. This gives a very
+(described in section \vref{sec:applymethod}). This gives a very
 compact syntax, combined with the import of the available structuring
 element types as shown above. An example is shown in listing
 \vref{lst:scalacompobj}.
@@ -961,7 +956,7 @@ val se = StrEl(Square, 3)
 \end{lstlisting}
 
 Using traits\footnote{Traits are an object-oriented mechanism allowing
-  mixin-composition of objects. This can be seen as a form of basic
+  mixin-composition with classes. This can be seen as a form of basic
   multiple inheritance.}, we are able to compose image objects with
 the operations we want. The operations are implemented in separate
 traits which are mixed in with the image on creation. This is using
@@ -1063,13 +1058,13 @@ visualizing statistical distributions and many other uses.
 
 The DSL created for charting is also a minimal one, as with the
 statistics DSL. It provides the third and last important piece when
-building a full DSL environment for image analysis. The DSL is written
-in Scala (as the two DSLs described in previous sections), and
-implements the charting functionality using the Java library
+building a full DSL environment for image analysis. The DSL is
+implemented in Scala (as the two DSLs described in previous sections),
+and implements the charting functionality using the Java library
 JFreeChart\footnote{\url{http://www.jfree.org/jfreechart} -- Open
-  source (LGPL licensed) charting library written in Java.}. It shows
+  source (LGPL licensed) charting library implemented in Java.}. It shows
 how an existing Java library can be directly used as implementation
-for a DSL written in the other languages.
+for a DSL implemented in the other languages.
 
 An example creating a basic pie chart is shown in listing
 \vref{lst:chartdsl}, resulting in the chart shown in figure
@@ -1095,7 +1090,7 @@ createPieChart("Pie Chart",
 \section{Other Examples Used}
 
 This section describes some other DSLs used as examples. They have not
-been written as part of the work, but are used as examples as they are
+been implemented as part of the work, but are used as examples as they are
 popular Open Source frameworks being used in many enterprise
 projects. They also exercise some exciting features in the host
 languages to obtain some of the features that make the suited for the
@@ -1139,7 +1134,7 @@ end
 \subsection{Hibernate}
 
 Hibernate is a so called object-relational-mapping (ORM) framework
-written in Java. It provides much the same functionality as the
+implemented in Java. It provides much the same functionality as the
 \texttt{ActiveRecord} mechanism described in the previous section, but
 implemented in Java using annotations. In listing
 \vref{lst:javahibernate}, the \texttt{Client} class from the Ruby on
@@ -1172,9 +1167,9 @@ embedded DSLs on the JVM. In this thesis jMock\footnote{jMock -- A
   \url{http://www.jmock.org/}} and ScalaTest\footnote{ScalaTest --
   Open-source testing framework for Scala:
   \url{http://www.scalatest.org/}} have been used as examples. jMock
-is written in Java, and is a framework providing functionality for
+is implemented in Java, and is a framework providing functionality for
 mocking dependencies so that classes can be tested in
-isolation. ScalaTest is written in Scala, and is a unit testing
+isolation. ScalaTest is implemented in Scala, and is a unit testing
 framework that facilitates several different styles of testing. Both
 jMock and ScalaTest are excellent examples of frameworks taking full
 advantage of their respective host languages.
@@ -1330,14 +1325,14 @@ val lineElement = new StrEl(HLine, 5)
 \section{Member Imports}
 
 With member imports it is possible to make members of a class
-available directly in the code that is being written. Member imports
-is a very useful mechanism in object-oriented languages for creating
-concise syntax, and thus in the embedding of DSLs. Java supports
-importing static members of classes, both methods and constants. Using
-static member import the Java sorting example from previous section
-can be written as the code in listing \vref{lst:javastaticimport},
-omitting the name of the \texttt{Collections} class where the
-\texttt{sort} method is used.
+available directly in the code that is being implemented. Member
+imports is a very useful mechanism in object-oriented languages for
+creating concise syntax, and thus in the embedding of DSLs. Java
+supports importing static members of classes, both methods and
+constants. Using static member import the Java sorting example from
+previous section can be implemented as the code in listing
+\vref{lst:javastaticimport}, omitting the name of the
+\texttt{Collections} class where the \texttt{sort} method is used.
 
 \begin{lstlisting}[language=java,caption=Java static member import example.,label=lst:javastaticimport]
 import static java.util.Collections.*; // Import all static members of the Collections class
@@ -1451,7 +1446,7 @@ class StackSpec extends FlatSpec with ShouldMatchers {
 }
 \end{lstlisting}
 
-In the dynamic language Ruby they have a similar mechanism to
+The dynamic language Ruby has a mechanism similar to that found in
 Scala. Here you are allowed to leave the parentheses surrounding the
 parameter(s) out, but not the dot in front of the method name. In
 addition it is a common idiom in Ruby to append method names with a
@@ -1615,11 +1610,12 @@ This makes the code similar to that of a dynamically typed
 language. An advantage when working with embedded DSLs in dynamic
 languages is that there is no need to explicitly write the types. With
 Ruby or Groovy the first two definitions in the example above could
-simply be written as in listing \vref{lst:rubyvariabledefs} (not even
-needing the \texttt{val} used in Scala). Type errors would, however,
-not be discovered until runtime. With Scala the type errors will still
-be captured at compile-time, so type inference is a way to write more
-concise code without loosing the safety-net provided by the compiler.
+simply be implemented as in listing \vref{lst:rubyvariabledefs} (not
+even needing the \texttt{val} used in Scala). Type errors would,
+however, not be discovered until runtime. With Scala the type errors
+will still be captured at compile-time, so type inference is a way to
+write more concise code without loosing the safety-net provided by the
+compiler.
 
 \begin{lstlisting}[language=ruby,caption=Ruby/Groovy variable definitions.,label=lst:rubyvariabledefs]
 i = 42
@@ -1719,7 +1715,7 @@ In Scala, parameters to methods can be defined as by-value or
 by-name. By-value is the default, and means that the parameter is
 evaluated before the method is invoked. By-name is the contrast to
 by-value, and means that the evaluation of the parameter happens every
-time the method implementation refers to the name.
+time the method implementation refers to the parameter.
 
 An example where this feature is used is shown in listing
 \vref{lst:scalabyname}. The method \texttt{times} in the class
@@ -1789,16 +1785,17 @@ structuring element. The signature looks like this:
 def seOp(se: StrEl[Int], op: (Seq[T]) => T): Matrix[T]
 \end{lstlisting}
 
-It might look cryptic at first, but is really quite simple. The
-first parameter is a structuring element (typically spanning a small
-3x3 section of the matrix), and the second is a function converting a
-sequence of values to one value. The structuring element is passed
-over the matrix as a window, and the operation is run for all values
-covered by the element. The yielded value is set as a new value in a
-new matrix, which is the final return value of the whole function. In
-the image processing DSL based on the Matrix DSL this functionality is
-used to implement a number of operations, using anonymous
-functions. This is shown in listing \vref{lst:scalaanonfunc}.
+It may look cryptic at first, but is really quite simple. The first
+parameter (\texttt{se}) is a structuring element (typically spanning a
+small 3x3 section of the matrix), and the second (\texttt{op}) is a
+function converting a sequence of values to one value. The structuring
+element is passed over the matrix as a window, and the operation is
+run for all values covered by the element. The yielded value is set as
+a new value in a new matrix, which is the final return value of the
+whole function. In the image processing DSL based on the Matrix DSL
+this functionality is used to implement a number of operations, using
+anonymous functions. This is shown in listing
+\vref{lst:scalaanonfunc}.
 
 \begin{lstlisting}[float,caption=Scala anonymous function example.,label=lst:scalaanonfunc]
 val matrix: Matrix[Int] // Internal image representation as a matrix
@@ -1910,10 +1907,10 @@ val person = new Person { name = "John"; age = 26 }
 In embedded DSLs this can be useful when building query-like syntaxes
 like that shown for LINQ. If the properties used to construct the
 objects vary, it would mean a lot of extra code if special
-constructors need to be written for every combination of
-properties. Just the two properties \texttt{name} and \texttt{age}
-used in the above examples would result in 4 different constructors
-(none, one x 2 or both properties given).
+constructors need to be made for every combination of properties. Just
+the two properties \texttt{name} and \texttt{age} used in the above
+examples would result in 4 different constructors (none, one x 2 or
+both properties given).
 
 \section{Metaprogramming}
 \label{sec:metaprogramming}
@@ -2086,7 +2083,7 @@ fashion in a static language would require some intermediate step of
 explicit code-generation or compiling before calling the generated
 methods. I think this is an extremely big differentiator when it comes
 to certain kind of DSLs and programming language paradigms. A DSL like
-Rails could never have been written in a static language.
+Rails could never have been implemented in a static language.
 
 \subsection{Functional Metaprogramming}
 
@@ -2094,9 +2091,9 @@ In Clojure, the only ``pure'' functional language used in this thesis,
 there is no big separation between code and data. It is a
 ``homoiconic'' language, meaning that Clojure code is composed of
 Clojure data\cite{hal09}. As such the whole concept of metaprogramming
-is really just an integrated part of the language, and not necessarily
-seen as a separate concept (as in the other languages). The macro
-mechanism in Clojure is the key to this.
+is an integrated part of the language, and not necessarily seen as a
+separate concept (as in the other languages). The macro mechanism in
+Clojure is the key to this.
 
 Clojure has a programmatic macro system which allows the compiler to
 be extended by user
@@ -2121,9 +2118,9 @@ and \texttt{~} are used to quote and un-quote symbols in the macro
 expansion. It finishes off by returning the result together with the
 computed time difference. It may not look that impressive, but it is a
 powerful mechanism that will not find anything similar to in any of
-the other languages. In fact, much of the Clojure library is written
-as macros, even the \texttt{defmacro} definition used to define macros
-is itself a macro.
+the other languages. In fact, much of the Clojure library is
+implemented as macros, even the \texttt{defmacro} definition used to
+define macros is itself a macro.
 
 \begin{lstlisting}[float,language=lisp,caption=Simple Clojure macro example.,label=lst:cljmacro]
 (defmacro bench [expr]
@@ -2205,9 +2202,9 @@ creation.
 
 In Ruby there is a notion of custom dispatch behaviour that can be
 controlled by the programmer. The base class, that all other classes
-extend from, has a \texttt{method\_missing} method that is called by
-the dispatcher as a last resort when no other method is found to
-respond to a message. The default behaviour is to throw a
+extend, has a \texttt{method\_missing} method that is called by the
+dispatcher as a last resort when no other method is found to respond
+to a message. The default behaviour is to throw a
 \texttt{NoMethodError} (similar to what would happen in Java or other
 languages), but this can be overridden by extending classes.
 
@@ -2334,6 +2331,8 @@ mixin-classes, as if they were subclassing the base class. This is
 different from the Scala traits example, where self-type annotation
 has to be used if the traits need to access any members of the classes
 they are mixed in with.
+
+% TODO: explain self-type annotation with reference
 
 \begin{lstlisting}[float,caption=Groovy mixing composition example.,label=lst:groovymixins,language=java]
 class Base {
@@ -2466,11 +2465,10 @@ called \texttt{prefer-method}, that explicitly specifies which
 implementation should be used when several qualify based on the
 dispatch.
 
-All in all the multimethods mechanism can be seen as an extremely
-powerful way to customize the way functions are dynamically dispatched
-in a DSL. It is a complicated mechanism that probably should be used
-with care, but the possibilities it provides are not found in any of
-the other languages studied in this thesis.
+The multimethods mechanism is a way to customize the way functions are
+dynamically dispatched in a DSL. It is a complicated mechanism that
+probably should be used with care, but the possibilities it provides
+are not found in any of the other languages studied in this thesis.
 
 \section{Combining DSLs}
 \label{sec:combining_dsls}
@@ -2678,7 +2676,7 @@ good alternative to combine DSLs.
 This chapter describes some advanced techniques that can be used in
 DSL construction. More specifically it deals with operations that
 remove functionality from the host language (pruning), and various
-ways to extends the host language. One could discuss how relevant this
+ways to extend the host language. One could discuss how relevant this
 is when talking about embedding DSLs, as using these techniques widely
 can alter the host languages radically. As such an embedded DSL in a
 host language can be rendered to act as an external DSL, tweaking the
@@ -2690,8 +2688,8 @@ This first section deals with the removing of functionality from the
 host language. It can be interesting when designing an embedded DSL to
 actually deactivate constructs in the host language not being used,
 and that you don't want to user of the DSL to be using either. For
-instance if the DSL is written in a very functional style in the Scala
-language, it might be interesting to disable some of the more
+instance if the DSL is implemented in a very functional style in the
+Scala language, it may be interesting to disable some of the more
 imperative mechanisms such as \texttt{while-loops}. Given this is a
 pretty narrow requirement, and probably not really often needed, the
 following sections just briefly discuss some of the options that
@@ -2813,10 +2811,10 @@ will be suppressed.
 \section{Extending Host Language}
 
 More interesting than removing stuff from the host language (as
-discussed in the previous section) might be the ability to extend
-it. If the host language does not natively support the kind of control
+discussed in the previous section) may be the ability to extend it. If
+the host language does not natively support the kind of control
 structure or primitive that can make your DSL as expressive as
-possible, it might come in handy to be able to add that support
+possible, it may come in handy to be able to add that support
 yourself. The following subsections describe some possibilities when
 you want to extend the various host languages.
 
@@ -2840,9 +2838,9 @@ of this were shown in section \vref{sec:monkey_patching}.
 
 Functional languages have a wide variety of ways to extend the hos
 language. The first subsection below describes how functions
-themselves can be written to appear as built-in keywords. The second
-subsection describe Clojure macros, an extremely flexible mechanism
-when it comes to extending the language.
+themselves can be implemented to appear as built-in keywords. The
+second subsection describe Clojure macros, an extremely flexible
+mechanism when it comes to extending the language.
 
 \subsubsection{First-class Functions as Built-in Control Structures}
 
@@ -2927,7 +2925,7 @@ first provides a multiplication of two values (\texttt{x} and
 ; Result: 12
 \end{lstlisting}
 
-The example with the reverse macro shown above might seem pretty
+The example with the reverse macro shown above may seem pretty
 useless, and it probably is. However, it was included here just to
 show the amazing power released by the Clojure macro support. It would
 probably prove extremely difficult to write anything like that in any
@@ -2962,9 +2960,9 @@ keywords.
 So far the focus has been on the design/implementation of embedded
 DSLs. This chapter discusses various ways to use embedded DSLs. There
 are quite many ways to take advantage of a DSL, depending on what kind
-of language it has been written in. The next sections describe some of
-the usages identified, and how they are supported by the different
-languages.
+of language it has been implemented in. The next sections describe
+some of the usages identified, and how they are supported by the
+different languages.
 
 \section{API/Library}
 
@@ -2978,8 +2976,8 @@ classes and use in the program code. An example is the JMock framework
 in Java (also mentioned in section \vref{sec:functionchaining}). It
 allows programmers writing unit tests to specify with an internal DSL
 syntax how they want to mock dependencies to the code they are
-testing. An example written in Java (DSL syntax mostly found in the
-expectations declarations) is shown in listing \vref{lst:javaapi}.
+testing. An example implemented in Java (DSL syntax mostly found in
+the expectations declarations) is shown in listing \vref{lst:javaapi}.
 
 \begin{lstlisting}[float,caption=Java example using jMock as an API.,label=lst:javaapi,language=java]
 import junit.framework.TestCase;
@@ -3007,10 +3005,10 @@ public class PublisherTest extends TestCase {
 
 Another interesting thing when using the DSL as a library, is that the
 language using the DSL not necessarily needs to be the same as the
-host language the DSL was written in. If the DSL is compiled to
+host language the DSL was implemented in. If the DSL is compiled to
 bytecode (\texttt{.class} files), it can be used from most of the
 other languages running on the JVM. The example above could just as
-well have been written in any of the languages used in this thesis,
+well have been implemented in any of the languages used in this thesis,
 for example in Scala as shown in listing \vref{lst:scalaapi} (looking
 quite similar to the original Java example above).
 
@@ -3040,17 +3038,17 @@ class PublisherTest extends TestCase {
 \section{Scripting}
 
 A different approach to the use-as-a-library approach shown above is
-to allow code written in the DSL to be run as a standalone
+to allow code implemented in the DSL to be run as a standalone
 script. That is without the need to wrap it in some class or module
-written in the host language. All the dynamic and interpreted
+implemented in the host language. All the dynamic and interpreted
 languages support this kind of usage. Scala, although it is a static
 and compiled language, has a kind of interactive interpreter called
 REPL (Read-Evaluate-Print Loop) that typically can be used to test
 code on the fly. It can also be used to run Scala-code in a more
 script-like way. The following script can be run demonstrating this
-functionality, using the image processing DSL from
-chapter \vref{chp:examples} as example (loading an image and saving a
-blurred copy to a new file):
+functionality, using the image processing DSL from chapter
+\vref{chp:examples} as example (loading an image and saving a blurred
+copy to a new file):
 
 \begin{lstlisting}[caption=Scala scripting usage example.]
 import simage.io.SImageIO._
@@ -3074,13 +3072,13 @@ image processing DSL has it's classes packed in the jar
 scala -classpath simage.jar ImageScript.scala
 \end{lstlisting}
 
-For users of the image processing DSL this means a great simplification
-in the way it is run. They do not have to learn how to make classes,
-objects and methods in Scala, as they would if they wanted to run the
-DSL as a regular library in a Scala file (requiring at a minimum
-creating an application object with a main method). As image analysis
-experts are not necessarily computer programmers this might be a good
-idea.
+For users of the image processing DSL this means a great
+simplification in the way it is run. They do not have to learn how to
+make classes, objects and methods in Scala, as they would if they
+wanted to run the DSL as a regular library in a Scala file (requiring
+at a minimum creating an application object with a main method). As
+image analysis experts are not necessarily computer programmers this
+may be a good idea.
 
 Similar examples can be given for other DSLs and using other host
 languages supporting running code as a script.
@@ -3182,13 +3180,13 @@ image. This is similar to how \matlab{} works, a proven environment
 for image analysis and other mathematical calculations.
 
 I think this technique could be very useful for a number of cases. All
-kinds of DSLs where you might want to see some immediate results of
-your commands could be candidates. Examples could typically be
-statistical, financial or graphical DSLs. A generic application might
-even be reused for several different DSLs, thus being a powerful base
-for building custom running environments for any embedded DSL written
-in Scala (or any other language that compiles to regular Java
-bytecode). A project using this approach is
+kinds of DSLs where you may want to see some immediate results of your
+commands could be candidates. Examples could typically be statistical,
+financial or graphical DSLs. A generic application may even be reused
+for several different DSLs, thus being a powerful base for building
+custom running environments for any embedded DSL implemented in Scala
+(or any other language that compiles to regular Java bytecode). A
+project using this approach is
 Kojo\footnote{\url{http://www.kogics.net/sf:kojo}}, a programming
 learning environment for children. They have their own Scala-based DSL
 for programming in a visual environment, utilizing an embedded REPL
@@ -3350,15 +3348,15 @@ implementing the same example as shown for Scala and JRuby.
 
 Even though the functional languages Scala and Clojure support normal
 exception handling, there are other alternatives in many cases that
-might be better. \cite{ode08} describes the \textit{loan pattern},
-where a control-abstraction function opens a resource and ``loans'' it
-to a function before it closes the resource. The exception handling
-would then be done in this function providing a control-abstraction,
-and not by the calling function. An example is shown in listing
+may be better. \cite{ode08} describes the \textit{loan pattern}, where
+a control-abstraction function opens a resource and ``loans'' it to a
+function before it closes the resource. The exception handling would
+then be done in this function providing a control-abstraction, and not
+by the calling function. An example is shown in listing
 \vref{lst:scalaloanpattern}, using the \texttt{withPrintWriter}
 abstraction to write a date to a file ("date.txt") without handling
-exceptions. This would be valuable in a DSL setting where we might
-want to hide ``complicated'' exception handling from the user.
+exceptions. This would be valuable in a DSL setting where we may want
+to hide ``complicated'' exception handling from the user.
 
 \begin{lstlisting}[caption=Scala control-abstraction example.,label=lst:scalaloanpattern]
 // Control-abstraction function
@@ -3405,7 +3403,7 @@ the JVM will run the bytecode. Many basic errors, related to typing,
 syntax and similar, will be resolved by the compiler before the code
 is run. With an interpreted language all errors, even the basic ones,
 will go through to the actual running/interpreting of the code. This
-difference might be important for some kinds of DSLs.
+difference may be important for some kinds of DSLs.
 
 The major difference between compiling or not is of course related to
 the typing discipline of the language. The statically typed languages
@@ -3487,7 +3485,7 @@ compilation. If the type is dynamic, but still obvious to the
 compiler, it is possible for the compiler to create bytecode that is
 using regular static types instead. However, a thorough knowledge of
 the languages and their compilers is needed to know exactly what code
-will be optimized and how it should be written.
+will be optimized and how it should be implemented.
 
 Several existing benchmarks have been studied to verify that the above
 statements about dynamic languages being slower are actually true. It
@@ -3539,7 +3537,7 @@ Java time: 8ms
 Groovy time: 398ms
 JRuby time: 1071ms
 Scala time: 18ms
-Clojure "Elapsed time: 185.542 msecs"
+Clojure time: 186ms
 \end{lstlisting}
 
 The tests were run on a standard MacBook (2 GHz Intel Core 2 Duo
@@ -3557,7 +3555,7 @@ language used is shown in parenthesis:
 \end{enumerate*}
 
 Both my own and other results clearly show that the dynamic languages
-are much slower on the JVM. This might change, as mentioned in the
+are much slower on the JVM. This may change, as mentioned in the
 beginning of this section, with new features on the JVM and more
 optimized compilers.
 
@@ -3683,7 +3681,7 @@ quite alot, but the while-loop implementation is by far the most
 efficient. This example was done on a 1000x1000 matrix. Increasing the
 matrix size also increased the differences in efficiency. From these
 results it is safe to conclude that the nice code you can write with
-the functional programming features of Scala might come at the price
+the functional programming features of Scala may come at the price
 of efficiency.
 
 \begin{lstlisting}[language=]
@@ -4217,8 +4215,8 @@ run\footnote{\url{http://java.sun.com/docs/hotspot/gc5.0/gc_tuning_5.html}}.
 The performance part is one of the areas where there is a big
 difference between the various language categories. Dynamic languages
 are significantly slower than static ones running on the JVM, due to
-synthetic types and use of reflection-based mechanisms. This might
-change is future releases of Java as more native support for dynamic
+synthetic types and use of reflection-based mechanisms. This may
+change in future releases of Java as more native support for dynamic
 invocation is added to the JVM.
 
 Functional language provide an exciting new view on concurrency, with
@@ -4284,7 +4282,7 @@ comes to embedded DSL design (compared to the Java language). Features
 like implicit conversions, type inference and operator notation on
 regular methods are just some examples. Being statically typed and
 compiled still makes the language similar in many ways to Java, and
-might be one of the easiest languages to learn for a Java
+may be one of the easiest languages to learn for a Java
 programmer. Scala offers, in most cases, code that is just as concise
 as that of the dynamic languages, with the added benefit of being
 compiled and thus checked for many errors earlier than the interpreted
@@ -4307,7 +4305,8 @@ modular design in a more precise way than in Java which only supports
 polymorphism through interfaces. All the object-oriented languages
 (Ruby, Groovy and Scala) support some form of mixin-composition. Most
 thoroughly studied was the traits in Scala, which were used to build
-the DSL for image processing.
+the DSL for image processing. With the help of traits is was possible
+to create a modular DSL, that can be tailored to specific users needs.
 
 Clojure supports multimethods. A mechanism enabling a much more
 detailed dynamic dispatch than that found in
@@ -4326,7 +4325,7 @@ behaviour of their core functionality. For a DSL this is interesting,
 either to remove (prune) unwanted features or to add new control
 structures or other basic functionality.
 
-In Scala, compiler plugins can be written to provide new or remove
+In Scala, compiler plugins can be implemented to provide new or remove
 existing functionality. In addition, ``pass by-name'' parameters
 combined with functional style programming and member imports is a
 good way to write functions appearing as new control structures.
@@ -4337,15 +4336,15 @@ to, existing classes, even core Java classes marked as \texttt{final}.
 
 The Clojure macro system is the most flexible way to build new control
 structures. Most of the core Clojure system is made up of macros
-written in Clojure itself, and can be redefined by the user if
+implemented in Clojure itself, and can be redefined by the user if
 needed. With the macro system, it should be possible to create an
 embedded DSL appearing to be a separate programming language (like an
 external DSL).
 
 \subsection{Usage}
 
-While a DSL written in Java will have to be compiled and used like an
-API or library in other Java code, all the languages studied have
+While a DSL implemented in Java will have to be compiled and used like
+an API or library in other Java code, all the languages studied have
 other capabilities with regards to usage.
 
 Interpreted languages can be run directly as scripts on a JVM, and the
@@ -4366,7 +4365,7 @@ An advantage all the languages share is the ability to utilize the
 existing tools and frameworks on the JVM. Java is an extremely popular
 language, and there are thousands of useful open source or other
 easily available tools to choose from. A good example is the charting
-DSL that was written in Scala, but almost entirely based on an
+DSL that was implemented in Scala, but almost entirely based on an
 existing Java open source framework (JFreeChart).
 
 When it comes to error handling all the languages support the
@@ -4380,7 +4379,7 @@ The biggest difference in performance between the language types is
 most likely that between dynamic and static languages. Dynamic
 languages running on the JVM are significantly slower, largely because
 of the use of synthetic types and reflection. This is due to the fact
-that the JVM was not written with dynamic languages in mind, but might
+that the JVM was not created with dynamic languages in mind, but may
 change in future versions of the JVM, as the \texttt{invokedynamic}
 instruction is added to the JVM. But at the moment a DSL that needs
 effective code, like those adding thousands of numbers or similar (as
@@ -4392,7 +4391,7 @@ code. However, some of these features seem to cost quite a lot when it
 comes to performance. Some examples include for-comprehensions and
 pattern matching in Scala, that are much slower than while-loops and
 general if-else statements. So there is a trade-off between concise
-code and high performance. Scala 2.8 might improve this a little, with
+code and high performance. Scala 2.8 may improve this a little, with
 better support for JVM primitives and annotations to create effective
 recursions and pattern matching statements.
 
@@ -4440,7 +4439,7 @@ with the Java programming language. All the other programming
 languages were relatively new to me. The amount of time and
 mindset-shifting needed to learn 3-4 new programming languages in less
 than a year was seriously under-estimated. As such, a more narrow
-focus with only one alternative language might have been more
+focus with only one alternative language may have been more
 effective with regards to the domain-specific language angle. For me
 personally it has been an extremely interesting year, with a massive
 amount of useful knowledge added, but I have a feeling that the
