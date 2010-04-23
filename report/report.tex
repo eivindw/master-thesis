@@ -259,39 +259,41 @@ EBSE are as follows:
   seek ways to improve it.
 \end{enumerate*}
 
-With this list as basis I have built a list of steps that I will
-follow in the thesis work. To summarize I will use existing literature
-extensively to build a solid base for the experiments conducted, and
-try to critically conclude the work at the end:
+Inspired by the EBSE method, I have created my own method suited to
+solve the problem presented in the previous section. It is a set of
+steps that can be run in iterations, each bringing further results,
+that is suited for a timeboxed assignment (as a master thesis). The
+steps followed are illustrated in figure \vref{fig:method}, and
+described in the list below:
 
 \begin{enumerate*}
-\item Identify requirement -- Make sure the questions to research are
-  sound and possible to answer.
-\item Search theory -- Find literature to provide direct answers to
-  the questions, or to support assumptions needed to sustain
-  experiments.
-\item Write example -- The major part of the thesis work is of course
-  related to the experiments conducted. The first two steps are
-  important to make sure the experiments are based on sound evidence
-  and former knowledge.
-\item Measure -- Measure results, if applicable. Those results that
-  produce some kind of measurable unit will be included in this phase.
-\item Conclude -- Make a preliminary conclusion based on the results
-  found so far.
-\item Evaluate -- The experiments and results found must be carefully
-  evaluated. By being critical to my own results I hope to improve the
-  overall quality of the thesis deliverance.
+\item \textbf{Identify requirement} -- Identify requirements that are
+  relevant in solving the problem. Break down big requirements into
+  smaller ones to reach a ``solvable'' size.
+\item \textbf{Search theory} -- After choosing a requirement a theory
+  search is conducted to find relevant research and information. From
+  the theory found decide if separate experiments are needed, or if a
+  preliminary conclusion can be made directly.
+\item \textbf{Implement example} -- Implement example code to prove or
+  show how the requirement can be solved.
+\item \textbf{Measure} -- Some of the requirements are directly
+  measurable (for example ``which programming is fastest in adding two
+  integers?''). This step makes sure that relevant results are
+  measured where possible.
+\item \textbf{Conclude} -- Make a preliminary conclusion based on the
+  results found so far. Identify all results found, and possibly
+  further requirements to find out more.
+\item \textbf{Evaluate} -- Evaluate results and method
+  continuously. Before starting work on a new requirement improve
+  those parts of the process not being efficient or useful.
 \end{enumerate*}
 
-The process is illustrated in figure \vref{fig:method}. Not all the
-phases are relevant for all requirements investigated. As shown with
-the dotted lines, a conclusion may be deducted directly from theory,
-and the measurement phase is not necessarily valid for all
-requirements. Note also that the method is used iteratively, in
-cycles, after evaluation of the results new or modified requirements
-can be taken into consideration. This way of working is very good for
-a master thesis of a set time/size, as the method is simply run over
-and over again as many times as there is room for.
+The whole process starts by identifying some overall requirements
+related to the problem formulation. These requirements are then broken
+down to smaller ones. New requirements are discovered in the process
+and can be prioritized when starting new iterations of the
+process. The rest of this chapter describes the overall requirements
+(with background information), and why they are considered important.
 
 \begin{figure}[h]
   \begin{center}
@@ -303,7 +305,7 @@ and over again as many times as there is room for.
     \node [cloud, fill=blue!5] (requirement) {1. Identify requirement};
     \node [cloud, fill=blue!10, right of=requirement, above of=requirement] (theory) {2. Search theory};
     \node [cloud, fill=blue!30, right of=requirement, below of=requirement] (evaluate) {6. Evaluate};
-    \node [cloud, fill=blue!15, right of=theory] (example) {3. Write example};
+    \node [cloud, fill=blue!15, right of=theory] (example) {3. Implement example};
     \node [cloud, fill=blue!25, right of=evaluate] (conclude) {5. Conclude};
     \node [cloud, fill=blue!20, right of=example, below of=example] (measure) {4. Measure};
     % Draw edges
