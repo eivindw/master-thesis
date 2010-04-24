@@ -1022,14 +1022,15 @@ Using traits\footnote{Traits are an object-oriented mechanism allowing
   multiple inheritance.}, we are able to compose image objects with
 the operations we want. The operations are implemented in separate
 traits which are mixed in with the image on creation. This is using
-self-type annotations\footnote{Self-type annotation is a way to give a
-  trait a specific type. A trait with a given self-type can only be
-  mixed in with objects of that type.} to specify that the trait can
-only be mixed in with classes of type \texttt{GrayScaleImage}. See
-listing \vref{lst:scalaimgtraits} for a small example, where the trait
-\texttt{Standard} implements a function \texttt{avg} that will be
-available on instances of \texttt{GrayScaleImage} having the trait
-mixed in (as is done in the \texttt{Image} object in the example).
+selftype annotations\footnote{Selftype annotation is a way to give a
+  trait a specific type. A trait with a given selftype can only be
+  mixed in with objects of that type.\cite{ode05}} to specify that the
+trait can only be mixed in with classes of type
+\texttt{GrayScaleImage}. See listing \vref{lst:scalaimgtraits} for a
+small example, where the trait \texttt{Standard} implements a function
+\texttt{avg} that will be available on instances of
+\texttt{GrayScaleImage} having the trait mixed in (as is done in the
+\texttt{Image} object in the example).
 
 \begin{lstlisting}[float,caption=Scala image processing traits.,label=lst:scalaimgtraits]
 trait Standard { this: GrayScaleImage =>
@@ -1990,7 +1991,7 @@ of these differences with examples.
 
 \subsection{Metaprogramming in Static Languages}
 
-Java has a wide range of mechanisms associated with metaprogramming:
+Java has some mechanisms associated with metaprogramming:
 
 \begin{itemize}
 \item Annotations -- Annotations were introduced to Java with version
@@ -2003,19 +2004,9 @@ Java has a wide range of mechanisms associated with metaprogramming:
   as \texttt{class} and \texttt{method} in Java, and as such is
   considered a form of metaprogramming. Extensive use of reflection
   can have a negative effect on the performance of a Java application.
-\item Aspect Oriented Programming (AOP) -- AOP has become a popular
-  mechanism in many Java frameworks the last years. It is too big of a
-  concept to describe in detail here, but is worth mentioning in the
-  light of metaprogramming. With AOP it is possible to alter the
-  behaviour of Java-code dramatically. I have, however, not looked
-  detailed at AOP here as it is not really part of the Java
-  language\footnote{Aspect Oriented Programming is usually implemented
-    by pre-compilation, or extensive use of dynamic proxies in
-    Java. Some of the most popular AOP frameworks in Java are AspectJ
-    (\url{http://www.eclipse.org/aspectj/}), JBossAOP
-    (\url{http://www.jboss.org/jbossaop}) and Qi4j
-    (\url{http://www.qi4j.org/}).}. An article that covers the use of
-  AOP and metaprogramming is found in\cite{hua08}.
+\item Aspect Oriented Programming (AOP) -- AOP is a mechanism that can
+  be used for metaprogramming. As shown in\cite{hua08}, AOP and
+  metaprogramming can be useful when designing DSLs.
 \end{itemize}
 
 An example of an embedded DSL in Java relying heavily on annotations
@@ -2325,37 +2316,38 @@ allowing custom handling of missing methods.
 \chapter{Creating Customizable DSLs}
 \label{chp:customization}
 
-% TODO rewrite with focus on tailoring/specialization.
+This chapter shows how DSLs can be customized for specific needs. It
+is divided in two main parts; the first describes techniques used to
+customize a general DSL to more specialized versions, and the second
+showing how to combine several DSLs to create new ones. The main
+example used is the image processing DSL. It is shown how it can be
+specialized to a specific version, and also how it can be combined
+with the other example DSLs (statistics and charting) to create a more
+complete environment for image analysis.
 
-This chapter looks at various composition techniques used when working
-with DSLs. It is divided into two main sections; the first one
-describing how modular composition can be useful when constructing a
-single DSL, and the second showing how to combine multiple DSLs to
-create new ones.
+\section{Specializing a General DSL}
 
-\section{Modular DSL Composition}
+This section describes several ways to create tailored versions of a
+specific DSL. A key to achieve this is in making the DSLs modularly
+composed. The first sub-section discusses mixin-composition in the
+different programming languages studied, and show how the image
+processing DSL uses traits in Scala to build modules of functionality
+that can be combined in different ways. Then it is shown how type
+specialization and abstract types can be used to build general
+DSLs. The image processing DSL also uses these techniques to make it
+easier to extend into more specialized versions. The final sub-section
+describes some functional programming techniques that can be used to
+build modularly implemented DSLs.
 
-With modular composition I mean structuring a program such that the
-implementation is spread over several separate modules. A modular
-design can be useful when creating a DSL for a number of reasons. With
-a loosely coupled modular implementation the DSL can easily be
-extended by implementing new modules, or customized by specifying a
-subset of modules to be included. In the following subsections two
-different ways to create a modular composition is shown and
-discussed. First an object-oriented technique involving
-mixin-composition using traits is shown, and secondly functional
-composition using decorators is shown.
+\subsection{Mixin-composition -- Polymorphic Abilities}
 
-\subsection{Traits - Polymorphic Abilities}
-
-Scala has support for virtual types (abstract type members) and family
-polymorphism\cite{ode03}, mixin composition\cite{ode05} and
-higher-order genericity\cite{moo08}. These are all powerful features
-that support polymorphic embedding of DSLs\cite{hof08}. This allows
-building DSLs that can have several different interpretations as
-reusable components. It can also be used to effectively combine
-different DSLs into new ones. The paper ``Polymorphic Embedding of
-DSLs''\cite{hof08} describes this in detail with examples.
+Scala has support for family polymorphism\cite{ode03} and mixin
+composition\cite{ode05}. These are features that support polymorphic
+embedding of DSLs\cite{hof08}. This allows building DSLs that can have
+several different interpretations as reusable components. It can also
+be used to effectively combine different DSLs into new ones. The paper
+``Polymorphic Embedding of DSLs''\cite{hof08} describes this in detail
+with examples.
 
 A use of traits can be to split functionality in several traits and
 create classes/objects with only the methods that we need. In the
@@ -2392,11 +2384,9 @@ mechanism in Groovy is shown in listing
 \vref{lst:groovymixins}. Because of the dynamic typing the
 \texttt{name} variable of the \texttt{Base} class is available in the
 mixin-classes, as if they were subclassing the base class. This is
-different from the Scala traits example, where self-type annotation
+different from the Scala traits example, where selftype annotations
 has to be used if the traits need to access any members of the classes
-they are mixed in with.
-
-% TODO: explain self-type annotation with reference
+they are mixed in with\cite{ode05}.
 
 \begin{lstlisting}[float,caption=Groovy mixing composition example.,label=lst:groovymixins,language=java]
 class Base {
@@ -2471,9 +2461,126 @@ useful if compiling the DSL for a computer with a limited amount of
 resources (memory and storage), for example a mobile or other small
 device having support for running Java applications.
 
-\subsection{Functional Composition}
+\subsubsection{Aspect Oriented Programming in Java}
 
-% TODO: referanse til polymorfisme
+Aspect Oriented Programming (AOP) is a separate programming paradigm
+providing support for mixin-composition (aspects are closely related
+to mixins) and more. It is not supported by Java directly, but several
+frameworks exist adding AOP support to the language. Some examples of
+frameworks are
+AspectJ\footnote{\url{http://www.eclipse.org/aspectj/}},
+JBossAOP\footnote{\url{http://www.jboss.org/jbossaop}} and
+Qi4j\footnote{\url{http://www.qi4j.org/}}. The paper <<Domain-Specific
+Languages and Program Generation with Meta-AspectJ>>\cite{hua08}
+describes ``Meta-AspectJ'', a language for generating AspectJ programs
+using code templates, and how it is used to construct a DSL. It is
+clear that using AOP is a good way to achieve many of the same
+benefits in Java, that were shown for other languages using
+mixin-composition. AOP is even more powerful than mixin-composition,
+as it allows a much more fine-grained mechanism for aspect weaving
+than that of pure polymorphism. Composition can be made simply by
+means of names, not using any form of inheritance at all. This is
+possible due to AOP being implemented with dynamic
+proxies\footnote{\url{http://java.sun.com/javase/6/docs/api/java/lang/reflect/Proxy.html}}
+or similar reflection/metaprogramming techniques in Java. Although not
+studied in detail here, as it is not really an integrated part of the
+Java language (and thus outside the scope of this thesis), it is worth
+being aware of the capabilities that can be achieved using AOP.
+
+\subsection{Type Specialization and Abstract Types}
+
+Another way that a DSL can be created to allow specialization is by
+using virtual types (abstract type members) and/or type
+parameterization (generics) of classes. Scala supports higher-order
+genericity\cite{moo08} and abstract type members. In this section it
+is demonstrated how these features are used to make the image
+processing DSL more general, allowing specializations in a number of
+ways. The main reason for using these features in the image processing
+DSL is to ease the process of extending with new specializations.
+
+The \texttt{Matrix} trait used in the image processing DSL uses type
+parameterization to denote the type of the values in the matrix. A
+matrix of integers will be defined as \texttt{Matrix[Int]} and a
+matrix of floating point numbers as \texttt{Matrix[Double]}. The
+matrix trait is extended by an array specific implementation, in the
+form of an abstract class \texttt{Array2DMatrix} also using the same
+type parameter as the matrix trait. Finally concrete classes
+\texttt{IntArray2DMatrix} and \texttt{DoubleArray2DMatrix} extend the
+\texttt{Array2DMatrix} providing integer- and double specific
+implementations. Together with a companion object acting as a matrix
+factory, these definitions are shown in listing
+\vref{lst:typeparameters}. A user of this DSL can create matrices
+specific for integer or double values without knowing the concrete
+implementations actually in use. This is shown at the end of listing
+\ref{lst:typeparameters}. Another benefit in using type parameters is
+that users can extend the matrix data structure with support for new
+types simply by extending the \texttt{Matrix} trait with whatever type
+they need.
+
+\begin{lstlisting}[float,caption=Matrix implementation using type parameters.,label=lst:typeparameters]
+trait Matrix[T] {
+  ... // Implementation of general matrix interface
+}
+
+abstract class Array2DMatrix[T] extends Matrix[T] {
+  ... // 2D-array specialization of the general matrix interface
+}
+
+class IntArray2DMatrix extends Array2DMatrix[Int] {
+  ... // Integer specific implementation of the abstract 2D-array-matrix type
+}
+
+class DoubleArray2DMatrix extends Array2DMatrix[Double] {
+  ... // Double specific implementation of the abstract 2D-array-matrix type
+}
+
+// Companion object acting as factory for matrix objects
+object Matrix {
+  def apply(nCols: Int, els: Array[Int]) = new IntArray2DMatrix(nCols, els)
+
+  def apply(nCols: Int, els: Array[Double]) = new DoubleArray2DMatrix(nCols, els)
+}
+
+// Examples of use - construct one matrix of each specific type based on the type of the arguments
+val intMtx = Matrix(2, Array(1, 2, 3, 4))
+val doubleMtx = Matrix(2, Array(1.1, 2.2, 3.3, 4.4))
+\end{lstlisting}
+
+While type parameters are exposed at the signature of a trait or
+class, virtual types are kept inside the body. This gives similar
+abilities to those found with type parameters, but may feel different
+for the users. In the image processing DSL, a virtual type
+\texttt{DataType} is used in the \texttt{Image} trait to give the type
+representing the data structure of the image. This is shown in listing
+\vref{lst:virtualtypes}.  In the specific implementations of images,
+the datatype is specified as a type suited to represent the kind of
+image. Gray scale images (images only using different values of gray,
+resulting in a ``black and white'' look) can be represented with one
+integer for each pixel, giving the gray-level value, as the
+\texttt{GrayScaleImage} class. Notice how the generic \texttt{Matrix}
+trait is used to make the datatype a matrix of integers. Color images
+can be represented as the \texttt{RGBImage}, with the datatype being a
+matrix of triple-integers (one integer value for each of the colors
+Red Green and Blue).
+
+\begin{lstlisting}[caption=Image implementation using virtual type.,label=lst:virtualtypes]
+trait Image {
+  type DataType
+  ... // Implementation of general image interface
+}
+
+class GrayScaleImage(data: Matrix[Int]) extends Image {
+  type DataType = Matrix[Int]
+  ... // Implementation of gray scale image, as a matrix of integer values
+}
+
+class RGBImage(data: Matrix[(Int, Int, Int)] extends Image {
+  type DataType = Matrix[(Int, Int, Int)]
+  ... // Implementation of RGB image, as a matrix of triple integer values (representing the three colors)
+}
+\end{lstlisting}
+
+\subsection{Functional Composition}
 
 Obtaining modular composition is typically dependent on some kind of
 dynamic dispatch mechanism, as the polymorphism described with the use
@@ -2721,16 +2828,18 @@ int average = img.avg();
 
 \section{Summary}
 
-This chapter has explored ways to create modular, reusable DSL
-components, as well as techniques used to combine several
-DSLs. Mixin-composition, found in Groovy, Ruby and Scala, is a
-powerful way to create loosely coupled modular DSLs. The functional
-composition techniques in Clojure provide some exiting new ways to
-compose modular code, compared to the more imperative
-languages. Implicit conversion is a good technique found in Scala that
-enables combining two DSLs in a very smooth manner. The package
-templates mechanism research at the University of Oslo seems like a
-good alternative to combine DSLs.
+This chapter has explored ways to create customizable DSL components,
+as well as techniques used to combine several DSLs. Mixin-composition,
+found in Groovy, Ruby and Scala, is a powerful way to create loosely
+coupled modular DSLs. New versions of the DSL can be created very
+easily only varying on the specific traits included in the actual
+implementations. Another approach to creating generic DSLs is using
+type parameters or abstract types. The functional composition
+techniques in Clojure provide some exiting new ways to compose modular
+code, compared to the more imperative languages. Implicit conversion
+is a good technique found in Scala that enables combining two DSLs in
+a very smooth manner. The package templates mechanism research at the
+University of Oslo seems like a good alternative to combine DSLs.
 
 \clearpage{\pagestyle{plain}\cleardoublepage}
 
