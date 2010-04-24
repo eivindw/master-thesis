@@ -1788,7 +1788,7 @@ Java). The class wraps an integer value \texttt{n}, which is used in
 the \texttt{times} method to evaluate the by-name parameter n
 times. In the example the class is combined with an implicit
 conversion from \texttt{Int}, to provide the handy DSL syntax
-\lstinline{2 times ... }.
+<<\lstinline[language=]{2 times ... }>>.
 
 \lstinputlisting[caption={[Scala by-name parameter examples]Scala example combining implicit conversion with by-name parameter.},label=lst:scalabyname]{../examples/by-name-param/ByName.scala}
 
@@ -2694,25 +2694,32 @@ println("Minimum value: " + words.minValue) // 3 is the length of the shortest w
 println("Maximum value: " + words.maxValue) // 8 is the length of the longest word
 \end{lstlisting}
 
-Finally we combine the image processing DSL with the statistics DSL
-using the same technique that was shown for the string-array above. An
-implicit conversion is defined converting instances of
-\texttt{GrayScaleImage} (image storing only one integer value per
-pixel) to a data-set, making it possible to call the statistics method
-to compute the average, minimum and maximum pixel values. In a way one
-could say that we have defined a new ``statistical image processing
-DSL'' combining the two existing DSL, all without writing any other
-code than the actual conversion. A simple example is shown below:
+In the next example we combine the image processing DSL with the
+statistics DSL using the same technique that was shown for the
+string-array above. An implicit conversion is defined converting
+instances of \texttt{GrayScaleImage} (image storing only one integer
+value per pixel) to a data-set, making it possible to call the
+statistics method to compute the average, minimum and maximum pixel
+values. In a way one could say that we have defined a new
+``statistical image processing DSL'' combining the two existing DSL,
+all without writing any other code than the actual conversion. The
+whole example is shown in listing \vref{lst:scalaipstats}. The DSL
+creator would typically provide the function performing the implicit
+conversion (shown at the top), and the user would be able to call
+methods belonging to the statistical DSL directly on an image object
+(bottom part of code listing).
 
-\begin{lstlisting}[float,caption={[Scala implicit conv. DSL combine example]Scala example using implicit conversion to combine DSL for statistics with DSL for image processing.}]
+\begin{lstlisting}[caption={[Scala implicit conv. DSL combine example]Scala example using implicit conversion to combine DSL for statistics with DSL for image processing.},label=lst:scalaipstats]
+// Function must be within scope, typically as a result of a member import or package object
+implicit def img2DS(img: GrayScaleImage) = {
+  DataSet(img.data.toArray: _*)
+}
+
+// Example use:
 val img = Image(Matrix(3, List(
   9, 8, 7,
   6, 5, 6,
   7, 8, 9)))
-
-implicit def img2DS(img: GrayScaleImage) = {
-  DataSet(img.data.toArray: _*)
-}
 
 println("Average: " + img.average) // 7.22 is the average pixel value
 println("Minimum value: " + img.minValue) // 5 is the smallest pixel value
@@ -2725,12 +2732,12 @@ imagine a whole environment built from small DSLs, each describing a
 specialized part of the domain. For example an environment for various
 numeric analysis could be built combining DSLs for image processing,
 statistics, charting etc. The image processing DSL can also be
-combined with the charting DSL, to visualize properties with
-images. The example in listing \vref{lst:scalaipchart} loads an image,
-an uses the charting DSL to draw an area diagram of its data. An
-implicit conversion creates the data-set needed for the charting DSL,
-counting pixels of the various values, thus resulting in a sort of
-histogram over the various gray values found in the picture. Figure
+combined with the charting DSL, to visualize properties of images. The
+example in listing \vref{lst:scalaipchart} loads an image, and uses the
+charting DSL to draw an area diagram of its data. An implicit
+conversion creates the data-set needed for the charting DSL, counting
+pixels of the various values, thus resulting in a sort of histogram
+over the various gray values found in the picture. Figure
 \vref{fig:iphistogram} shows two images together with their
 histograms, produced with the given code. As we can see, histograms
 are a useful visualization of the pixel distribution in an image. The
@@ -2739,8 +2746,7 @@ the histogram, while the better contrast of the second image is shown
 with a more evenly distributed histogram.
 
 \begin{lstlisting}[float,caption=Scala image histogram example,label=lst:scalaipchart]
-val img = loadImageCP("/numbers.png")
-
+// Function provided by the DSL designer
 implicit def img2DS(img: GrayScaleImage) = {
   val dataset = new DefaultCategoryDataset
   val imgData = img.data.toList
@@ -2750,10 +2756,10 @@ implicit def img2DS(img: GrayScaleImage) = {
   dataset
 }
 
-createShowWindow(
-  "Histogram Window",
-  ChartFactory.createAreaChart(
-    "Image Histogram", "Value", "Number", img, PlotOrientation.VERTICAL, false, true, true))
+// Example use - load an image and use it directly as input to an area chart.
+val img = loadImageCP("/numbers.png")
+
+createAreaChart("Image Histogram", img)
 \end{lstlisting}
 
 \begin{figure}[h]
@@ -2857,7 +2863,7 @@ can alter the host languages radically. As such an embedded DSL in a
 host language can be rendered to act as an external DSL, tweaking the
 programming language to suit our needs.
 
-\section{Removing from Host Language -- Pruning}
+\section{Removing from the Host Language -- Pruning}
 
 This first section deals with the removing of functionality from the
 host language. It can be interesting when designing an embedded DSL to
@@ -2916,8 +2922,9 @@ methods from base classes. The \texttt{remove\_method} method can be
 used to remove a given method from the current class, while
 \texttt{undef\_method} will undefine the method completely. In listing
 \vref{lst:rubyundefmethod} the \texttt{String.length} is undefined
-completely, rendering the message <<\texttt{NoMethodError: undefined
-  method `length' for "hei":String}>> if called on the string ``hei''.
+completely, rendering the message
+<<\lstinline[language=]{NoMethodError: undefined method `length' for "hei":String}>>
+if called on the string ``hei''.
 
 \begin{lstlisting}[float,language=ruby,caption=Ruby \texttt{undef\_method} example.,label=lst:rubyundefmethod]
 class String
@@ -2953,6 +2960,19 @@ the image processing example used for this thesis.
 (+ 2 3)
 \end{lstlisting}
 
+Clojure also supports removing mappings from namespaces
+completely. The code in listing \vref{lst:cljundefcore} removes the
+mapping for the \texttt{+} function. Attempting to add numbers after
+this renders an error: <<\lstinline[language=]{Unable to resolve symbol: + in this context}>>.
+
+\begin{lstlisting}[language=lisp,caption=Clojure undefining core functions.,label=lst:cljundefcore]
+; Remove the mapping of + for the current namespace
+(ns-unmap *ns* '+)
+
+; Generates an error
+(+ 2 3)
+\end{lstlisting}
+
 Another way to change the core functionality of Clojure, is to use
 \texttt{dynamic bindings}. With dynamic bindings it is possible to
 redefine the meaning of a globally defined variable, within the scope
@@ -2983,7 +3003,7 @@ will be suppressed.
 (noprint (println "Noprint println!"))
 \end{lstlisting}
 
-\section{Extending Host Language}
+\section{Extending the Host Language}
 
 More interesting than removing stuff from the host language (as
 discussed in the previous section) may be the ability to extend it. If
