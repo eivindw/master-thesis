@@ -245,7 +245,7 @@ practitioners looking to support decision-making it can easily be
 adapted to support an evaluative thesis as this one. The main steps of
 EBSE are as follows:
 
-\begin{enumerate*}
+\begin{enumerate}
 \item Convert a relevant problem or need for information into an
   answerable question.
 \item Search the literature for the best available evidence to answer
@@ -257,7 +257,7 @@ EBSE are as follows:
   practice.
 \item Evaluate performance in comparison with previous performance and
   seek ways to improve it.
-\end{enumerate*}
+\end{enumerate}
 
 Inspired by the EBSE method, I have created my own method suited to
 solve the problem presented in the previous section. It is a set of
@@ -266,7 +266,7 @@ that is suited for a timeboxed assignment (as a master thesis). The
 steps followed are illustrated in figure \vref{fig:method}, and
 described in the list below:
 
-\begin{enumerate*}
+\begin{enumerate}
 \item \textbf{Identify requirement} -- Identify requirements that are
   relevant in solving the problem. Break down big requirements into
   smaller ones to reach a ``solvable'' size.
@@ -286,19 +286,18 @@ described in the list below:
 \item \textbf{Evaluate} -- Evaluate results and method
   continuously. Before starting work on a new requirement improve
   those parts of the process not being efficient or useful.
-\end{enumerate*}
+\end{enumerate}
 
 The whole process starts by identifying some overall requirements
 related to the problem formulation. These requirements are then broken
 down to smaller ones. New requirements are discovered in the process
 and can be prioritized when starting new iterations of the
-process. The rest of this chapter describes the overall requirements
-(with background information), and why they are considered important.
+process.
 
 \begin{figure}[h]
   \begin{center}
   \tikzstyle{line} = [draw, -latex']
-  \tikzstyle{cloud} = [rectangle, draw, text width=6em, text centered, rounded corners, node distance=3.5cm, minimum height=5em]
+  \tikzstyle{cloud} = [rectangle, draw, text width=7em, text centered, rounded corners, node distance=4cm, minimum height=5em]
   %\tikzstyle{cloud} = [draw, ellipse,fill=red!20, text width=5em, text centered, node distance=4.5cm, minimum height=5em]
   \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
@@ -352,20 +351,26 @@ queries), CSS (domain of HTML styles) and XML (domain of data
 exchange). An embedded DSL on the other hand, is created in a host
 language. Various capabilities in the host language are exploited to
 create interfaces that look and behave almost like a particular
-programming language. There are also research contributions working on
-the border between external and embedded DSL, combining elements from
-both, an example shown in\cite{bra04}.
+programming language. So the syntax and semantics of the DSL are
+defined only using the syntax and semantics already present in the
+host language. This has some advantages in reducing the work needed to
+implement the DSL (as a separate parser and interpreter does not have
+to be implemented), and in integration with the host language and
+other DSLs implemented in the same host language\cite{atk09}. The
+boundary between external and embedded DLSs is not necessarily a fixed
+one. Elements from both categories can be mixed in a single DSL
+implementation, as shown in\cite{bra04}.
 
-In this thesis I have identified different requirements of embedded
-DSLs running on the Java Virtual Machine (JVM), and looked at how
-various programming languages (described in section
-\vref{sec:programminglanguages}) solve these aspects. As described in
-the next section the exact definition of an embedded DSL is hard to
-find, and as such this thesis is just as much a study of different
-programming languages and what capabilities they provide. The embedded
-DSL focus provides examples used to visualize and compare results. A
-good introduction to DSL design on the JVM is the book <<DSLs in
-Action>> by Debasish Ghosh\cite{gho09}.
+In this thesis I have focused solely on embedded DSLs running on the
+Java Virtual Machine (JVM). As described in the book <<DSLs in
+Action>> by Debasish Ghosh\cite{gho09}, several different programming
+languages can be used to implement embedded DSLs on the JVM. In this
+thesis I have identified some different requirements of embedded DSLs,
+and then looked at various JVM programming languages (described in
+section \vref{sec:programminglanguages}) in order to find out what
+languages are best suited for the different requirements. The rest of
+this chapter describes these requirements, with a discussion of why I
+think they are important.
 
 \subsection{Embedded DSL or just Advanced Library Design?}
 \label{sec:embeddeddsl}
@@ -377,10 +382,7 @@ in a given domain, is that enough to call it an embedded DSL? How much
 DSL? What kind of syntax qualifies for DSL use? Answering questions
 like these is difficult, and in my opinion not contributing to a
 fruitful discussion. I have tried to turn my focus toward interesting
-capabilities different languages have, and the problems they solve. As
-such some of the examples I will be using may not qualify as embedded
-DSLs, but merely as libraries/interfaces with nontraditional, or in
-other ways interesting, use of the host language.
+capabilities different languages have, and the problems they solve.
 
 Martin Fowler and Eric Evans have defined the name ``fluent
 interface''\cite{fow05} to describe interfaces which provide a more
@@ -394,61 +396,119 @@ hardly covers the subject of embedding DSLs, but I feel that a lot of
 the DSL design is focused on understanding and expressing a particular
 domain and as such has a lot in common with the thoughts behind DDD.
 
-The reason this discussion was included is to briefly try to
-demonstrate that the area of embedded DSLs is a complex and maybe not
-precisely defined one. The activity of building an embedded DSL is
-tightly connected to the understanding of the domain at hand, and the
-capabilities required from the host language will vary strongly with
-that understanding. The next section gives a list of such
-requirements.
+I believe the main requirement of an embedded DSL is the way it looks
+and feels for a domain expert using it. This leads to the first
+requirement in the list, looking at what syntax and semantics the
+different programming languages support making them suited in building
+the syntax and semantics required by a particular embedded DSL. Much
+of the existing DSL research is concerned with this requirement,
+looking primarily at the syntax and semantics of host languages. There
+are, however, other requirements that may be important for particular
+DSLs, as described in the following sections.
 
-\subsection{Requirements of an Embedded DSL}
+\subsection{Creating Customizable DSLs}
+
+There are many situations where having the ability to customize a DSL
+may be useful. There are also many different ways that the DSL can be
+customized or in other ways changed to suit a specific need.
+
+A way to provide customization is to implement the DSL as a general
+component that can be specialized for different users. There may be
+situations where users have different needs regarding the DSL. For
+example ``super users'' having access to more features than ordinary
+users should not have. Or in creating a general DSL that can be
+tailored for each user according the the needs of that particular
+user. If you only need feature X, and the general DSL includes
+features X, Y and Z, then a specialized version only including feature
+X could be created.
+
+Related to the specialization of a DSL is the ability to build new
+DSLs combining two or more existing ones. Each DSL can be seen as a
+building block providing functionality covering a piece of a
+domain. If a big domain is divided into sub-domains, each of the
+sub-domains could be implemented as separate DSLs. It would then be
+possible to tailor new DSLs including one the sub-domains needed. Two
+users working on separate parts of the domain could have tailored DSLs
+with some overlapping functionality where applicable.
+
+Yet another form of customizing the DSL is by doing changes directly
+to the host language. Is it possible to remove, or ``prune'', features
+from the host language? For example if it is discovered that having
+access to conditional logic (like the \texttt{if/else} statements in
+Java) leads to more errors, then that conditional logic could be
+removed from the host language and customized logic added to the DSL
+instead. Similarly it is interesting to find ways to extend the host
+language. For example if you want to provide the users of the DSL with
+some kind of control structure not currently found in the host
+language, it would be useful to extend the host language with the
+needed control structure.
+
+\subsection{Using DSLs with Different Performance Requirements}
+
+There are many different ways a DSL could be used. For example as a
+library, as a standalone script being run from the command line, or in
+an interactive environment where commands are evaluated and executed
+as they are written. Do the different programming languages provide
+new ways to use DSLs over those provided by Java? A different aspect
+of using a DSL is that of error handling. How can exceptional
+situations be communicated to the user in an understandable way?
+
+Different DSLs may have varying requirements when it comes to
+performance. For example a DSL for issuing stock trades may have
+completely different performance requirements compared to a DSL
+created to support repeating numerical calculations. What host
+languages are suited for building high performance DSLs? Are there
+features in the languages that affect performance? How well do the
+different host languages facilitate building DSLs taking advantage of
+parallel processing and concurrency?  There are many interesting
+questions to be answered regarding performance.
+
+\section{Summary of Requirements and Report Structure}
 \label{sec:requirements}
 
-The following lists the different requirements/capabilities that I
-have considered in this work. The list provides a foundation for
-structuring the rest of this report:
+The rest of this report is structured around the requirements
+discussed in the previous section. After a description of the
+programming languages used and the examples implemented (chapter
+\ref{chp:examples} <<Programming Languages and Examples>>), each of
+the requirements are treated in separate chapters. As described in the
+method section, each requirement is studied in terms of existing
+theory combined with examples. A summary is written for each chapter,
+concluding the results found related to the requirements covered by
+the chapter.
+
+The following list summarizes the main requirements, and gives a
+pointer to the chapter that covers each set of requirements:
 
 \begin{itemize}
-\item \textbf{Syntax Conciseness/``fluency''} -- What capabilities
-  does the different languages provide in building fluent interfaces?
-\item \textbf{Modularity/composition} -- How can several DSLs be
-  combined/reused into new ones?
-\item \textbf{Isolation/uniqueness} -- How can unwanted features of
-  the host language be deprecated/removed? How can the host language
-  be extended to provide new functionality?
+\item \textbf{Syntax and Semantics} -- What capabilities does the
+  different languages provide in building concise syntax and
+  semantics? Chapter \ref{chp:syntax} <<Syntax and Semantics>> looks
+  at different host language features, and how those features can be
+  used to create embedded DSLs with a concise and understandable
+  syntax.
+\item \textbf{Customizing the DSL} -- How can a DSL be tailored for a
+  specific need? How can several DSLs be combined/reused into new
+  ones? Chapter \ref{chp:customization} <<Creating Customizable DSLs>>
+  handles the design of customizable DSLs.
+\item \textbf{Changing the Host Language} -- How can unwanted features
+  of the host language be deprecated/removed? How can the host
+  language be extended to provide new functionality? Chapter
+  \ref{chp:changinghostlanguage} <<Changing the Host Language>>
+  describes looks at how the various host languages can be changed.
 \item \textbf{Use} -- How can embedded DSLs be used? What is the level
   of tool support provided for the DSL? How are errors and exceptional
-  situations handled in the different languages?
+  situations handled in the different languages? Chapter
+  \ref{chp:dsluse} <<Exploring Ways to Use Embedded DSLs>> handles
+  different ways to utilize and run the DSLs.
 \item \textbf{Performance} -- How does the different languages
   facilitate building DSLs with high demands regarding
-  throughput/performance?
+  throughput/performance? Chapter \ref{chp:performance}
+  <<Performance>> discusses various aspects regarding DSL performance.
 \end{itemize}
 
-\section{Report Structure}
-
-The rest of this report is structured around the requirements listed
-in section \ref{sec:requirements}. After a brief description of the
-programming languages used, and the examples studied, each of the
-requirements are treated in separate chapters. As described in the
-method section, each requirement is studied in terms of existing
-literature combined with examples. A summary is written for each
-chapter, concluding the results found related to the requirements
-covered by the chapter.
-
-Chapter \ref{chp:examples} <<Programming Languages and Examples>>
-describes the programming languages used and the example DSLs created
-or studied in this thesis.  Chapter \ref{chp:syntax} <<Syntax>> looks
-at techniques for creating concise and ``fluent'' syntax.  Chapter
-\ref{chp:composition} <<Composition>> handles composition of DSLs.
-Chapter \ref{chp:advancedtechniques} <<Advanced Techniques>> describes
-advanced DSL techniques like pruning (removing features from) and
-extending the host language.  Chapter \ref{chp:dsluse} <<Exploring
-Ways to Use Embedded DSLs>> handles different ways to utilize and run
-the DSLs.  Chapter \ref{chp:performance} <<Performance>> discusses
-various aspects regarding DSL performance.  Chapter \ref{chp:summary}
-<<Summary>> provides a summary containing the conclusion as well as
-some suggestions to further work.
+Finally chapter \ref{chp:summary} <<Summary>> provides a summary
+containing the main results and conclusion, as well as some
+suggestions to further work.
 
 \clearpage{\pagestyle{plain}\cleardoublepage}
 
@@ -1015,7 +1075,7 @@ A minimal DSL for statistics has been created in Scala for this
 work. It only has a very basic data structure, with a few rudimentary
 operations. The main reason for creating this little DSL is to provide
 a basis when working with DSL composition (see chapter
-\vref{chp:composition}).
+\vref{chp:customization}).
 
 This whole DSL consist of a single \texttt{DataSet} class,
 implementing the basic operations \texttt{average}, \texttt{minValue}
@@ -1187,7 +1247,7 @@ exist on the JVM.
 
 \clearpage{\pagestyle{plain}\cleardoublepage}
 
-\chapter{Syntax}
+\chapter{Syntax and Semantics}
 \label{chp:syntax}
 
 \textit{The syntax of a language defines its surface
@@ -2262,8 +2322,10 @@ allowing custom handling of missing methods.
 
 \clearpage{\pagestyle{plain}\cleardoublepage}
 
-\chapter{Composition}
-\label{chp:composition}
+\chapter{Creating Customizable DSLs}
+\label{chp:customization}
+
+% TODO rewrite with focus on tailoring/specialization.
 
 This chapter looks at various composition techniques used when working
 with DSLs. It is divided into two main sections; the first one
@@ -2672,8 +2734,10 @@ good alternative to combine DSLs.
 
 \clearpage{\pagestyle{plain}\cleardoublepage}
 
-\chapter{Advanced Techniques}
-\label{chp:advancedtechniques}
+\chapter{Changing the Host Language}
+\label{chp:changinghostlanguage}
+
+% TODO: change focus to host language changes
 
 This chapter describes some advanced techniques that can be used in
 DSL construction. More specifically it deals with operations that
