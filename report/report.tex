@@ -70,7 +70,7 @@
   numbers=none,
   numberstyle=\tiny\color{gray},
   keywordstyle=\color{blue}\bfseries,
-  commentstyle=\color{dkgreen},
+  commentstyle=\color{dkgreen}\it,
   stringstyle=\color{mauve},
   frame=single,
   frameround=tttt,
@@ -607,10 +607,10 @@ console, as if they were interpreted (not compiled) languages.
     & Object-oriented & Functional & Static Typing & Dynamic Typing & Compiled & Interpreted \\ [0.5ex]
     \hline
     Java & x & - & x & - & x & - \\
+    Scala & x & x & x & - & x & (x) \\
     Groovy & x & (x) & - & x & (x) & x \\
     Ruby & x & (x) & - & x & (x) & x \\
     Clojure & - & x & - & x & x & (x) \\
-    Scala & x & x & x & - & x & (x) \\
     \hline
   \end{tabular*}
   \caption{Programming languages comparison matrix.\label{tab:plmatrix}}
@@ -622,10 +622,17 @@ sections.
 \subsection{Java}
 
 Java is naturally the most common programming language used on the
-JVM. It is a statically typed and compiled object-oriented
-language. It provides the baseline for the work, and will be used as
-example language where applicable. Much of the work however has gone
-in showing how other languages provide features useful when building
+JVM. It is a statically typed and compiled object-oriented language,
+created by the company Sun Microsystems in 1995 (version 1.0
+released). In 2006/2007 most of Java was released as open source
+software, under the GNU General Public License (GPL). As such, Java is
+now considered a standard programming language independent of any
+particular company (although Sun still contributes much of the
+development, and are considered Java ``evangelists'').
+
+In this thesis Java is mainly used as a reference language, and as a
+baseline of what is possible on the JVM. Most of the work is focused
+on showing how other languages provide features useful when building
 DSLs, features not currently found in the Java language itself. So
 Java will also be used quite heavily for reference and comparison to
 the other languages. It is assumed that the reader has a certain
@@ -634,15 +641,16 @@ both academic and enterprise environments), and many Java concepts
 will only be described briefly or referred to without explanation.
 
 Embedded DSLs can also be implemented in Java. A good background with
-examples can be found in\cite{fre06}, a paper describing the
+examples can be found in the paper <<Evolving an Embedded
+Domain-Specific Language in Java>>\cite{fre06}, describing the
 development of the testing framework \texttt{jMock} as an embedded DSL
-in Java. The techniques described in\cite{fre06} can be seen as a sort
-of baseline for what is possible in Java. The majority of work done in
-this report is showing what can be achieved using features from other
-languages, going beyond what is capable in the Java language. The
-example shown in listing \vref{lst:jmock} is from\cite{fre06}, showing
-the DSL syntax of mock object expectations used in a mock
-\texttt{Offer} class.
+in Java. The example shown in listing \vref{lst:jmock} is
+from\cite{fre06}, showing the DSL syntax of mock object expectations
+used in a mock \texttt{Offer} class. The techniques described in the
+paper can be seen as a sort of baseline for what is possible in
+Java. The majority of work done in this report is showing what can be
+achieved using features from other languages, going beyond what is
+capable in the Java language.
 
 \begin{lstlisting}[float,caption=Java jMock example.,label=lst:jmock,language=java]
 void testAcceptsOfferIfLowPrice() {
@@ -654,6 +662,69 @@ void testAcceptsOfferIfLowPrice() {
   ...
 }
 \end{lstlisting}
+
+\subsection{Scala}
+
+\textit{``Scala is a general purpose programming language designed to
+  express common programming patterns in a concise, elegant, and
+  type-safe way. It smoothly integrates features of object-oriented
+  and functional languages, enabling Java and other programmers to be
+  more productive. Code sizes are typically reduced by a factor of two
+  to three when compared to an equivalent Java
+  application''.}\cite{scala}
+
+Scala is a relatively new language (first version released
+2003\cite{scala}) providing exciting programming capabilities on the
+Java Virtual Machine (JVM). The main reason for choosing Scala in this
+thesis is the combination of powerful programming structures (both
+object-oriented and functional) with the cross-platform and wide
+adoption of the JVM. Code implemented in Scala can be run on any JVM
+version 1.5 or newer, and can utilize any library implemented in Java. It
+can thus be seen as a ``best of both worlds'' language. For this
+reason Scala has been used as the main language in this thesis, and as
+example language when implementing the DSL examples.
+
+% TODO: write more about Scala, with example?
+
+For more detailed information about Scala please refer
+to\cite{ode08},\cite{scala} or\cite{scalatour}.
+
+\subsubsection{Scala and Java}
+\label{sec:scalajava}
+
+Scala code (.scala files) compiles to Java bytecode (.class files)
+through a special compiler (\texttt{scalac}). The bytecode can then be
+run on the JVM as if it was created from Java source (.java files). In
+addition Scala provides a number of library classes that need to be
+included as a jar file. This relationship between Scala and Java is
+illustrated in figure \vref{fig:scalajava}.
+
+\begin{figure}[h]
+  \begin{center}
+  \tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=5em, text centered, rounded corners, minimum height=4em]
+  \tikzstyle{line} = [draw, -latex']
+  \tikzstyle{cloud} = [draw, ellipse,fill=red!20, text width=5em, text centered, node distance=2.5cm, minimum height=2em]
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [cloud] (class) {Java Bytecode (.class)};
+    \node [block, left of=class, above of=class] (scalacompile) {Scala Compile (scalac)};
+    \node [cloud, left of=scalacompile] (scala) {Scala Source (.scala)};
+    \node [block, right of=class, above of=class] (javacompile) {Java Compile (javac)};
+    \node [cloud, right of=javacompile] (java) {Java Source (.java)};
+    \node [block, below of=class] (jvm) {Java Virtual Machine};
+    \node [block, below of=scala] (scalalib) {Scala API (.jar)};
+    % Draw edges
+    \path [line] (scalacompile) -- (class);
+    \path [line] (javacompile) -- (class);
+    \path [line] (class) -- (jvm);
+    \path [line] (scala) -- (scalacompile);
+    \path [line] (java) -- (javacompile);
+    \path [dotted, line] (scalalib) -- (jvm);
+  \end{tikzpicture}
+  \end{center}
+  \caption{Visual representation of the relationship between Scala and
+    Java.\label{fig:scalajava}}
+\end{figure}
 
 \subsection{Groovy}
 
@@ -831,67 +902,6 @@ libraries on the Java platform seems to be a very good idea. A good
 book for learning more about Clojure is <<Programming
 Clojure>>\cite{hal09}.
 
-\subsection{Scala}
-
-\textit{``Scala is a general purpose programming language designed to
-  express common programming patterns in a concise, elegant, and
-  type-safe way. It smoothly integrates features of object-oriented
-  and functional languages, enabling Java and other programmers to be
-  more productive. Code sizes are typically reduced by a factor of two
-  to three when compared to an equivalent Java
-  application''.}\cite{scala}
-
-Scala is a relatively new language (first version released
-2003\cite{scala}) providing exciting programming capabilities on the
-Java Virtual Machine (JVM). The main reason for choosing Scala in this
-thesis is the combination of powerful programming structures (both
-object-oriented and functional) with the cross-platform and wide
-adoption of the JVM. Code implemented in Scala can be run on any JVM
-version 1.5 or newer, and can utilize any library implemented in Java. It
-can thus be seen as a ``best of both worlds'' language. For this
-reason Scala has been used as the main language in this thesis, and as
-example language when implementing the DSL examples.
-
-For more detailed information about Scala please refer
-to\cite{ode08},\cite{scala} or\cite{scalatour}.
-
-\subsubsection{Scala and Java}
-\label{sec:scalajava}
-
-Scala code (.scala files) compiles to Java bytecode (.class files)
-through a special compiler (\texttt{scalac}). The bytecode can then be
-run on the JVM as if it was created from Java source (.java files). In
-addition Scala provides a number of library classes that need to be
-included as a jar file. This relationship between Scala and Java is
-illustrated in figure \vref{fig:scalajava}.
-
-\begin{figure}[h]
-  \begin{center}
-  \tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=5em, text centered, rounded corners, minimum height=4em]
-  \tikzstyle{line} = [draw, -latex']
-  \tikzstyle{cloud} = [draw, ellipse,fill=red!20, text width=5em, text centered, node distance=2.5cm, minimum height=2em]
-  \begin{tikzpicture}[node distance = 2cm, auto]
-    % Place nodes
-    \node [cloud] (class) {Java Bytecode (.class)};
-    \node [block, left of=class, above of=class] (scalacompile) {Scala Compile (scalac)};
-    \node [cloud, left of=scalacompile] (scala) {Scala Source (.scala)};
-    \node [block, right of=class, above of=class] (javacompile) {Java Compile (javac)};
-    \node [cloud, right of=javacompile] (java) {Java Source (.java)};
-    \node [block, below of=class] (jvm) {Java Virtual Machine};
-    \node [block, below of=scala] (scalalib) {Scala API (.jar)};
-    % Draw edges
-    \path [line] (scalacompile) -- (class);
-    \path [line] (javacompile) -- (class);
-    \path [line] (class) -- (jvm);
-    \path [line] (scala) -- (scalacompile);
-    \path [line] (java) -- (javacompile);
-    \path [dotted, line] (scalalib) -- (jvm);
-  \end{tikzpicture}
-  \end{center}
-  \caption{Visual representation of the relationship between Scala and
-    Java.\label{fig:scalajava}}
-\end{figure}
-
 \section{Examples}
 
 This section describes the main examples implemented and researched in
@@ -899,8 +909,8 @@ the thesis. The DSLs are described, and details about implementation
 and key features given. Some source code being central in the
 implementation is shown in the text. Full source code for all the
 examples can be downloaded from my repositories at
-GitHub\footnote{GitHub repositories website --
-  \url{http://github.com/eivindw}}.
+GitHub.\footnote{GitHub repositories website --
+  \url{http://github.com/eivindw}}
 
 \subsection{DSL for Image Processing}
 \label{sec:dslimageprocessing}
@@ -978,9 +988,9 @@ The methods to load and save the image, as well as the \texttt{Square}
 definition of structuring element, are all member functions in classes
 \texttt{SImageIO} and \texttt{StrElType}. These can be imported with
 the \texttt{.\_} notation in Scala, and are then available
-directly\footnote{The Scala member import is similar to the static
+directly.\footnote{The Scala member import is similar to the static
   member import found in Java, making static methods in a class
-  directly available.}. An example is shown in listing
+  directly available.} An example is shown in listing
 \vref{lst:scalaipsyn}, where the comments show how the statements
 would look without using the static member import.
 
@@ -1124,8 +1134,8 @@ statistics DSL. It provides the third and last important piece when
 building a full DSL environment for image analysis. The DSL is
 implemented in Scala (as the two DSLs described in previous sections),
 and implements the charting functionality using the Java library
-JFreeChart\footnote{\url{http://www.jfree.org/jfreechart} -- Open
-  source (LGPL licensed) charting library implemented in Java.}. It shows
+JFreeChart.\footnote{\url{http://www.jfree.org/jfreechart} -- Open
+  source (LGPL licensed) charting library implemented in Java.} It shows
 how an existing Java library can be directly used as implementation
 for a DSL implemented in the other languages.
 
@@ -1795,10 +1805,10 @@ conversion from \texttt{Int}, to provide the handy DSL syntax
 \section{Lambda Expressions/Anonymous Functions}
 
 Anonymous functions, or lambda expressions, can be used as parameters
-for higher-order function\footnote{Higher-order functions are
+for higher-order function.\footnote{Higher-order functions are
   functions that can take other functions as input parameters or
   return a function as output value, or functions that can be stored
-  in variables.}. They are useful to make concise code, and avoiding
+  in variables.} They are useful to make concise code, and avoiding
 duplication. For example in the Scala for comprehensions and the LINQ
 statements shown in section \vref{sec:querysyntax}, anonymous
 functions play a role in allowing filtering (if-statements).
@@ -1900,12 +1910,12 @@ closures\footnote{Closures are actually anonymous functions binding a
   important to the usages described here (or most other places,
   really).} in Ruby and Groovy, and as lambda expressions in
 Clojure. Support for anonymous functions has also been discussed for
-the next version of Java\footnote{Several different proposals for
+the next version of Java.\footnote{Several different proposals for
   closures/anonymous functions in Java 7 have been discussed. The main
   effort is now lead by Mark Reinhold, as stated on his blog
   (\url{http://cr.openjdk.java.net/~mr/lambda/straw-man/}), and is
   documented as ``Project Lambda'' at the OpenJDK:
-  \url{http://openjdk.java.net/projects/lambda/}.}.
+  \url{http://openjdk.java.net/projects/lambda/}.}
 
 \section{Anonymous Types}
 
@@ -2151,7 +2161,7 @@ Clojure is the key to this.
 
 Clojure has a programmatic macro system which allows the compiler to
 be extended by user
-code\footnote{\url{http://clojure.org/macros}}. This means that we can
+code.\footnote{\url{http://clojure.org/macros}} This means that we can
 write code that produces code, which was the definition of
 metaprogramming given earlier. The Clojure macros are processed in two
 steps. First the macro expands/executes, and substitutes the result
@@ -2471,7 +2481,7 @@ frameworks exist adding AOP support to the language. Some examples of
 frameworks are
 AspectJ\footnote{\url{http://www.eclipse.org/aspectj/}},
 JBossAOP\footnote{\url{http://www.jboss.org/jbossaop}} and
-Qi4j\footnote{\url{http://www.qi4j.org/}}. The paper <<Domain-Specific
+Qi4j.\footnote{\url{http://www.qi4j.org/}} The paper <<Domain-Specific
 Languages and Program Generation with Meta-AspectJ>>\cite{hua08}
 describes ``Meta-AspectJ'', a language for generating AspectJ programs
 using code templates, and how it is used to construct a DSL. It is
@@ -2616,7 +2626,7 @@ of an object. They can dispatch on any function, and can use more than
 one parameter when dispatching. In \cite{hal09} a part of the Clojure
 core API using multimethods is explained, namely the
 \textit{inspector}
-mechanism\footnote{\url{http://richhickey.github.com/clojure/clojure.inspector-api.html}}. This
+mechanism.\footnote{\url{http://richhickey.github.com/clojure/clojure.inspector-api.html}} This
 can be seen as a kind of DSL to provide quick views of data organized
 in a tree-like structure. The interesting part of this is that the
 data-structures used can be anything you want. The only thing that
@@ -2910,8 +2920,8 @@ programming uses functions and recursion instead of pure loops) or
 
 Listing \vref{lst:scalacompilerplugin} shows an example implementation
 of a compiler plugin checking for divide by zero
-errors\footnote{Example taken from: ``Writing Scala Compiler Plugins''
-  -- \url{http://www.scala-lang.org/node/140}}. This is an example of
+errors.\footnote{Example taken from: ``Writing Scala Compiler Plugins''
+  -- \url{http://www.scala-lang.org/node/140}} This is an example of
 host language extension, but a plugin removing functionality could be
 made in a similar manner. Compiling code with this plugin activated
 renders an error if division statements have the integer 0 as divisor
@@ -3519,7 +3529,7 @@ on the JVM, as they can analyze bytecode or other JVM-based management
 options. Typical examples are standard Java tools like \texttt{jps},
 \texttt{jstat}, \texttt{jstack} and \texttt{javap} (all included in
 standard Java Development Kit
-distribution\footnote{\url{http://java.sun.com/javase/6/docs/technotes/tools/}}).
+distribution.\footnote{\url{http://java.sun.com/javase/6/docs/technotes/tools/}})
 
 Other useful tools include those that are used to automate the
 building of projects (like
@@ -3547,7 +3557,7 @@ following sections discuss differences related to language category.
 
 The Java programming language uses exceptions to handle errors and
 other exceptional
-events\footnote{\url{http://java.sun.com/docs/books/tutorial/essential/exceptions/index.html}}. It
+events.\footnote{\url{http://java.sun.com/docs/books/tutorial/essential/exceptions/index.html}} It
 is a basic mechanism where code can be wrapped in a \texttt{try}
 block, and any exception thrown can be handled in separate
 \texttt{catch} blocks (one for each type of exception). Additionally
@@ -3770,10 +3780,10 @@ Several existing benchmarks have been studied to verify that the above
 statements about dynamic languages being slower are actually true. It
 is a problem that there are very few official benchmarks
 available. The ones studied here are published on various Internet
-sites\footnote{\url{http://shootout.alioth.debian.org/}}
+sites.\footnote{\url{http://shootout.alioth.debian.org/}}
 \footnote{\url{http://pegolon.wordpress.com/2008/01/24/quick-ruby-groovy-performance-comparison/}}
 \footnote{\url{http://www.mikeperham.com/2008/12/13/clojure-vs-ruby/}}
-\footnote{\url{http://www.fischerlaender.net/perl/poor-groovy-performance}}.
+\footnote{\url{http://www.fischerlaender.net/perl/poor-groovy-performance}}
 Discussions seem to indicate that it is difficult to create objective
 benchmarks. JIT-compilation on the JVM makes the platform unreliable
 when running small standalone tests, and the techniques used to create
@@ -3858,7 +3868,7 @@ matrix I ended up testing a few different variants:
 \item \textbf{List of Lists} -- A very logical implementation of
   matrix can be made by using Scala \texttt{Lists}. The idea for this
   implementation was inspired by a blog post by Jonathan
-  Merritt\footnote{\url{http://jsmerritt.blogspot.com/2008/07/matrix-multiplication-in-scala.html}}. A
+  Merritt.\footnote{\url{http://jsmerritt.blogspot.com/2008/07/matrix-multiplication-in-scala.html}} A
   simple example of using a list of lists is shown in listing
   \vref{lst:listoflist}. However, this implementation proves to be
   very slow in specific element access and iteration.
@@ -4056,7 +4066,7 @@ classes. Using primitives is much faster than using wrappers:
   code. An Integer is not a substitute for an int; autoboxing and
   unboxing blur the distinction between primitive types and reference
   types, but they do not eliminate
-  it}\footnote{\url{http://java.sun.com/j2se/1.5.0/docs/guide/language/autoboxing.html}}.
+  it}.\footnote{\url{http://java.sun.com/j2se/1.5.0/docs/guide/language/autoboxing.html}}
 As stated in the quote, it is critical to ensure that primitives are
 used for numerical code, like the image processing DSL in this thesis.
 
@@ -4123,7 +4133,7 @@ programming the different functional paradigms are explored.
 
 Java supports various abstractions that can be used when working with
 concurrency, all dealing with threads in some way or
-another\footnote{\url{http://java.sun.com/docs/books/tutorial/essential/concurrency/}}.
+another.\footnote{\url{http://java.sun.com/docs/books/tutorial/essential/concurrency/}}
 Several threads can exist within a process, sharing resources like
 memory and files. This opens up possibilities for more efficient
 programming, but also opens up for errors regarding access to shared
@@ -4423,7 +4433,7 @@ the GPU to perform calculations. OpenCL is being created by the
 Khronos Group with the participation of many industry-leading
 companies and institutions. A Scala API exists which enables Scala
 programs to make use of the possibilities offered by OpenCL --
-ScalaCL\footnote{\url{http://code.google.com/p/nativelibs4java/wiki/OpenCL}}.
+ScalaCL.\footnote{\url{http://code.google.com/p/nativelibs4java/wiki/OpenCL}}
 
 A simple example using ScalaCL to add two arrays of integers is shown
 in listing \vref{lst:scalacl}. The \texttt{IntsVar} type is a special
@@ -4473,8 +4483,8 @@ performance. This section briefly describes some of these options,
 with a focus on the various programming languages running on the
 JVM. Configuring the JVM for performance is covered in details by
 documentation provided by
-Sun\footnote{\url{http://java.sun.com/javase/technologies/performance.jsp}}
-\footnote{\url{http://java.sun.com/performance/reference/whitepapers/tuning.html}}.
+Sun.\footnote{\url{http://java.sun.com/javase/technologies/performance.jsp}}
+\footnote{\url{http://java.sun.com/performance/reference/whitepapers/tuning.html}}
 
 \subsection{Configuring Memory Usage and the Garbage Collectors}
 
@@ -4487,7 +4497,7 @@ controlling how fast they can grow in size and the upper limits. Since
 the JVM provides automatic garbage collection, setting memory limits
 directly control how often the garbage collector will run. Parameters
 are also available to control how the garbage collectors
-run\footnote{\url{http://java.sun.com/docs/hotspot/gc5.0/gc_tuning_5.html}}.
+run.\footnote{\url{http://java.sun.com/docs/hotspot/gc5.0/gc_tuning_5.html}}
 
 \section{Summary}
 
@@ -4769,8 +4779,8 @@ work.
 The C\# language from Microsoft is a statically typed language that
 from version 4.0\footnote{To be released spring 2010.} adds support
 for a \texttt{dynamic} keyword allowing type checking to be postponed
-until runtime\footnote{C\# 4.0 -- Using Type dynamic:
-  \url{http://msdn.microsoft.com/en-us/library/dd264736\%28VS.100\%29.aspx}}. Features
+until runtime.\footnote{C\# 4.0 -- Using Type dynamic:
+  \url{http://msdn.microsoft.com/en-us/library/dd264736\%28VS.100\%29.aspx}} Features
 such as this bridges much of the gap between statically and
 dynamically typed languages. A suggestion of future work is to add
 similar support to one of the statically typed languages running on
