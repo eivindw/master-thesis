@@ -2139,6 +2139,7 @@ to certain kind of DSLs and programming language paradigms. A DSL like
 Rails could never have been implemented in a static language.
 
 \subsection{Functional Metaprogramming}
+\label{sec:functionalmetaprogramming}
 
 In Clojure, the only ``pure'' functional language used in this thesis,
 there is no big separation between code and data. It is a
@@ -2924,7 +2925,7 @@ Test.scala:5: error: definitely division by zero
 one error found
 \end{lstlisting}
 
-\lstinputlisting[float,caption=Scala ``Divide-by-zero'' compiler plugin.,label=lst:scalacompilerplugin]{../examples/scala-compiler-plugin/DivByZero.scala}
+\lstinputlisting[caption=Scala ``Divide-by-zero'' compiler plugin.,label=lst:scalacompilerplugin]{../examples/scala-compiler-plugin/DivByZero.scala}
 
 Using compiler plugins has the advantage that you can have full
 control of what features to remove/add to the host language. The
@@ -2964,7 +2965,7 @@ completely, rendering the message
 <<\lstinline[language=]{NoMethodError: undefined method `length' for "hei":String}>>
 if called on the string ``hei''.
 
-\begin{lstlisting}[float,language=ruby,caption=Ruby \texttt{undef\_method} example.,label=lst:rubyundefmethod]
+\begin{lstlisting}[language=ruby,caption=Ruby \texttt{undef\_method} example.,label=lst:rubyundefmethod]
 class String
   undef_method: length
 end
@@ -2973,6 +2974,14 @@ end
 Similar ways to modify the base API methods and classes are also
 available in Groovy, as was shown with the \texttt{random} method
 redefinition in listing \vref{lst:groovymeta}.
+
+The advantage with using the approach offered in the dynamic languages
+is that the changes can be made in code, and included directly in the
+DSL. All functionality that is based on classes and methods can be
+changed. The limitations with the approach is that mechanisms built
+into the language are impossible to remove. Removing support for basic
+forms like \texttt{while-loops} or \texttt{if-else} statements can not
+be done.
 
 \subsection{Pruning in Functional Languages}
 
@@ -3000,8 +3009,13 @@ the image processing example used for this thesis.
 
 Clojure also supports removing mappings from namespaces
 completely. The code in listing \vref{lst:cljundefcore} removes the
-mapping for the \texttt{+} function. Attempting to add numbers after
-this renders an error: <<\lstinline[language=]{Unable to resolve symbol: + in this context}>>.
+mapping for the \texttt{+} function in the current
+namespace. Attempting to add numbers after this renders an error:
+<<\lstinline[language=]{Unable to resolve symbol: + in this context}>>.
+This is a mechanism that could be used directly as part
+of the DSL code. Users would still be able to redefine the things that
+have been removed, but the ``default'' would not to have them
+available.
 
 \begin{lstlisting}[language=lisp,caption=Clojure undefining core functions.,label=lst:cljundefcore]
 ; Remove the mapping of + for the current namespace
@@ -3013,8 +3027,8 @@ this renders an error: <<\lstinline[language=]{Unable to resolve symbol: + in th
 
 Another way to change the core functionality of Clojure, is to use
 \texttt{dynamic bindings}. With dynamic bindings it is possible to
-redefine the meaning of a globally defined variable, within the scope
-of a function/macro. An example is shown in listing
+redefine the meaning of a globally defined value, within the scope of
+a function/macro. An example is given in listing
 \vref{lst:cljbinding}\footnote{Example from
   \url{http://en.wikipedia.org/wiki/Clojure\#Examples}.}, showing how
 the \texttt{noprint} macro redefines the \texttt{*out*} special
@@ -3022,9 +3036,10 @@ variable to a dummy \texttt{java.io.Writer} object. The \texttt{*out*}
 variable is used by many functions to print information to a standard
 output/console. However, because of the redefining done by the dynamic
 binding, all print statements within a \texttt{noprint} macro call
-will be suppressed.
+will be suppressed. Using dynamic bindings is a nice way to prune or
+redefine features only within a limited scope.
 
-\begin{lstlisting}[float,language=lisp,caption=Clojure macro binding core variable.,label=lst:cljbinding]
+\begin{lstlisting}[language=lisp,caption=Clojure macro binding core variable.,label=lst:cljbinding]
 (def bit-bucket-writer
   (proxy [java.io.Writer] []
     (write [buf] nil)
@@ -3041,15 +3056,23 @@ will be suppressed.
 (noprint (println "Noprint println!"))
 \end{lstlisting}
 
+An advantage with the pruning possibilities found in Clojure is, as
+for the other dynamic languages, that the changes can be made directly
+in code and included in the DSL. It is the only language where base
+features like conditional logic or similar can be disabled directly in
+code (without using compiler plugins or other ``external''
+mechanisms). A problem with Clojure may be that it allows too many
+changes. If not used carefully, one may end up removing base features
+that can cause other features to malfunction.
+
 \section{Extending the Host Language}
 
-More interesting than removing stuff from the host language (as
-discussed in the previous section) may be the ability to extend it. If
-the host language does not natively support the kind of control
-structure or primitive that can make your DSL as expressive as
-possible, it may come in handy to be able to add that support
-yourself. The following subsections describe some possibilities when
-you want to extend the various host languages.
+This section discusses extensions to the host language. For some of
+the languages, the same features that were shown for pruning can also
+be used for extending the language. These are only mentioned briefly,
+with references to the previous section. Some new mechanisms are
+discussed, with a focus on how they aid in extending the host
+language.
 
 \subsection{Compiler Plugins}
 
@@ -3059,21 +3082,30 @@ functionality added to Scala is first introduced as compiler plugins,
 and then later added to the main distribution after being tested. An
 example of this is the continuations support that will be added to
 Scala 2.8\footnote{A Taste of 2.8: Continuations --
-  \url{http://www.scala-lang.org/node/2096}}.
+  \url{http://www.scala-lang.org/node/2096}}, and has been available
+as a downloadable plugin some time before the new version is released.
+
+A similar approach to that of the Scala language itself (letting users
+try new functionality as downloadable plugins), could be done with a
+DSL. Features could be enabled or disabled based on the plugins
+included in the compiler.
 
 \subsection{Dynamic Languages}
 
 The mechanisms described in section \vref{sec:dynlangprune} can just
-as well be used to extend the host language with new methods. Examples
+as well be used to extend the host language with new methods. Existing
+classes can be modified, even final or core language classes. Examples
 of this were shown in section \vref{sec:monkey_patching}.
 
 \subsection{Functional Languages}
 
-Functional languages have a wide variety of ways to extend the hos
+The functional languages have a few different ways to extend the host
 language. The first subsection below describes how functions
-themselves can be implemented to appear as built-in keywords. The
-second subsection describe Clojure macros, an extremely flexible
-mechanism when it comes to extending the language.
+themselves can be implemented to appear as built-in keywords. This is
+not really an extension of the language, but still included here as it
+offers some of the same possibilities. The second subsection describe
+Clojure macros, an extremely flexible mechanism when it comes to
+extending the language.
 
 \subsubsection{First-class Functions as Built-in Control Structures}
 
@@ -3083,8 +3115,17 @@ functions. In Scala functions can be defined with ``pass by-name''
 parameter passing, and single parameter functions can be called using
 curly braces instead of parenthesis to specify the parameter (an
 example was shown in section \vref{sec:bynameparams}). As an example
-consider the definition of a new while construct shown in listing
-\vref{lst:scalabuiltinkeywords}
+consider the definition of a new while construct \texttt{mywhile}
+shown in listing \vref{lst:scalabuiltinkeywords}. The function
+\texttt{mywhile} is implemented as a curried function (having two
+lists of parameters, instead of one list with two parameters), using
+recursion to call itself as long as the given condition evaluates to
+true. The usage (shown in the bottom part of the listing) is exactly
+the same as the regular while construct. This is partly due to the
+fact that Scala allows both regular paranthesis and curly braces to
+surround function arguments. Notice how the condition is given in
+paranthesis, and the body statements in curly braces, although they
+are both just by-name parameters.
 
 \begin{lstlisting}[float,caption={[Scala built-in keyword functions]Scala example making functions look like built-in keywords.},label=lst:scalabuiltinkeywords]
 def mywhile(cond: => Boolean)(body: => Unit) {
@@ -3105,7 +3146,9 @@ mywhile(i < 3) {
 As we can see it is simple to define functions that act and look like
 built-in control structures. This is very useful designing DSLs where
 we want it to seem like the host language has been extended with new
-features supporting the DSL.
+features supporting the DSL. So this is not really a genuine extension
+of the language, but something that appears to be and does the same
+job in many cases.
 
 \subsubsection{Clojure Macros}
 
@@ -3115,7 +3158,10 @@ mechanism as well, namely the macro system. Macros in Clojure extend
 the compiler by writing regular user code, and are totally different
 from other programming languages macro systems. Many of the core
 constructs in Clojure are in fact implemented as macros, and are not
-actually primitives or other built-in support.
+actually primitives or other built-in support. Macros were introduced
+in section \vref{sec:functionalmetaprogramming}, with a focus on
+metaprogramming. In this section they are used to show how Clojure, as
+a host language, can be extended.
 
 A macro can be seen as a kind of template that outputs code, like that
 found in many other programming languages. The big difference with
