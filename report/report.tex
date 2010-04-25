@@ -2517,7 +2517,7 @@ that users can extend the matrix data structure with support for new
 types simply by extending the \texttt{Matrix} trait with whatever type
 they need.
 
-\begin{lstlisting}[float,caption=Matrix implementation using type parameters.,label=lst:typeparameters]
+\begin{lstlisting}[float,caption=Matrix example using type parameters.,label=lst:typeparameters]
 trait Matrix[T] {
   ... // Implementation of general matrix interface
 }
@@ -2563,7 +2563,7 @@ can be represented as the \texttt{RGBImage}, with the datatype being a
 matrix of triple-integers (one integer value for each of the colors
 Red Green and Blue).
 
-\begin{lstlisting}[caption=Image implementation using virtual type.,label=lst:virtualtypes]
+\begin{lstlisting}[caption=Image example using virtual type.,label=lst:virtualtypes]
 trait Image {
   type DataType
   ... // Implementation of general image interface
@@ -2759,7 +2759,7 @@ implicit def img2DS(img: GrayScaleImage) = {
 // Example use - load an image and use it directly as input to an area chart.
 val img = loadImageCP("/numbers.png")
 
-createAreaChart("Image Histogram", img)
+val histogram = createHistogram("Image Histogram", img)
 \end{lstlisting}
 
 \begin{figure}[h]
@@ -2852,31 +2852,40 @@ University of Oslo seems like a good alternative to combine DSLs.
 \chapter{Changing the Host Language}
 \label{chp:changinghostlanguage}
 
-% TODO: change focus to host language changes
+In the previous chapter we looked at customizable DSLs. This chapter
+deals with a related topic, namely customizing the host language that
+the DSL is implemented in. The chapter is divided in two main
+parts. The first section discusses ways to remove (or ``prune'')
+features from the host language, while the last section shows how the
+various host languages can be extended. This chapter does not rely on
+a big example, but shows through small stand-alone examples what can
+be done with the languages.
 
-This chapter describes some advanced techniques that can be used in
-DSL construction. More specifically it deals with operations that
-remove functionality from the host language (pruning), and various
-ways to extend the host language. One could discuss how relevant this
-is when talking about embedding DSLs, as using these techniques widely
-can alter the host languages radically. As such an embedded DSL in a
-host language can be rendered to act as an external DSL, tweaking the
-programming language to suit our needs.
+The reason for looking at this requirement is to see how much it is
+possible to customize the host languages. There are several situations
+where this is useful. Maybe the host language has some feature that is
+likely to cause errors if used together with the DSL. In that
+situation, it would be useful to disable or remove that feature in the
+scope of the DSL. This would ``protect'' the user from doing something
+wrong. At the same time it must be done with care, as users who are
+familiar with the host language may get offended if features are
+missing.
+
+Another situation is that where the DSL uses some kind of pattern that
+one would like to include in the host language. If features can be
+added to the host language, maybe the syntax feels more native, or
+maybe one could benefit from added compiler-checks or similar? Maybe
+extensions to the host language can be used in combination with
+pruning unwanted features, making the DSL appear almost as an external
+DSL with its own parser and interpreter?
 
 \section{Removing from the Host Language -- Pruning}
 
-This first section deals with the removing of functionality from the
-host language. It can be interesting when designing an embedded DSL to
-actually deactivate constructs in the host language not being used,
-and that you don't want to user of the DSL to be using either. For
-instance if the DSL is implemented in a very functional style in the
-Scala language, it may be interesting to disable some of the more
-imperative mechanisms such as \texttt{while-loops}. Given this is a
-pretty narrow requirement, and probably not really often needed, the
-following sections just briefly discuss some of the options that
-exist.
+The following section describes how features can be removed from the
+different programming languages. Where possible, small examples have
+been implemented to show how the mechanisms can be used.
 
-\subsection{Compiler Plugins}
+\subsection{Compiler Plugins in Scala}
 \label{sec:compilerplugins}
 
 Scala supports the notion of compiler plugins. This means that you can
@@ -2888,14 +2897,43 @@ distribution. So if the plugin is present the functionality will be
 available, but once it is removed the added functionality will not be
 available anymore.
 
-It would be quite trivial to write a compiler plugin that disables
-unwanted features of Scala. For example if we wanted to remove the
-\texttt{while} construct, the plugin could simply search the abstract
-syntax tree for occurrences of while, and output an error message if
-any are found. No examples are given here, but the Scala website
-provides a good tutorial for getting started writing compiler
-plugins\footnote{Writing Scala Compiler Plugins --
-  \url{http://www.scala-lang.org/node/140}}.
+A compiler plugin could be used to remove or disable features in
+Scala, although primarily used to add new features (extending the host
+language). For example if you want the DSL to be used in a purely
+functional programming setting, features of scala supporting
+imperative programming may be disabled. A compiler plugin can be made
+to return an error if constructs like \texttt{while-loops} (functional
+programming uses functions and recursion instead of pure loops) or
+\texttt{var} (functional programming uses immutable values defined by
+\texttt{val} instead of \texttt{var}) are used.
+
+Listing \vref{lst:scalacompilerplugin} shows an example implementation
+of a compiler plugin checking for divide by zero
+errors\footnote{Example taken from: ``Writing Scala Compiler Plugins''
+  -- \url{http://www.scala-lang.org/node/140}}. This is an example of
+host language extension, but a plugin removing functionality could be
+made in a similar manner. Compiling code with this plugin activated
+renders an error if division statements have the integer 0 as divisor
+(as line 5 of the file \texttt{Test.scala} does in this example):
+
+\begin{lstlisting}[language=]
+\$ scalac -Xplugin:divbyzero.jar Test.scala
+Test.scala:5: error: definitely division by zero
+  val amount = five / 0
+                    ^
+one error found
+\end{lstlisting}
+
+\lstinputlisting[float,caption=Scala ``Divide-by-zero'' compiler plugin.,label=lst:scalacompilerplugin]{../examples/scala-compiler-plugin/DivByZero.scala}
+
+Using compiler plugins has the advantage that you can have full
+control of what features to remove/add to the host language. The
+disadvantage is that you need to make sure the compiler plugins are
+used, either by specifying a separate compile command including the
+plugin jar files or depending on the users actually including the
+plugin when compiling. If the DSL is used in some kind if integrated
+development environment, it may be difficult to ensure that the plugin
+is actually included.
 
 \subsection{Pruning in Dynamic Languages}
 \label{sec:dynlangprune}

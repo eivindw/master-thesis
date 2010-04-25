@@ -16,8 +16,6 @@ class DivByZero(val global: Global) extends Plugin {
   private object Component extends PluginComponent {
     val global: DivByZero.this.global.type = DivByZero.this.global
     val runsAfter = "refchecks"
-    // Using the Scala Compiler 2.8.x the runsAfter should be written as below
-    // val runsAfter = List[String]("refchecks");
     val phaseName = DivByZero.this.name
     def newPhase(_prev: Phase) = new DivByZeroPhase(_prev)    
     
