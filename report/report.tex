@@ -262,7 +262,7 @@ EBSE are as follows:
 Inspired by the EBSE method, I have created my own method suited to
 solve the problem presented in the previous section. It is a set of
 steps that can be run in iterations, each bringing further results,
-that is suited for a timeboxed assignment (as a master thesis). The
+that is suited for a time-boxed assignment (as a master thesis). The
 steps followed are illustrated in figure \vref{fig:method}, and
 described in the list below:
 
@@ -357,7 +357,7 @@ host language. This has some advantages in reducing the work needed to
 implement the DSL (as a separate parser and interpreter does not have
 to be implemented), and in integration with the host language and
 other DSLs implemented in the same host language\cite{atk09}. The
-boundary between external and embedded DLSs is not necessarily a fixed
+boundary between external and embedded DSLs is not necessarily a fixed
 one. Elements from both categories can be mixed in a single DSL
 implementation, as shown in\cite{bra04}.
 
@@ -2556,7 +2556,7 @@ being aware of the capabilities that can be achieved using AOP.
 
 Another way that a DSL can be created to allow specialization is by
 using virtual types (abstract type members) and/or type
-parameterization (generics) of classes. Scala supports higher-order
+parametrization (generics) of classes. Scala supports higher-order
 genericity\cite{moo08} and abstract type members. In this section it
 is demonstrated how these features are used to make the image
 processing DSL more general, allowing specializations in a number of
@@ -2564,7 +2564,7 @@ ways. The main reason for using these features in the image processing
 DSL is to ease the process of extending with new specializations.
 
 The \texttt{Matrix} trait used in the image processing DSL uses type
-parameterization to denote the type of the values in the matrix. A
+parametrization to denote the type of the values in the matrix. A
 matrix of integers will be defined as \texttt{Matrix[Int]} and a
 matrix of floating point numbers as \texttt{Matrix[Double]}. The
 matrix trait is extended by an array specific implementation, in the
@@ -3186,9 +3186,9 @@ lists of parameters, instead of one list with two parameters), using
 recursion to call itself as long as the given condition evaluates to
 true. The usage (shown in the bottom part of the listing) is exactly
 the same as the regular while construct. This is partly due to the
-fact that Scala allows both regular paranthesis and curly braces to
+fact that Scala allows both regular parenthesis and curly braces to
 surround function arguments. Notice how the condition is given in
-paranthesis, and the body statements in curly braces, although they
+parenthesis, and the body statements in curly braces, although they
 are both just by-name parameters.
 
 \begin{lstlisting}[float,caption={[Scala built-in keyword functions]Scala example making functions look like built-in keywords.},label=lst:scalabuiltinkeywords]
@@ -4938,5 +4938,9 @@ interpreter consoles ++) on top.
 % LocalWords:  cljmacroreverseuse scalaexception MalformedURLException JIT GHz
 % LocalWords:  rubyexception cljexception scalaloanpattern withPrintWriter DDR
 % LocalWords:  PrintWriter cljwithopen Fjeldberg jvmbenchmark MacBook unboxing
-% LocalWords:  autoboxing livelocks scalaparallelip doParallelSeOp seOpWin
-% LocalWords:  avgSimple
+% LocalWords:  autoboxing livelocks scalaparallelip doParallelSeOp seOpWin GPL
+% LocalWords:  avgSimple Microsystems scalaintro MathTrait addNumbers selftype
+% LocalWords:  MathDoubler Selftype DoubleArray typeparameters els intMtx RGB
+% LocalWords:  doubleMtx DataType virtualtypes datatype RGBImage scalaipstats
+% LocalWords:  createHistogram scalacompilerplugin namespaces cljundefcore
+% LocalWords:  unmap functionalmetaprogramming pointcut
