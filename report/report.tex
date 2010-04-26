@@ -674,20 +674,67 @@ void testAcceptsOfferIfLowPrice() {
   application''.}\cite{scala}
 
 Scala is a relatively new language (first version released
-2003\cite{scala}) providing exciting programming capabilities on the
-Java Virtual Machine (JVM). The main reason for choosing Scala in this
-thesis is the combination of powerful programming structures (both
-object-oriented and functional) with the cross-platform and wide
-adoption of the JVM. Code implemented in Scala can be run on any JVM
-version 1.5 or newer, and can utilize any library implemented in Java. It
-can thus be seen as a ``best of both worlds'' language. For this
+2003\cite{scala}) providing many new programming capabilities on the
+JVM. It is a statically typed and compiled language, just like
+Java. Scala is a multi-paradigm language, combining object-oriented
+and functional programming. The combination of object-orientation and
+functional programming has been proved to support advanced embedding
+of DSLs\cite{hof08}. The fact that the language compiles to bytecode
+and uses static typing makes it similar to Java in many ways. For this
 reason Scala has been used as the main language in this thesis, and as
 example language when implementing the DSL examples.
 
-% TODO: write more about Scala, with example?
+On the object-oriented side, Scala provides many ``new'' features
+compared to Java. First of all it is more pure in its
+object-orientation, as all values are objects. There is no separation
+between primitive and object, as in Java (although the compiler might
+use primitives when producing bytecode for better efficiency). The
+language also supports advanced object-oriented features not found in
+Java, such as traits, singleton objects, class parameters, virtual
+types and higher-order generics (the details around these features
+will be explained later when used in examples).
 
-For more detailed information about Scala please refer
-to\cite{ode08},\cite{scala} or\cite{scalatour}.
+Scala also has many features of functional programming included. This
+includes support for higher-order functions, pattern matching, type
+inference, implicit conversions, currying, partial functions, lazy
+data-structures and a very advanced type system. The type system has
+been a showcase for what is possible in a static language on the
+JVM\cite{moo08b}. Many of the functional programming capabilities of
+Scala will be explained in detail later, with regards to the various
+DSL requirements.
+
+A small Scala example is shown in listing \vref{lst:scalaintro},
+showing some basics of the language. Functions are defined using the
+\texttt{def} keyword. Parenthesis are not mandatory when there are no
+parameters (as in the function \texttt{double}), and curly braces can
+be dropped if the function body consists of only one statement (as
+both functions in the example). Semicolons are usually only needed
+when having multiple statement on the same line. Using \texttt{val}
+defines an immutable value (like using \texttt{final} in Java), while
+\texttt{var} defines a variable (as is default in Java). The type of a
+value is written after the name. The reason for this is the support
+for type inference; the type does not have to be given if it is
+obvious to the compiler. A final point to note is that there is no
+explicit \texttt{return} statement. As in most functional languages
+the final statement in a function is considered the return value.
+
+\begin{lstlisting}[float,caption=Scala introductory example.,label=lst:scalaintro]
+// Example trait
+trait MathTrait {
+  def addNumbers(x: Int, y: Int) = x + y
+}
+
+// Example class
+class MathDoubler(var num: Int) extends MathTrait {
+  def double = addNumbers(num, num)
+}
+
+// Example of use
+val m = new MathDoubler(32)
+println(m.double) // prints 64
+m.num = 64
+println(m.double) // prints 128
+\end{lstlisting}
 
 \subsubsection{Scala and Java}
 \label{sec:scalajava}
@@ -697,7 +744,9 @@ through a special compiler (\texttt{scalac}). The bytecode can then be
 run on the JVM as if it was created from Java source (.java files). In
 addition Scala provides a number of library classes that need to be
 included as a jar file. This relationship between Scala and Java is
-illustrated in figure \vref{fig:scalajava}.
+illustrated in figure \vref{fig:scalajava}. Scala does not separate
+classes implemented in Java or Scala. Classes can be imported and used
+directly, with no special syntax or handling.
 
 \begin{figure}[h]
   \begin{center}
@@ -728,11 +777,18 @@ illustrated in figure \vref{fig:scalajava}.
 
 \subsection{Groovy}
 
-Groovy is a dynamically typed and interpreted (or compiled)
-object-oriented language. It is tightly integrated with Java and can
-leverage existing Java libraries directly. An example of a simple
-object-oriented ``Hello World!'' program is shown in listing
-\vref{lst:groovyhello}.
+Groovy is a dynamically typed and interpreted (or optionally compiled)
+object-oriented language. The first beta-versions of the language were
+available in 2003, but the first official release (version 1.0) was
+not until 2007. I have included Groovy in this thesis as it provides
+an interesting dynamically typed alternative to the Java language. It
+has some syntax-capabilities making it well suited for building
+embedded DSLs.
+
+An example of a simple object-oriented ``Hello World!'' program is
+shown in listing \vref{lst:groovyhello}. The keyword \texttt{def} is
+used for both variables and functions. Strings support insertion of
+values directly, as with the \texttt{name} variable in this example.
 
 \begin{lstlisting}[language=java,caption=Groovy ``hello world'' example.,label=lst:groovyhello]
 class Greet {
@@ -747,17 +803,15 @@ class Greet {
 new Greet('world').salute()
 \end{lstlisting}
 
-I have included Groovy in this thesis as it provides an interesting
-dynamically typed alternative to the Java language. It has some
-syntax-capabilities making it well suited for building embedded DSLs.
-
 \subsubsection{Groovy and Java}
 
 Groovy is very tightly integrated with Java. In most cases, an
 existing Java code file can be renamed to \texttt{.groovy} and run
 directly. This is due to the fact that Groovy supports most of the
 native Java syntax, as well as all the ``new'' dynamic style
-syntax. All Java classes can be imported and used directly in Groovy.
+syntax. All Java classes can be imported and used directly in
+Groovy. Most Groovy functionality uses the existing functionality in
+Java, with its own extensions added.
 
 \subsection{Ruby/JRuby}
 
@@ -881,7 +935,7 @@ Clojure integrates with Java using some special macros like
 \texttt{import} and \texttt{new}, and the dot operator, as shown in
 the examples given in listing \vref{lst:clojurejava}.
 
-\begin{lstlisting}[caption=Clojure -- Java integration.,label=lst:clojurejava,language=lisp]
+\begin{lstlisting}[float,caption=Clojure -- Java integration.,label=lst:clojurejava,language=lisp]
 ; Get a system property
 (System/getProperty "java.vm.version")
 ; Call "toUpperCase" on the String "clojure"
@@ -938,7 +992,7 @@ in\cite{gon08}, but serves good as an example of using the DSLs.
 
 The \matlab{} code to perform the operation could typically look like
 that of listing \vref{lst:matlabimgproc}. An image is read from file,
-blurred with the \texttt{medfilt2} method, and the result saved back
+blurred with the \texttt{medfilt2} function, and the result saved back
 as a new file.
 
 \begin{lstlisting}[language=matlab,caption=\matlab{} image processing example.,label=lst:matlabimgproc]
@@ -984,12 +1038,12 @@ This section briefly describes the syntax and implementation of the
 example. Some Scala features are used that will be further explained
 in the next chapter, and are only described here with short footnotes.
 
-The methods to load and save the image, as well as the \texttt{Square}
-definition of structuring element, are all member functions in classes
-\texttt{SImageIO} and \texttt{StrElType}. These can be imported with
-the \texttt{.\_} notation in Scala, and are then available
-directly.\footnote{The Scala member import is similar to the static
-  member import found in Java, making static methods in a class
+The functions to load and save the image, as well as the
+\texttt{Square} definition of structuring element, are all member
+functions in classes \texttt{SImageIO} and \texttt{StrElType}. These
+can be imported with the \texttt{.\_} notation in Scala, and are then
+available directly.\footnote{The Scala member import is similar to the
+  static member import found in Java, making static methods in a class
   directly available.} An example is shown in listing
 \vref{lst:scalaipsyn}, where the comments show how the statements
 would look without using the static member import.
