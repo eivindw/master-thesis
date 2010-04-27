@@ -100,7 +100,7 @@
 \fancyhead{}
 \fancyfoot[LE,RO]{\thepage}}
 
-\title{Embedding Efficient DSLs on the Java Virtual Machine}
+\title{Embedding Efficient DSLs on the JVM}
 \subtitle{A review of alternative languages}
 \author{Eivind Barstad Waaler (\emph{eivindwa})}
 
@@ -111,14 +111,14 @@
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-The Java Virtual Machine is an extremely popular software platform
-capable of running programs in the intermediate language called Java
-bytecode. The JVM supports a wide range of languages with different
-approach to typing, programming paradigm and compilation. This thesis
-examines some of the most popular of these languages, with a focus on
-their support for embedding domain-specific languages. It is
-demonstrated how various languages provide radically different
-possibilities, with regard to syntax, composition, usage and
+The Java Virtual Machine (JVM) is a popular software platform capable
+of running programs in the intermediate language called Java
+bytecode. The JVM supports a wide range of programming languages with
+different approach to typing, programming paradigm and
+compilation. This thesis examines some of these languages, with a
+focus on their support for embedding domain-specific languages. It is
+demonstrated how various languages provide different possibilities,
+with regard to syntax and semantics, customization, usage and
 performance. Examples are given showing what programming languages are
 suited to particular domain-specific tasks, and further research is
 suggested in the form of new language features and new ways to utilize
@@ -164,8 +164,8 @@ in research and administration.
 
 At last, but not least, I would like to thank my supervisor Professor
 Birger Møller-Pedersen at the Department of Informatics, UiO. His
-unique experience from projects such as the \textsc{beta} programming
-language and the \textsc{swat} project has proven extremely valuable
+unique experience from projects such as the \textsc{Beta} programming
+language and the \textsc{Swat} project has proven extremely valuable
 for me. Through many good discussions at his office I've learned much
 about current and historic programming language concepts. His
 enthusiasm has motivated me from beginning to end.
@@ -173,7 +173,7 @@ enthusiasm has motivated me from beginning to end.
 \begin{flushright}
 \textsc{Eivind Barstad Waaler}\\
 Oslo, Norway\\
-May 2010
+April 2010
 \end{flushright}
 
 \chapter{Introduction}
@@ -182,14 +182,13 @@ May 2010
 
 The goal of this chapter is to describe the problem as detailed as
 possible. It has taken me a long time to clarify and understand the
-problem, and as such I think it is justified to spend quite a lot of
-time and space describing the background and why it is
-important. First the problem formulation is given, with a brief
-background and motivational description. The rest of the chapter
-describes the method followed, and gives more detailed explanations of
-the terminology and background of choices made regarding the problem
-formulation. The final section gives a brief outline of how the rest
-of the report is structured.
+problem, and as such I think it is justified to spend some time and
+space describing the background and why it is important. First the
+problem formulation is given, with a brief background and motivational
+description. The rest of the chapter describes the method followed,
+and gives more detailed explanations of the terminology and background
+of choices made regarding the problem formulation. The final section
+gives a brief outline of how the rest of the report is structured.
 
 \section{Problem Description}
 \label{sec:problemdescription}
@@ -198,7 +197,7 @@ of the report is structured.
 \label{sec:problemformulation}
 
 \textit{Evaluate some major alternative programming languages on the
-  Java Virtual Machine with regards to embedding domain-specific
+  Java Virtual Machine (JVM) with regards to embedding domain-specific
   languages. Identify important aspects when working with embedded
   domain-specific languages and show what programming languages are
   suited and how they solve the problems.}
@@ -213,10 +212,10 @@ particular problem domain. This thesis looks at embedding programming
 DSLs into existing general-purpose programming languages, with a focus
 on several categories of languages with different features, and how
 these features are used. The scope is limited to the platform offered
-by the Java Virtual Machine, and a set of programming languages
-(described further in chapter \vref{chp:examples}). A more detailed
-definition of domain-specific languages, with a discussion around
-scoping and requirements, is given in section \vref{sec:dsls}.
+by the JVM, and a set of programming languages (described further in
+chapter \vref{chp:examples}). A more detailed definition of
+domain-specific languages, with a discussion around scoping and
+requirements, is given in section \vref{sec:dsls}.
 
 \subsection{Motivation}
 \label{sec:motivation}
@@ -229,8 +228,8 @@ problems and solutions. When starting on a master thesis it is natural
 for me to focus on programming language capabilities. I feel that the
 embedded DSL domain provides a good basis for exploring different
 categories of programming languages, and by limiting the focus to the
-Java Virtual Machine I can control the scope and draw on my experience
-working with the Java platform.
+JVM I can control the scope and draw on my experience working with the
+Java platform.
 
 \section{Method}
 \label{sec:method}
@@ -277,9 +276,9 @@ described in the list below:
 \item \textbf{Implement example} -- Implement example code to prove or
   show how the requirement can be solved.
 \item \textbf{Measure} -- Some of the requirements are directly
-  measurable (for example ``which programming is fastest in adding two
-  integers?''). This step makes sure that relevant results are
-  measured where possible.
+  measurable (for example ``which programming language is fastest in
+  adding two integers?''). This step makes sure that relevant results
+  are measured where possible.
 \item \textbf{Conclude} -- Make a preliminary conclusion based on the
   results found so far. Identify all results found, and possibly
   further requirements to find out more.
@@ -290,7 +289,7 @@ described in the list below:
 
 The whole process starts by identifying some overall requirements
 related to the problem formulation. These requirements are then broken
-down to smaller ones. New requirements are discovered in the process
+down into smaller ones. New requirements are discovered in the process
 and can be prioritized when starting new iterations of the
 process.
 
@@ -331,7 +330,7 @@ tried to use scientific research papers as theory basis as much as
 possible, but a certain amount of references/footnotes will also refer
 to links on the Internet. Although not as reliable as scientific
 resources, I find it more honest to include the source of any
-ideas/inspiration. As a general rule I have tried to put URLs sources
+ideas/inspiration. As a general rule I have tried to put URL sources
 directly as footnotes, while more scientific resources are used as
 references.
 
@@ -353,24 +352,27 @@ language. Various capabilities in the host language are exploited to
 create interfaces that look and behave almost like a particular
 programming language. So the syntax and semantics of the DSL are
 defined only using the syntax and semantics already present in the
-host language. This has some advantages in reducing the work needed to
-implement the DSL (as a separate parser and interpreter does not have
-to be implemented), and in integration with the host language and
-other DSLs implemented in the same host language\cite{atk09}. The
-boundary between external and embedded DSLs is not necessarily a fixed
-one. Elements from both categories can be mixed in a single DSL
-implementation, as shown in\cite{bra04}.
+host language. Atkey et al.\cite{atk09} describe two principal
+advantages with embedded over external DSLs. First, the work needed by
+the programmer to implement the DSL is reduced (as a separate parser
+and interpreter does not have to be implemented), and it is easier for
+the user who does not necessarily need to learn an entirely new
+language. Second, in integration with the host language and other DSLs
+implemented in the same language. The boundary between external and
+embedded DSLs is not necessarily a fixed one. Elements from both
+categories can be mixed in a single DSL implementation, as shown by
+Bravenboer and Visser in\cite{bra04}.
 
 In this thesis I have focused solely on embedded DSLs running on the
-Java Virtual Machine (JVM). As described in the book <<DSLs in
-Action>> by Debasish Ghosh\cite{gho09}, several different programming
-languages can be used to implement embedded DSLs on the JVM. In this
-thesis I have identified some different requirements of embedded DSLs,
-and then looked at various JVM programming languages (described in
-section \vref{sec:programminglanguages}) in order to find out what
-languages are best suited for the different requirements. The rest of
-this chapter describes these requirements, with a discussion of why I
-think they are important.
+JVM. As described in the book <<DSLs in Action>> by Debasish
+Ghosh\cite{gho09}, several different programming languages can be used
+to implement embedded DSLs on the JVM. In this thesis I have
+identified some different requirements of embedded DSLs, and then
+looked at various JVM programming languages (described in section
+\vref{sec:programminglanguages}) in order to find out what languages
+are best suited for the different requirements. The rest of this
+chapter describes these requirements, with a discussion of why I think
+they are important.
 
 \subsection{Embedded DSL or just Advanced Library Design?}
 \label{sec:embeddeddsl}
@@ -408,28 +410,28 @@ DSLs, as described in the following sections.
 
 \subsection{Creating Customizable DSLs}
 
-There are many situations where having the ability to customize a DSL
-may be useful. There are also many different ways that the DSL can be
+There are situations where having the ability to customize a DSL may
+be useful. There are also many different ways that the DSL can be
 customized or in other ways changed to suit a specific need.
 
 A way to provide customization is to implement the DSL as a general
 component that can be specialized for different users. There may be
 situations where users have different needs regarding the DSL. For
 example ``super users'' having access to more features than ordinary
-users should not have. Or in creating a general DSL that can be
-tailored for each user according the the needs of that particular
-user. If you only need feature X, and the general DSL includes
-features X, Y and Z, then a specialized version only including feature
-X could be created.
+users have. Or in creating a general DSL that can be tailored for each
+user according the the needs of that particular user. If you only need
+feature X, and the general DSL includes features X, Y and Z, then a
+specialized version only including feature X could be created.
 
 Related to the specialization of a DSL is the ability to build new
 DSLs combining two or more existing ones. Each DSL can be seen as a
 building block providing functionality covering a piece of a
 domain. If a big domain is divided into sub-domains, each of the
 sub-domains could be implemented as separate DSLs. It would then be
-possible to tailor new DSLs including one the sub-domains needed. Two
-users working on separate parts of the domain could have tailored DSLs
-with some overlapping functionality where applicable.
+possible to build new DSLs only including support for the sub-domains
+needed. Two users working on separate parts of the domain could have
+their own tailored DSLs, with overlapping functionality where
+applicable.
 
 Yet another form of customizing the DSL is by doing changes directly
 to the host language. Is it possible to remove, or ``prune'', features
@@ -460,8 +462,8 @@ created to support repeating numerical calculations. What host
 languages are suited for building high performance DSLs? Are there
 features in the languages that affect performance? How well do the
 different host languages facilitate building DSLs taking advantage of
-parallel processing and concurrency?  There are many interesting
-questions to be answered regarding performance.
+parallel processing and concurrency? There are many requirements to
+consider regarding performance.
 
 \section{Summary of Requirements and Report Structure}
 \label{sec:requirements}
@@ -477,24 +479,24 @@ concluding the results found related to the requirements covered by
 the chapter.
 
 The following list summarizes the main requirements, and gives a
-pointer to the chapter that covers each set of requirements:
+pointer to what chapter they are covered in:
 
 \begin{itemize}
-\item \textbf{Syntax and Semantics} -- What capabilities does the
-  different languages provide in building concise syntax and
-  semantics? Chapter \ref{chp:syntax} <<Syntax and Semantics>> looks
-  at different host language features, and how those features can be
-  used to create embedded DSLs with a concise and understandable
-  syntax.
+\item \textbf{Syntax and Semantics} -- What capabilities do the
+  different programming languages provide in building concise syntax
+  and semantics? Chapter \ref{chp:syntax} <<Syntax and Semantics>>
+  looks at different host language features, and how those features
+  can be used to create embedded DSLs with a concise and
+  understandable syntax.
 \item \textbf{Customizing the DSL} -- How can a DSL be tailored for a
   specific need? How can several DSLs be combined/reused into new
   ones? Chapter \ref{chp:customization} <<Creating Customizable DSLs>>
-  handles the design of customizable DSLs.
+  handles the design of such customizable DSLs.
 \item \textbf{Changing the Host Language} -- How can unwanted features
   of the host language be deprecated/removed? How can the host
   language be extended to provide new functionality? Chapter
   \ref{chp:changinghostlanguage} <<Changing the Host Language>>
-  describes looks at how the various host languages can be changed.
+  describes how the various host languages can be modified.
 \item \textbf{Use} -- How can embedded DSLs be used? What is the level
   of tool support provided for the DSL? How are errors and exceptional
   situations handled in the different languages? Chapter
@@ -526,16 +528,16 @@ while other examples have been taken from existing frameworks.
 \section{JVM Programming Languages}
 \label{sec:programminglanguages}
 
-The goal platform of this thesis is the Java Virtual Machine
-(JVM). The reason for this is that the enormous popularity of the Java
-programming language has made the JVM one of the most widespread
-multi-language platforms in the world. At the same time the Java
-language itself is getting old, and many other languages have been
-created (or ported) for the JVM. So this thesis looks at how some of
-these languages provide various capabilities when building embedded
-DSLs. I have tried to look at languages that differ in many
-categories, as typing, paradigm or execution model. The languages
-studied are described and categorized in the next sections.
+The goal platform of this thesis is JVM. The reason for this is that
+the enormous popularity of the Java programming language has made the
+JVM one of the most widespread multi-language platforms in the
+world. At the same time the Java language itself is getting old, and
+many other languages have been created (or ported) for the JVM. So
+this thesis looks at how some of these languages provide various
+capabilities when building embedded DSLs. I have tried to look at
+languages that differ in many categories, as typing, paradigm or
+execution model. The languages studied are described and categorized
+in the next sections.
 
 The tight relationship between the programming languages and the JVM
 has a number of advantages:
@@ -550,7 +552,7 @@ has a number of advantages:
 \item \textbf{Access to libraries} -- The JVM has a wide range of
   libraries available, many being Open Source.
 \item \textbf{High performance} -- The JVM has been proven to be a
-  high performance Virtual Machine, with a large number of tuning
+  high performance virtual machine, with a large number of tuning
   possibilities.
 \end{itemize}
 
