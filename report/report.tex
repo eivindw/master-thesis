@@ -517,58 +517,62 @@ suggestions to further work.
 \chapter{Programming Languages and Examples}
 \label{chp:examples}
 
-This chapter introduces the programming languages used in the thesis,
-and the DSL examples studied. As described in the introduction the
-main focus has been on capabilities provided by a set of different
+This chapter introduces the programming languages studied in the
+thesis, and the DSL examples used. As described in the introduction
+the main focus has been on capabilities provided by a set of different
 programming languages, and how these capabilities sustain the
 development of various types of embedded domain-specific
-languages. Some examples have been developed as part of the work,
-while other examples have been taken from existing frameworks.
+languages. The examples description is divided into two sections. The
+first example section demonstrates the main example DSLs, implemented
+in Scala, while the second section introduces some other examples
+used.
 
 \section{JVM Programming Languages}
 \label{sec:programminglanguages}
 
-The goal platform of this thesis is JVM. The reason for this is that
-the enormous popularity of the Java programming language has made the
+The goal platform of this thesis is JVM. One of the reasons for this
+is that the popularity of the Java programming language has made the
 JVM one of the most widespread multi-language platforms in the
 world. At the same time the Java language itself is getting old, and
-many other languages have been created (or ported) for the JVM. So
-this thesis looks at how some of these languages provide various
+many other languages have been created (or ported) for the JVM. This
+thesis looks at how some of these languages provide various
 capabilities when building embedded DSLs. I have tried to look at
 languages that differ in many categories, as typing, paradigm or
 execution model. The languages studied are described and categorized
 in the next sections.
 
-The tight relationship between the programming languages and the JVM
-has a number of advantages:
+The following list summarizes other advantages in using the JVM as a
+platform:
 
 \begin{itemize}
 \item \textbf{Cross-platform distribution} -- Code implemented in any
   of the languages can be run on any platform supporting JVM 1.5 or
-  newer.
+  newer. The JVM is present on all major operating systems, and even
+  on portable devices like mobile phones. There is no need to
+  implement separate versions of DSLs for different platforms, as long
+  as it runs on a standard JVM.
 \item \textbf{Stability and standards} -- The JVM is a stable platform
-  with good support for internationalization (Unicode support ++) and
-  localization (supports local languages and standards).
+  with good support for internationalization (full Unicode support)
+  and localization (supports local languages, currencies and
+  standards). A DSL can be used by users from different countries,
+  localized to their native language and standards.
 \item \textbf{Access to libraries} -- The JVM has a wide range of
-  libraries available, many being Open Source.
+  libraries available, many being Open Source. In many cases a DSL can
+  be based on an existing Java framework.
 \item \textbf{High performance} -- The JVM has been proven to be a
   high performance virtual machine, with a large number of tuning
   possibilities.
 \end{itemize}
 
-There are also disadvantages with such a tight coupling to the JVM:
-
-\begin{itemize}
-\item \textbf{Limitations in bytecode} -- Many of the languages have
-  features that are not directly supported by the JVM. Examples
-  include tail call optimization useful for recursive programming and
-  dynamic dispatching of functions.
-\item \textbf{Generics implemented with erasure} -- This was a design
-  choice when generics were implemented for the JVM, removing the type
-  information at compile-time. For example for Scala, a language which
-  implements generics with erasure to be 100\% compliant with Java,
-  this leads to some limitations\cite{emi06}.
-\end{itemize}
+The main disadvantage using the JVM as a platform is in the
+limitiations set by the currently supported bytecode, as it was
+developed targeting one language (Java). Many of the languages studied
+here have features that are not found in Java, and thus not being
+directly supported at the bytecode level. Examples of this is tail
+call optimization of recursive functions and dynamic dispatching of
+functions. An important aspect of the performance requirement will be
+to look into the performance of DSLs making using these kind of
+features.
 
 \subsection{Categories of Languages}
 
@@ -604,15 +608,15 @@ console, as if they were interpreted (not compiled) languages.
 
 \begin{table}[ht]
   \centering
-  \begin{tabular*}{1\textwidth}{l c c c c c c}
+  \begin{tabular*}{1\textwidth}{l c c c c c c c}
     \hline
-    & Object-oriented & Functional & Static Typing & Dynamic Typing & Compiled & Interpreted \\ [0.5ex]
+    & Age & Object-oriented & Functional & Static Typing & Dynamic Typing & Compiled & Interpreted \\ [0.5ex]
     \hline
-    Java & x & - & x & - & x & - \\
-    Scala & x & x & x & - & x & (x) \\
-    Groovy & x & (x) & - & x & (x) & x \\
-    Ruby & x & (x) & - & x & (x) & x \\
-    Clojure & - & x & - & x & x & (x) \\
+    Java & 1995 & x & - & x & - & x & - \\
+    Scala & 2003 & x & x & x & - & x & (x) \\
+    Groovy & 2003 & x & (x) & - & x & (x) & x \\
+    JRuby & 2001 & x & (x) & - & x & (x) & x \\
+    Clojure & 2007 & - & x & - & x & x & (x) \\
     \hline
   \end{tabular*}
   \caption{Programming languages comparison matrix.\label{tab:plmatrix}}
@@ -636,11 +640,11 @@ In this thesis Java is mainly used as a reference language, and as a
 baseline of what is possible on the JVM. Most of the work is focused
 on showing how other languages provide features useful when building
 DSLs, features not currently found in the Java language itself. So
-Java will also be used quite heavily for reference and comparison to
-the other languages. It is assumed that the reader has a certain
-knowledge about the Java language (because of its wide adoption in
-both academic and enterprise environments), and many Java concepts
-will only be described briefly or referred to without explanation.
+Java will be used for reference and comparison to the other
+languages. It is assumed that the reader has a certain knowledge about
+the Java language (because of its wide adoption in both academic and
+enterprise environments), and many Java concepts will only be
+described briefly or referred to without explanation.
 
 Embedded DSLs can also be implemented in Java. A good background with
 examples can be found in the paper <<Evolving an Embedded
@@ -679,12 +683,14 @@ Scala is a relatively new language (first version released
 2003\cite{scala}) providing many new programming capabilities on the
 JVM. It is a statically typed and compiled language, just like
 Java. Scala is a multi-paradigm language, combining object-oriented
-and functional programming. The combination of object-orientation and
-functional programming has been proved to support advanced embedding
-of DSLs\cite{hof08}. The fact that the language compiles to bytecode
-and uses static typing makes it similar to Java in many ways. For this
-reason Scala has been used as the main language in this thesis, and as
-example language when implementing the DSL examples.
+and functional programming. This combination has been proved to
+support advanced embedding of DSLs, as shown by Hofer et
+al.\cite{hof08}. The fact that the language compiles to bytecode and
+uses static typing makes it similar to Java in many ways. For these
+reasons Scala has been used as the main language in this thesis, and
+as example language when implementing the DSL examples. The other
+languages are used with smaller examples, demonstrating features not
+found in Scala (or Java).
 
 On the object-oriented side, Scala provides many ``new'' features
 compared to Java. First of all it is more pure in its
@@ -790,7 +796,8 @@ embedded DSLs.
 An example of a simple object-oriented ``Hello World!'' program is
 shown in listing \vref{lst:groovyhello}. The keyword \texttt{def} is
 used for both variables and functions. Strings support insertion of
-values directly, as with the \texttt{name} variable in this example.
+values directly, as with the \texttt{name} variable in this
+example. Comments in Groovy are the same as for Java (and Scala).
 
 \begin{lstlisting}[language=java,caption=Groovy ``hello world'' example.,label=lst:groovyhello]
 class Greet {
@@ -805,6 +812,29 @@ class Greet {
 new Greet('world').salute()
 \end{lstlisting}
 
+Like Scala, Groovy supports higher-order functions. The code in
+listing \vref{lst:groovyclosure} shows an example. An anonymous
+function is created with the \lstinline[language=]{it * it}
+expression, and assigned to the variable \texttt{square}. This can
+then be used as a regular function to calculate the square value of
+numbers. Arrays are created using square brackets. In the example an
+array of four integers is created, and the \texttt{collect} function
+is run passing the previously created \texttt{square} function as
+parameter. This loops through the array, calling the given function
+for each element, and returning the result as a new array.
+
+\begin{lstlisting}[language=java,caption=Groovy closure example.,label=lst:groovyclosure]
+// Define anonymous function 'square'
+square = { it * it }
+// Example of use:
+nine = square(3)
+
+// Create an array and pass the 'square' function as parameter to the 'collect' function
+squareNumbers = [1, 2, 3, 4].collect(square)
+// Prints [1, 4, 9, 16]
+println(squareNumbers)
+\end{lstlisting}
+
 \subsubsection{Groovy and Java}
 
 Groovy is very tightly integrated with Java. In most cases, an
@@ -817,17 +847,24 @@ Java, with its own extensions added.
 
 \subsection{Ruby/JRuby}
 
-Ruby is a dynamically typed and interpreted object-oriented
-language. JRuby is a Java implementation of the Ruby language on the
-JVM, thus acting as an interpreter for Ruby on the JVM. The latest
-versions of JRuby also support some notions of just-in-time
+Ruby is a dynamically typed and interpreted object-oriented language,
+first released in 1995 (same year as first version of Java). JRuby is
+a Java implementation of the Ruby language on the JVM, thus acting as
+an interpreter for Ruby on the JVM. JRuby was first released in 2001,
+but not used much until support for Rails was added in 2006. The
+latest versions of JRuby also support some notions of just-in-time
 compilation, as well as regular ahead-of-time compilation.
 
-The main reason for my inclusion of Ruby in this thesis is the ``Ruby
-on Rails'' framework\cite{rails}, an extraordinary DSL running on the
-JVM with the help of the JRuby interpreter. In listing
-\vref{lst:rubyhello} is a Ruby implementation of the same ``hello
-world'' program that was shown in Groovy in the previous section.
+The main reason for my inclusion of JRuby in this thesis is the ``Ruby
+on Rails'' framework\cite{rails}, a Ruby DSL running on the JVM with
+the help of the JRuby interpreter. In listing \vref{lst:rubyhello} is
+a Ruby implementation of the same ``hello world'' program that was
+shown in Groovy in the previous section. In Ruby blocks are ended with
+the \texttt{end} keyword, instead of being surrounded by curly braces
+(as in Java, Scala and Groovy). Functions are defined using the
+\texttt{def} keyword. Instance variables are created using the
+\texttt{@} character, as in the \texttt{@name} variable in the
+example.
 
 \begin{lstlisting}[float,caption=Ruby ``hello world'' example.,label=lst:rubyhello,language=ruby]
 class Greet
@@ -872,15 +909,20 @@ Clojure is a dynamically typed and compiled functional language. It is
 a modern dialect of the Lisp programming language compiling to Java
 bytecode. It is the only language not supporting object-orientation
 directly, and also the youngest and possibly the least mature language
-included in my work.
+included in my work. Clojure was first released in 2007.
 
-The reason I have looked at Clojure is the amount of embedded DSL
-papers written using functional programming languages (for
-example\cite{hud96},\cite{hud98} and\cite{atk09}), making Clojure an
-interesting language with respect to embedding DSLs on the JVM. Below
-is an example of the ``hello world'' function in Clojure, as well as
-an example implementation of the Fibonacci function (a more common
-``hello world'' in the functional world):
+The main reason I have looked at Clojure is the amount of embedded DSL
+papers written using functional programming languages as host language
+(some examples are\cite{hud96},\cite{hud98} and\cite{atk09}), making
+Clojure an interesting language with respect to embedding DSLs on the
+JVM. In listing \vref{lst:clojurefibonacci} is an example of the
+``hello world'' function in Clojure, as well as an example
+implementation of the Fibonacci function (a more common ``hello
+world'' in the functional world). All the code is grouped in lists,
+given by the parenthesises. Every statement in Clojure is a list on
+the form \lstinline[language=]{(<fn> <arg1> <arg2> ...)}, where
+\texttt{<fn>} is the name of a function followed by any number of
+arguments.
 
 \begin{lstlisting}[language=lisp,caption=Clojure Fibonacci example.,label=lst:clojurefibonacci]
 ; A kind of hello world function
@@ -901,11 +943,13 @@ relevant. In Lisp (and thus in Clojure), the most important fact is
 the simplicity of the basics in the language. There are very few
 special forms requiring specific syntax. All code is organized in
 lists, meaning that code is made up of data and vise versa, making
-Clojure a ``homoiconic''\cite{hal09}. The macro system utilizes this
-fact, making it possible to seamlessly mix code and data to provide
-new control structures. Clojure macros will be used with examples
-several places in this report, together with other exciting features
-such as multimethods and built-in immutable data structures.
+Clojure a ``homoiconic'' programming language\cite{hal09}
+(<<Programming Clojure>>, a good book for learning more about
+Clojure). The macro system utilizes this fact, making it possible to
+seamlessly mix code and data to provide new control
+structures. Clojure macros will be used with examples several places
+in this report, together with other features such as multimethods and
+built-in immutable data structures.
 
 \subsubsection{Clojure and Java}
 
@@ -918,13 +962,13 @@ some output, implemented side by side in Clojure and Java. In many
 ways Clojure is much more consistent in its syntax. While Java has
 special keywords and forms for defining variables, functions, operator
 use and more, Clojure simply does everything the same way. Notice how
-the definition of the variable in Clojure is the same as the
-definition of the function, and that the comparison operator used in
-the if statement in Java is also just a regular function in the same
-form as the definitions in Clojure. Once you get used to the Clojure
-way, Java may not feel so consistent anymore.
-
-% TODO: explain (fn x y ..)
+the definition of the variable in Clojure
+(\lstinline[language=]{(def x 5)}) is on the same list-form as the
+definition of the function (\lstinline[language=]{(defn halfOrSome ...)}),
+and that the comparison operator used in the if statement in Java is
+also just a regular function in the same form as the definitions in
+Clojure. The simple list-structure and functional style in Clojure
+gives the code a more consistent look than that of Java.
 
 \begin{figure}[t]
   \subfigure[Clojure]{\lstinputlisting[nolol,language=lisp,linewidth=0.48\textwidth]{../examples/clj-java/ex.clj}}
@@ -935,7 +979,14 @@ way, Java may not feel so consistent anymore.
 
 Clojure integrates with Java using some special macros like
 \texttt{import} and \texttt{new}, and the dot operator, as shown in
-the examples given in listing \vref{lst:clojurejava}.
+the examples given in listing \vref{lst:clojurejava}. Comments are
+defined as lines starting with semicolon. In the example a system
+property is extracted using the static Java method
+\texttt{getProperty} of the \texttt{System} class. Notice how the
+function name always comes first, even in the case of calling the
+\texttt{toUpperCase} method on a Java string. Finally it is shown how
+the \texttt{java.util.Date} class can be imported, instantiated and
+used.
 
 \begin{lstlisting}[float,caption=Clojure -- Java integration.,label=lst:clojurejava,language=lisp]
 ; Get a system property
@@ -951,12 +1002,10 @@ the examples given in listing \vref{lst:clojurejava}.
 In addition all Clojure data structures implement standard Java
 interfaces, making it easy to run code implemented in Clojure from
 Java. The very good interoperability between Clojure and Java is a bit
-surprising looking at the extreme differences in syntax and
-programming paradigm, but is a powerful addition to the Lisp
-world. Combining the macros of a Lisp language with all the available
-libraries on the Java platform seems to be a very good idea. A good
-book for learning more about Clojure is <<Programming
-Clojure>>\cite{hal09}.
+surprising looking at the differences in syntax and programming
+paradigm, but is a powerful addition to the Lisp world. Combining the
+macros of a Lisp language with all the available libraries on the Java
+platform seems to be a very good idea.
 
 \section{Examples}
 
@@ -964,9 +1013,8 @@ This section describes the main examples implemented and researched in
 the thesis. The DSLs are described, and details about implementation
 and key features given. Some source code being central in the
 implementation is shown in the text. Full source code for all the
-examples can be downloaded from my repositories at
-GitHub.\footnote{GitHub repositories website --
-  \url{http://github.com/eivindw}}
+examples can be downloaded from my repositories at GitHub, full
+instructions are given in Appendix \vref{chp:downloadingexamples}.
 
 \subsection{DSL for Image Processing}
 \label{sec:dslimageprocessing}
@@ -974,23 +1022,31 @@ GitHub.\footnote{GitHub repositories website --
 \subsubsection{Description}
 
 Image Processing is an area involving series of computationally heavy
-operations performed on images\cite{gon08}. Many practitioners in the
-area have more mathematical than computer science oriented
+operations performed on images\cite{gon08}. Practitioners in the area
+have typically more mathematical than computer science oriented
 background. This leads to the need for DSLs where complicated and
 computationally heavy operations can be performed with a simple and
-straightforward syntax.
+straightforward syntax, hiding much of the programming language
+specific, letting the users focus on their domain.
 
 A major actor in the art of Image Processing is the company
 MathWorks\texttrademark with their product \matlab{}. They provide the
 user with a DSL for doing advanced Image Processing operations. The
 goal of this example is to create a similar DSL (with a limited amount
-of functionality) running on a JVM. This DSL was implemented in Scala,
-mostly due to performance requirements.
+of functionality) running on a JVM. The DSL was implemented in Scala,
+as the main language studied. It is important to note that the focus
+has been on creating a best possible DSL example, not on doing
+anything new in the area of image processing.
 
 As an example consider the operation of blurring an image using an
-average filter mask shown in figures \vref{fig:eximg} and
-\vref{fig:exavg}. This is a basic operation, documented
-in\cite{gon08}, but serves good as an example of using the DSLs.
+average filter mask. This is a basic operation, documented
+in\cite{gon08}, but serves good as an example of using the DSLs. The
+result of the operation is shown in figure \vref{fig:eximg}, original
+and blurred images side by side. The process is illustrated in figure
+\vref{fig:exavg}, showing how each pixel in the new image is an
+average of an area of pixels in the old image. This is a good example
+to use, as it involves potensially many operations (depending on the
+image size) such that performance considerations also must be taken.
 
 The \matlab{} code to perform the operation could typically look like
 that of listing \vref{lst:matlabimgproc}. An image is read from file,
@@ -1005,10 +1061,13 @@ imwrite(imgAvg, 'cell_avg.jpg');
 \end{lstlisting}
 
 A Scala-solution to the same problem is shown in listing
-\vref{lst:scalaimgproc}. The rest of this section describes how this
-was implemented, with regards to syntax and class/object
-composition. The DSL also implements basic morphological operations
-like erode, dilate, open and close\cite{gon08}.
+\vref{lst:scalaimgproc}. The same image is loaded, and then blurred
+using a ``structuring element''\cite{gon08}. The result is then
+written back to a new file. The rest of this section describes how
+this was implemented, with regards to syntax and class/object
+composition. The DSL also implements some other basic image processing
+operations like erode, dilate, open and close\cite{gon08} that are not
+shown here.
 
 \begin{lstlisting}[caption=Scala image processing example.,label=lst:scalaimgproc]
 // Imports...
@@ -1132,11 +1191,11 @@ section \vref{sec:concurrency}, in chapter \ref{chp:performance}.
 
 Statistic processing is an important aspect in many numerical
 calculation environments. For example in image analysis, statistical
-models are used intensively for pattern recognition (ie. finding text
-or other figures in images). In this respect it is interesting to have
-a DSL for statistical operations that can be used together with the
-image processing DSL to create a more complete DSL environment for
-image analysis.
+models are used for pattern recognition (ie. finding text or other
+figures in images). In this respect it is interesting to have a DSL
+for statistical operations that can be used together with the image
+processing DSL to create a more complete DSL environment for image
+analysis.
 
 A minimal DSL for statistics has been created in Scala for this
 work. It only has a very basic data structure, with a few rudimentary
@@ -1148,7 +1207,15 @@ This whole DSL consist of a single \texttt{DataSet} class,
 implementing the basic operations \texttt{average}, \texttt{minValue}
 and \texttt{maxValue}. There is also a \texttt{DataSet} companion
 object acting as a factory for building data-sets. The source code is
-given in listing \vref{lst:statsdsl}.
+given in listing \vref{lst:statsdsl}. The \texttt{DataSet} class takes
+as parameter an array of integers, and defines the three basic
+functions mentioned above. The implementation of the functions uses
+anonymous functions (\lstinline[language=]{_ + _}) as parameters to
+the \texttt{reduceLeft} function on the array. This is a typical
+example of combining the object-oriented and functional programming
+features of Scala. The factory object uses a variable number of
+integers (denoted with the type \texttt{Int*}) to build the array
+needed for the dataset.
 
 \begin{lstlisting}[caption={[Scala statistics DSL]Minimal statistics DSL implemented in Scala.},label=lst:statsdsl]
 class DataSet(private val intArr: Array[Int]) {
@@ -1197,9 +1264,11 @@ for a DSL implemented in the other languages.
 
 An example creating a basic pie chart is shown in listing
 \vref{lst:chartdsl}, resulting in the chart shown in figure
-\vref{fig:piechartex}.
+\vref{fig:piechartex}. The whole example consists of two functions,
+\texttt{createPieChart} and \texttt{pieData}, creating the chart with
+a variable number of data values.
 
-\begin{lstlisting}[caption={[Scala charting DSL]Scala charting DSL -- create a basic pie chart.},label=lst:chartdsl]
+\begin{lstlisting}[float,caption={[Scala charting DSL]Scala charting DSL -- create a basic pie chart.},label=lst:chartdsl]
 createPieChart("Pie Chart",
    pieData(
       ("One", 43.2D),
@@ -1234,7 +1303,13 @@ for querying databases. The \texttt{ActiveRecord} can be seen as a
 separate DSL on its own. An example of using \texttt{ActiveRecord} is
 shown in listing \vref{lst:activerecordex} (from\cite{rails}). The
 relationship between tables in the database is directly mapped to Ruby
-classes, using a very specific syntax.
+classes, using a very specific syntax. In the example the
+\texttt{Client} class will be mapped to a ``client'' table in the
+database, and the \texttt{Address} class to an ``address'' table and
+so on. The framework takes care of producing the SQL code needed to
+bind data to objects when classes are instantiated, and makes sure
+that foreign keys refer to the correct tables based on the
+relationship mappings like \texttt{has\_one} and \texttt{has\_many}.
 
 \begin{lstlisting}[language=ruby,caption={[Ruby on Rails \texttt{ActiveRecord} example]Example using the Ruby on Rails \texttt{ActiveRecord} database querying classes.},label=lst:activerecordex]
 class Client < ActiveRecord::Base
@@ -1270,7 +1345,7 @@ implemented in Java using annotations. In listing
 Rails example given in \vref{lst:activerecordex} is implemented in
 Java using Hibernate.
 
-\begin{lstlisting}[language=java,caption=Java Hibernate example,label=lst:javahibernate]
+\begin{lstlisting}[float,language=java,caption=Java Hibernate example,label=lst:javahibernate]
 @Entity
 public class Client
 
@@ -1301,16 +1376,8 @@ mocking dependencies so that classes can be tested in
 isolation. ScalaTest is implemented in Scala, and is a unit testing
 framework that facilitates several different styles of testing. Both
 jMock and ScalaTest are excellent examples of frameworks taking full
-advantage of their respective host languages.
-
-\subsection{Query Languages}
-
-Many programming languages provide APIs for general querying. A good
-example is the LINQ (Language Integrated Query)\footnote{LINQ website:
-  \url{http://msdn.microsoft.com/en-us/library/bb308959.aspx}} found
-in the C\# language from Microsoft. LINQ has been included as an
-example to provide a basis for comparison with the alternatives that
-exist on the JVM.
+advantage of their respective host languages. An example using jMock
+was shown in listing \vref{lst:jmock}.
 
 \clearpage{\pagestyle{plain}\cleardoublepage}
 
@@ -1655,7 +1722,9 @@ irrelevant).
 \subsection{Query Syntax}
 \label{sec:querysyntax}
 
-In C\# 3.0 a DSL called LINQ (Language Integrated Query) was
+In C\# 3.0 a DSL called LINQ (Language Integrated Query\footnote{LINQ
+  website:
+  \url{http://msdn.microsoft.com/en-us/library/bb308959.aspx}}) was
 introduced. It is used to natively query data in the language. The
 implementation of the DSL relies on a number of language features
 (type inference, anonymous types, object initializer and lambda
@@ -2565,6 +2634,13 @@ processing DSL more general, allowing specializations in a number of
 ways. The main reason for using these features in the image processing
 DSL is to ease the process of extending with new specializations.
 
+% TODO - integrate:
+\textbf{Generics implemented with erasure} -- This was a design
+  choice when generics were implemented for the JVM, removing the type
+  information at compile-time. For example for Scala, a language which
+  implements generics with erasure to be 100\% compliant with Java,
+  this leads to some limitations\cite{emi06}.
+
 The \texttt{Matrix} trait used in the image processing DSL uses type
 parametrization to denote the type of the values in the matrix. A
 matrix of integers will be defined as \texttt{Matrix[Int]} and a
@@ -3381,6 +3457,7 @@ class PublisherTest extends TestCase {
 \end{lstlisting}
 
 \section{Scripting}
+\label{sec:scripting}
 
 A different approach to the use-as-a-library approach shown above is
 to allow code implemented in the DSL to be run as a standalone
@@ -4887,6 +4964,53 @@ interpreter consoles ++) on top.
 \bibliography{master}
 \bibliographystyle{plain}
 \end{spacing}
+
+\appendix
+\chapter{Downloading and Building the Examples}
+\label{chp:downloadingexamples}
+
+Full source code for the image processing example, with statistics and
+charting, can be downloaded from my GitHub repository:
+\url{http://github.com/eivindw/simage}
+
+\section{Viewing the Code Online}
+
+The code can be navigated and viewed directly online. For example the
+\texttt{Image} trait with implementation and companion object is found
+in the file \texttt{Image.scala}:\\
+\url{http://github.com/eivindw/simage/blob/master/src/main/scala/simage/structs/Image.scala}
+
+The various pieces of code is divided into several package. Base
+structure starting at \texttt{simage} package:\\
+\url{http://github.com/eivindw/simage/tree/master/src/main/scala/simage}
+
+\section{Downloading and Running the Examples}
+
+\subsection{Prerequisites}
+
+The following tools need to be installed in order to download, build
+and run the examples:
+
+\begin{itemize}
+  \item Java version 1.5 or later -- \url{http://www.java.com/getjava/}
+  \item Scala version 2.7.7 -- \url{http://www.scala-lang.org/downloads}
+  \item Git -- \url{http://git-scm.com/download}
+  \item Maven 2.x -- \url{http://maven.apache.org/download.html}
+\end{itemize}
+
+\subsection{Downloading, Building and Running}
+
+\begin{enumerate}
+  \item Download the sourcecode: \lstinline[language=]{git clone git://github.com/eivindw/simage.git}
+  \item Compile code and run tests: \lstinline[language=]{mvn package}
+  \item Run the example described in section \vref{sec:scripting}:
+    \begin{enumerate}
+      \item Go to the scripts directory: \lstinline[language=]{cd script}
+      \item Run the example: \lstinline[language=]{scala -classpath simage.jar Test.scala}
+      \item If everything works various generated images should be
+        found in the script directory.
+    \end{enumerate}
+\end{enumerate}
 
 \end{document}
 
