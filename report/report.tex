@@ -1131,7 +1131,7 @@ compact syntax, combined with the import of the available structuring
 element types as shown above. An example is shown in listing
 \vref{lst:scalacompobj}.
 
-\begin{lstlisting}[float,caption=Scala companion object example.,label=lst:scalacompobj]
+\begin{lstlisting}[caption=Scala companion object example.,label=lst:scalacompobj]
 // Definition of companion object StrEl
 object StrEl {
   import StrElType._
@@ -1157,7 +1157,7 @@ small example, where the trait \texttt{Standard} implements a function
 \texttt{GrayScaleImage} having the trait mixed in (as is done in the
 \texttt{Image} object in the example).
 
-\begin{lstlisting}[float,caption=Scala image processing traits.,label=lst:scalaimgtraits]
+\begin{lstlisting}[caption=Scala image processing traits.,label=lst:scalaimgtraits]
 trait Standard { this: GrayScaleImage =>
   def avg(se: StrEl[Int]) = { ... }
 }
@@ -1279,7 +1279,7 @@ createPieChart("Pie Chart",
       ("Six", 19.3D)))
 \end{lstlisting}
 
-\begin{figure}
+\begin{figure}[b]
   \includegraphics[width=1.0\textwidth]{images/piechart}
   \caption{Example pie chart created with the JFreeChart based
     charting DSL.\label{fig:piechartex}}
@@ -1392,20 +1392,20 @@ are considered to be correctly structured programs in that
 language. For an embedded DSL its syntax describes special ways to use
 the host language. Or in other words what defines the code as an
 embedded DSL is the way the syntax constructs of the host language are
-used, while the semantics stay the same. This chapter describes
-various programming language concepts that can be useful when
-designing an embedded DSL. These concepts form the building blocks
-that one can choose from when building a DSL. Choice of language
-determines what features will be available.
+used. The semantics will typically follow those of the host language,
+plus any additional semantics implemented by code. This chapter
+describes various programming language concepts that can be useful
+when designing an embedded DSL. These concepts form the building
+blocks that one can choose from when building a DSL. Choice of host
+language determines what features will be available.
 
 \section{Function Chaining/Nesting}
 \label{sec:functionchaining}
 
 As mentioned in section \vref{sec:embeddeddsl}, Fowler and Evans have
-used the term \texttt{fluent interfaces} to describe libraries that
-can be used in a certain way. A key functionality when creating such
-fluent interfaces in Java is the ability to chain/nest functions
-together.
+used the term fluent interfaces to describe libraries that can be used
+in a certain way. A key functionality when creating such fluent
+interfaces in Java is the ability to chain/nest functions together.
 
 One of the simplest ways to create a DSL-like syntax is to allow
 chaining several function calls together. As an example consider the
@@ -1447,9 +1447,48 @@ computer(
 In\cite{fre06}, this technique is described in detail. In the testing
 framework \texttt{jMock} a carefully designed set of interfaces and
 factory builder objects allow method chaining maintaining the wanted
-order of method calls. The referred paper is a very good read
-demonstrating how to design and build a library as an embedded DSL in
-Java.
+order of method calls. This ordering is a nice example of how custom
+semantics can be built into the DSL syntax. The example code in
+listing \vref{lst:scalatraitsorder} shows how this can be done using
+traits in Scala (or interfaces in Java). The key point is to let each
+method return an instance of the next possible type. In the example
+the method of \texttt{StartSyntax} return the type \texttt{BodySyntax}
+which again has methods returning type \texttt{EndSyntax}. The traits
+can all be implemented by the same class, returning \texttt{this} in
+each method. When the syntax is instantiated as type
+\texttt{StartSyntax} the specific ordering of method calls will be
+maintained by the compiler. The \texttt{BodySyntax} is made optional
+by extending the \texttt{EndSyntax} type.
+
+\begin{lstlisting}[caption=Scala traits providing DSL order.,label=lst:scalatraitsorder]
+// Traits defining a syntax
+trait StartSyntax {
+  def start: BodySyntax
+}
+
+trait BodySyntax extends EndSyntax {
+  def doSomething: EndSyntax
+  def doSomethingElse: EndSyntax
+}
+
+trait EndSyntax {
+  def end: Unit
+}
+
+class Syntax extends StartSyntax with BodySyntax {
+  ... // Method implementations returning this
+}
+
+// Instantiate Syntax as type StartSyntax
+val syntax: StartSyntax = new Syntax
+
+// Examples of ok use, body is optional
+syntax.start.doSomeThing.end
+syntax.start.end
+
+// Example NOT ok - compile error, wrong order of statements:
+syntax.start.end.doSomeThing
+\end{lstlisting}
 
 Function chaining is available in most programming languages. In
 functional programming it is a fundamental concept, while in
@@ -1459,18 +1498,17 @@ create functions that can be combined in various ways to create
 embedded DSLs. Similar examples could be created in Clojure and Scala
 to run on the JVM.
 
-% TODO: more about interfaces/ordering of method calls.
-
 \section{Static Methods/Singleton Objects}
 
 In object-oriented languages functions are nested inside classes. In
 order to be able to call functions without instantiating objects we
 have static methods, that are associated directly with the class
-instance and not with objects created from the class. The following
-example shows how to sort a list of strings in Java, using the static
-method \texttt{sort} in the \texttt{Collections} class:
+instance and not with objects created from the class. The example in
+listing \vref{lst:javastaticsort} shows how to sort a list of strings
+in Java, using the static method \texttt{sort} in the
+\texttt{Collections} class.
 
-\begin{lstlisting}[language=java,caption=Java static sort example.,label=lst:javastaticsort]
+\begin{lstlisting}[float,language=java,caption=Java static sort example.,label=lst:javastaticsort]
 // Create a list of strings
 List<String> names = ...
 
@@ -1495,20 +1533,20 @@ ListSorter.sort(names)
 \end{lstlisting}
 
 Static methods may play a central role in an embedded DSL, especially
-combined with \texttt{Member Imports} (next section). They are
-typically used for object creation through patterns like
-\texttt{Factory method}\footnote{The factory method is an
-  object-oriented pattern that handles the creation of objects without
-  specifying the exact class of the object\cite{gam95}.} and
-\texttt{Builder}\footnote{The builder pattern is an object-oriented
-  pattern that assists the creation of variations of objects through a
-  series of abstract method calls\cite{gam95}.}, or other utility
-operations like the sorting shown in the examples above. In the image
-processing DSL (described in section \vref{sec:dslimageprocessing}),
-singleton objects are used to construct objects. An example is shown
-in listing \vref{lst:scalaimgsingleton}.
+combined with member imports (next section). They are typically used
+for object creation through patterns like ``Factory
+method''\footnote{The factory method is an object-oriented pattern
+  that handles the creation of objects without specifying the exact
+  class of the object\cite{gam95}.} and ``Builder''\footnote{The
+  builder pattern is an object-oriented pattern that assists the
+  creation of variations of objects through a series of abstract
+  method calls\cite{gam95}.}, or other utility operations like the
+sorting shown in the examples above. In the image processing DSL
+(described in section \vref{sec:dslimageprocessing}), singleton
+objects are used to construct objects. An example is shown in listing
+\vref{lst:scalaimgsingleton}.
 
-\begin{lstlisting}[float,caption=Scala image processing singleton objects.,label=lst:scalaimgsingleton]
+\begin{lstlisting}[caption=Scala image processing singleton objects.,label=lst:scalaimgsingleton]
 // Using singleton object:
 val squareElement = StrEl(Square, 3) // 3x3 square element
 val lineElement = StrEl(HLine, 5) // 5x1 line element
@@ -1522,7 +1560,7 @@ val lineElement = new StrEl(HLine, 5)
 
 With member imports it is possible to make members of a class
 available directly in the code that is being implemented. Member
-imports is a very useful mechanism in object-oriented languages for
+imports is a useful mechanism in object-oriented languages for
 creating concise syntax, and thus in the embedding of DSLs. Java
 supports importing static members of classes, both methods and
 constants. Using static member import the Java sorting example from
@@ -1577,24 +1615,26 @@ saveImage(img.avg(se), "cell_avg.jpg") // Would be SImageIO.saveImage without me
 
 When constructing an embedded DSL we like to make the syntax reflect
 the actual domain as much as possible. Having flexible ways to name
-and call methods can be a very useful property of a host language.
-
-Scala has two features regarding method names and syntax that are
+and call methods can be a useful property of a host language. Scala
+has two features regarding method names and syntax that are
 interesting with regards to DSL development\cite{dub06}:
 
 \begin{itemize}
 \item Arbitrary method names - Scala methods can have special
   characters as names. As such Scala has full support for operator
   overloading, as operators are just regular methods with special
-  names. For example \texttt{+}, \texttt{!=} and \texttt{<=}.
+  names. For example \texttt{+}, \texttt{!=} and \texttt{<=} are all
+  valid method names in Scala.
 \item Operator notation - Methods in Scala can be called without the
-  dot and parentheses.
+  dot and parentheses, just as regular operators are used in Java.
 \end{itemize}
 
-The following example shows how the operator notation is used together
-with the \texttt{+} method name in a simple matrix DSL (being an
-important part of the larger image processing DSL shown in section
-\vref{sec:dslimageprocessing}):
+The example in listing \vref{lst:scalaoperator} shows how the operator
+notation is used together with the \texttt{+} method name in a simple
+matrix DSL (being an important part of the larger image processing DSL
+shown in section \vref{sec:dslimageprocessing}). Notice how there is
+no difference between the method with operator name and the method
+with a ``regular'' name in the way they can be used.
 
 \begin{lstlisting}[caption=Scala operator notation function example.,label=lst:scalaoperator]
 abstract class Matrix {
@@ -1614,12 +1654,15 @@ val m3 = m1 add m2
 
 Combining the method naming in Scala with method chaining can give
 ``fluent interfaces'' with even more concise syntax than what was
-shown in previous sections. The following example is from the website
-of ScalaTest, a testing framework supporting Behaviour Driven
-Development\footnote{BDD is a software development technique first
-  introduced in\cite{nor06}. It aims at writing automated tests in a
-  natural language, and has been implemented as embedded DSLs in a
-  number of different languages.} in a very fluent style:
+shown in previous sections. The example in listing
+\vref{lst:scalatest} is from the website of ScalaTest, a testing
+framework supporting Behaviour Driven Development\footnote{BDD is a
+  software development technique first introduced in\cite{nor06}. It
+  aims at writing automated tests in a natural language, and has been
+  implemented as embedded DSLs in a number of different languages.} in
+a very fluent style. Notice how operator notation is used in all
+method calls related to the DSL testing syntax. Other parts of the
+example will be explained in later sections.
 
 \begin{lstlisting}[caption=Scala ScalaTest example.,label=lst:scalatest]
 import org.scalatest.FlatSpec
@@ -1647,9 +1690,10 @@ Scala. Here you are allowed to leave the parentheses surrounding the
 parameter(s) out, but not the dot in front of the method name. In
 addition it is a common idiom in Ruby to append method names with a
 question mark if the method returns a boolean value. Some examples of
-use are shown in listing \vref{lst:rubyparam}.
+use are shown in listing \vref{lst:rubyparam}. In many cases, leaving
+the parenthesis out renders more human-readable code when using Ruby.
 
-\begin{lstlisting}[float,language=Ruby,caption=Ruby parameter example.,label=lst:rubyparam]
+\begin{lstlisting}[language=Ruby,caption=Ruby parameter example.,label=lst:rubyparam]
 name = "John"
 
 # Method without parameters
@@ -1672,19 +1716,23 @@ describe some examples of such mechanisms.
 \subsection{The ``magic'' \texttt{apply} Method}
 \label{sec:applymethod}
 
-Scala uses the \texttt{apply} method to let classes and object define
+Scala uses the \texttt{apply} method to let classes and objects define
 functionality that appears to be native in the language. You can leave
 the method name out and simply write syntax that seems to pass
-parameters directly to an object. In the following example the
+parameters directly to an object. In listing \vref{lst:scalaapply} the
 \texttt{apply} method is used to index the \texttt{Matrix} class as if
-it was a native feature:
+it was a native feature. The user of the code does not have to write
+the name of the \texttt{apply} method, as it is inserted by the
+compiler in the background.
 
-\begin{lstlisting}[caption=Scala \texttt{apply} method example.,label=lst:scalaapply]
+\begin{lstlisting}[float,caption=Scala \texttt{apply} method example.,label=lst:scalaapply]
+// Class with generic apply method signature
 class Matrix[T] {
   def apply(row: Int, col: Int): T = ...
 }
-val intMatrix = ... // Matrix[Int]
-// Get Int at position 2, 4
+
+// Example of use - get number at position 2, 4 from some matrix of integers
+val intMatrix = ...
 val intVal = intMatrix(2, 4) // Replaced by compiler: intMatrix.apply(2, 4)
 \end{lstlisting}
 
@@ -1692,7 +1740,11 @@ The \texttt{apply} method can also be used for object construction
 without using the \texttt{new} keyword, and without exposing the
 actual class being used to create the object. This makes it possible
 to create code according to the factory method pattern\cite{gam95}, as
-in the following example (simplified version of Matrix structure):
+in listing \vref{lst:scalaapplyfactory} (simplified version of Matrix
+structure from the image processing DSL). Notice how the user simply
+refers directly to the \texttt{Matrix} object, without any knowledge
+about the complicated structure of classes that implements the matrix
+data structure.
 
 \begin{lstlisting}[caption=Scala \texttt{apply} method factory example.,label=lst:scalaapplyfactory]
 abstract class Array2DMatrix[T](elements: Array[T]) extends Matrix[T] {
@@ -1728,8 +1780,11 @@ In C\# 3.0 a DSL called LINQ (Language Integrated Query\footnote{LINQ
 introduced. It is used to natively query data in the language. The
 implementation of the DSL relies on a number of language features
 (type inference, anonymous types, object initializer and lambda
-expressions -- see sections below) in addition to the query syntax
-itself. An example is shown in listing \vref{lst:linq}.
+expressions -- see sections to follow) in addition to the query syntax
+itself. An example is shown in listing \vref{lst:linq}. Notice how the
+datastructure is queried using a specific syntax. The bottom part of
+the example shows how the compiler will interpret the query syntax, as
+a combination of different nested method calls.
 
 \begin{lstlisting}[float,language={[Sharp]C},caption=C\# LINQ example.,label=lst:linq]
 // Query syntax:
@@ -1748,10 +1803,15 @@ var results =
 
 In Scala we have \texttt{for comprehensions} that can be viewed as a
 query syntax much like that of LINQ. Complex expressions using the
-mechanism will be rewritten to a combination of \texttt{filter},
-\texttt{flatMap} and \texttt{map}:
+mechanism will be rewritten to a combination of the functions
+\texttt{filter}, \texttt{flatMap} and \texttt{map} by the compiler. An
+example is shown in listing \vref{lst:scalafor}. We can see that the
+conditional if statement in the for-comprehension is converted to a
+\texttt{filter} function using an anonymous function (to be explained
+in a later section). The yielding of the value is converted to a
+\texttt{map} function, with yet another anonymous function.
 
-\begin{lstlisting}[caption=Scala \texttt{for comprehension} example.,label=lst:scalafor]
+\begin{lstlisting}[float,caption=Scala \texttt{for comprehension} example.,label=lst:scalafor]
 // "Query syntax" - for comprehension:
 val results = for {
   name <- listOfNames
@@ -1767,7 +1827,10 @@ extend the for comprehensions in Scala to support LINQ-style database
 queries\cite{spi09}. Both mechanisms rely on monadic behaviour
 (concept from functional programming), where complex statements can be
 constructed by combining a set of basic functions (as shown in the
-examples above).
+examples above). These mechanisms are good additions directly in a
+DSL. Alternatively a custom query syntax could be implemented for a
+specific DSL, using the techniques described here and in the next
+sections.
 
 Clojure supports a mechanism that is similar to the query languages
 described above, namely relational algebra on the \texttt{Set}
@@ -1795,7 +1858,8 @@ concise syntax. Some examples were given in the previous section about
 query syntax.
 
 The Scala compiler will try to infer the types used. So if the type is
-obvious there is no need to specify it:
+obvious there is no need to specify it, as shown in the following
+example where various types are inferred:
 
 \begin{lstlisting}[caption=Scala basic type inference example.,label=lst:scalabasictypeinference]
 val i = 42 // Type Int is inferred
@@ -1834,6 +1898,7 @@ the user does not need to be aware of the types returned (what traits
 are used and so forth).
 
 \begin{lstlisting}[caption=Scala type inference example.,label=lst:scalatypeinference]
+// Actual implementation, using type inference
 val img = loadImageFile("cell.jpg")
 val se = StrEl(Square, 3)
 val blurredImg = img.avg(se)
@@ -1860,9 +1925,11 @@ following Scala example an implicit conversion is used to convert from
 class MyInt(val i: Int) {
   def doubleIt = i * 2 // Method
 }
+
 // Implicit conversion
 implicit def fromInt(i: Int) = new MyInt(i)
-// Convert Int to MyInt and call method
+
+// Example of use - converts and Int to MyInt and calls method doubleIt
 val ten = 5.doubleIt
 \end{lstlisting}
 
@@ -1871,19 +1938,19 @@ Scala. A good example is found in the ScalaTest example shown in
 section \vref{sec:methodnames}, where the \texttt{String} type is used
 as if it had defined the methods \texttt{should} and \texttt{in}. The
 value returned from the \texttt{pop} operation on the stack being
-tested is treated the same way. The relevant parts of the example is
+tested is treated the same way. The relevant parts of the example are
 shown in the bottom part of listing
 \vref{lst:scalatestimplicitconversion}. What makes this possible is
 implicit conversions, shown in the upper part of the same code
 listing. For the \texttt{String} class the \texttt{should} method is
 defined in a class called \texttt{StringShouldWrapper}, which is
 implicitly available since there is defined a conversion from
-\texttt{String}. The value popped off the stack is converted to a
+\texttt{String}. The value popped off the stack is converted to an
 \texttt{AnyShouldMatcher} with a similar implicit conversion,
 including a generic type parameter.
 
 \begin{lstlisting}[float,caption={[ScalaTest implicit conversion example]ScalaTest example using implicit type conversions.},label=lst:scalatestimplicitconversion]
-// Method definitions
+// Method signatures
 implicit override def convertToStringShouldWrapper(o: String): StringShouldWrapper
 
 implicit def convertToAnyShouldWrapper[T](o: T): AnyShouldWrapper[T]
@@ -1901,10 +1968,10 @@ it should "throw NoSuchElementException if an empty stack is popped" in {
 \end{lstlisting}
 
 In dynamic languages a mechanism that can give much the same results
-is Monkey Patching described in
-section \vref{sec:monkey_patching}. Implicit conversions are also very
-useful when combining DSLs. This is described in
-section \vref{sec:combining_dsls}.
+is Monkey Patching described in section
+\vref{sec:monkey_patching}. Implicit conversions are also very useful
+when combining DSLs. This will be further described in chapter
+\vref{chp:customization}.
 
 \section{By-name Parameters}
 \label{sec:bynameparams}
@@ -1930,7 +1997,7 @@ conversion from \texttt{Int}, to provide the handy DSL syntax
 \section{Lambda Expressions/Anonymous Functions}
 
 Anonymous functions, or lambda expressions, can be used as parameters
-for higher-order function.\footnote{Higher-order functions are
+for higher-order functions.\footnote{Higher-order functions are
   functions that can take other functions as input parameters or
   return a function as output value, or functions that can be stored
   in variables.} They are useful to make concise code, and avoiding
@@ -1958,7 +2025,10 @@ In a language supporting anonymous functions, the \texttt{List} class
 could have a \texttt{filter} method taking a function as parameter
 which is used to decide what values should be returned in a new
 list. In Scala, the example in listing \ref{lst:javaforloop} could be
-implemented as follows:
+implemented as follows. Notice how the concise the syntax for defining
+the anonymous function is. The underscore is used as an anonymous
+parameter, since the filter method expects a function taking one
+parameter this can be anonymized:
 
 \begin{lstlisting}[caption=Scala basic anonymous function example]
 val numbers = ... // Make instance of list of integers
@@ -1979,7 +2049,7 @@ In my Matrix DSL I have used higher-order functions to create
 general-purpose functions to perform operations spanning a given
 structuring element. The signature looks like this:
 
-\begin{lstlisting}[caption=Scala higher-order function example]
+\begin{lstlisting}
 def seOp(se: StrEl[Int], op: (Seq[T]) => T): Matrix[T]
 \end{lstlisting}
 
@@ -1989,13 +2059,15 @@ small 3x3 section of the matrix), and the second (\texttt{op}) is a
 function converting a sequence of values to one value. The structuring
 element is passed over the matrix as a window, and the operation is
 run for all values covered by the element. The yielded value is set as
-a new value in a new matrix, which is the final return value of the
-whole function. In the image processing DSL based on the Matrix DSL
-this functionality is used to implement a number of operations, using
-anonymous functions. This is shown in listing
-\vref{lst:scalaanonfunc}.
+a value in a new matrix, which is the final return value of the whole
+function. In the image processing DSL based on the Matrix DSL this
+functionality is used to implement a number of operations, using
+anonymous functions. Some examples are shown in listing
+\vref{lst:scalaanonfunc}. Notice how the only thing differenciating
+the functions is the actual implementation of the anonymous function
+setting the rule for how two numbers should be handled.
 
-\begin{lstlisting}[float,caption=Scala anonymous function example.,label=lst:scalaanonfunc]
+\begin{lstlisting}[caption=Scala anonymous function example.,label=lst:scalaanonfunc]
 val matrix: Matrix[Int] // Internal image representation as a matrix
 
 // Use average anonymous function to create blur effect
@@ -2021,7 +2093,7 @@ anonymous functions, but could use the function \texttt{blur},
 \texttt{erode} and \texttt{dilate} directly, as shown in listing
 \vref{lst:scalaipanonfunc}.
 
-\begin{lstlisting}[float,caption={[Scala IP anonymous functions]Scala image processing functions implemented using anonymous functions.},label=lst:scalaipanonfunc]
+\begin{lstlisting}[caption={[Scala IP anonymous functions]Scala image processing functions implemented using anonymous functions.},label=lst:scalaipanonfunc]
 val image = ... // Obtain image instance
 val se = StrEl(Square, 3) // Create 3x3 structuring element
 val blurredImage = image.blur(se)
@@ -2046,7 +2118,8 @@ the next version of Java.\footnote{Several different proposals for
 
 Anonymous types allow the construction of types without a name, based
 on fields. Combined with type inference this is a central feature in
-the implementation of LINQ (as described in an earlier section).
+the implementation of LINQ (as described in an earlier section). For a
+DSL doing custom querying this may be a useful feature.
 
 Scala also supports anonymous types. An example of using anonymous
 types together with type inference:
@@ -2116,32 +2189,32 @@ both properties given).
 Metaprogramming is the writing of programs that write or manipulate
 other programs (or themselves) as their data, or that do part of the
 work at compile time that would otherwise be done at runtime. In terms
-of embedded DSL creation, metaprogramming can be an extremely useful
-mechanism. There are quite drastic differences between the studied
-programming paradigms in how they provide metaprogramming, how it is
-used and what you can do with it. The next sub-sections describe some
-of these differences with examples.
-
-% TODO: references on metaprogramming definitions?
+of embedded DSL creation, metaprogramming can be a useful
+mechanism. There are big differences between the studied programming
+paradigms in how they provide metaprogramming, how it is used and what
+you can do with it. The next sub-sections describe some of these
+differences with examples.
 
 \subsection{Metaprogramming in Static Languages}
 
 Java has some mechanisms associated with metaprogramming:
 
 \begin{itemize}
-\item Annotations -- Annotations were introduced to Java with version
-  5 (JDK 1.5). They are used to add metadata about a program. These
-  data are not part of the program itself, and can be used both at
-  compile-time/deployment-time and at runtime. Deployment-time
-  annotations can be used for code generation, and can be used when
-  embedding DSLs.
-\item Reflection -- Reflection is a way to program with concepts such
-  as \texttt{class} and \texttt{method} in Java, and as such is
-  considered a form of metaprogramming. Extensive use of reflection
-  can have a negative effect on the performance of a Java application.
-\item Aspect Oriented Programming (AOP) -- AOP is a mechanism that can
-  be used for metaprogramming. As shown in\cite{hua08}, AOP and
-  metaprogramming can be useful when designing DSLs.
+\item \textbf{Annotations} -- Annotations were introduced to Java with
+  version 5 (JDK 1.5). They are used to add metadata about a
+  program. These data are not part of the program itself, and can be
+  used both at compile-time/deployment-time and at
+  runtime. Deployment-time annotations can be used for code
+  generation, and can be used when embedding DSLs.
+\item \textbf{Reflection} -- Reflection is a way to program with
+  concepts such as \texttt{class} and \texttt{method} in Java, and as
+  such is considered a form of metaprogramming. Extensive use of
+  reflection can have a negative effect on the performance of a Java
+  application.
+\item \textbf{Aspect Oriented Programming (AOP)} -- AOP is a mechanism
+  that can be used for metaprogramming. As shown by Huang et
+  al. in\cite{hua08}, AOP and metaprogramming can be useful when
+  designing DSLs.
 \end{itemize}
 
 An example of an embedded DSL in Java relying heavily on annotations
@@ -2189,7 +2262,7 @@ dynamic way, to add or alter method definitions at runtime. The
 dynamic typing allows referring to names of functions that don't yet
 exist at compile-time, while a static language would end up with a
 compiler error in the same situation. Both Groovy and Ruby have
-powerful support for this kind of dynamic metaprogramming.
+support for this kind of dynamic metaprogramming.
 
 The example in listing \vref{lst:groovymeta} shows how the mechanism
 can be used in Groovy. In this case a new method is added to the Java
@@ -2227,8 +2300,11 @@ manner similar to the Groovy examples above, adding methods
 the classes in use. A simplified example of how the
 \texttt{belongs\_to} method is implemented using dynamic
 metaprogramming in Ruby is shown in listing \vref{lst:rubydynmeta},
-running some SQL and creating a collection of associated object
-dynamically.
+running some SQL and creating a collection of associated objects
+dynamically. An important principle to make this work is that strict
+naming conventions are followed in the database. Database names can be
+overridden in the code with arguments to the methods, but that would
+make the example less ``clean''.
 
 \begin{lstlisting}[float,caption={[Ruby on Rails dynamic metaprogramming]Ruby on Rails example showing dynamic metaprogramming.},label=lst:railsmeta,language=Ruby]
 class Team < ActiveRecord::Base
@@ -2269,9 +2345,9 @@ one generated by the rails framework. However, the client would not
 know about the methods until after compiling. So programming in this
 fashion in a static language would require some intermediate step of
 explicit code-generation or compiling before calling the generated
-methods. I think this is an extremely big differentiator when it comes
+methods. I think this is one of the big differentiators when it comes
 to certain kind of DSLs and programming language paradigms. A DSL like
-Rails could never have been implemented in a static language.
+Rails could not have been implemented in a static language.
 
 \subsection{Functional Metaprogramming}
 \label{sec:functionalmetaprogramming}
@@ -2285,16 +2361,15 @@ separate concept (as in the other languages). The macro mechanism in
 Clojure is the key to this.
 
 Clojure has a programmatic macro system which allows the compiler to
-be extended by user
-code.\footnote{\url{http://clojure.org/macros}} This means that we can
-write code that produces code, which was the definition of
-metaprogramming given earlier. The Clojure macros are processed in two
-steps. First the macro expands/executes, and substitutes the result
-back into the program. This is called \textit{macro expansion
-  time}. Then it continues with the normal \textit{compile
-  time}\cite{hal09}. Clojure macros provide similar DSL capabilities
-to those achieved with ``C++ Template Metaprogramming'', described
-in\cite{cza04}.
+be extended by user code.\footnote{\url{http://clojure.org/macros}}
+This means that we can write code that produces code, which falls
+under the definition of metaprogramming given earlier. The Clojure
+macros are processed in two steps. First the macro expands (executes),
+and substitutes the result back into the program. This is called
+\textit{macro expansion time}. Then it continues with the normal
+\textit{compile time}\cite{hal09}. Clojure macros provide similar DSL
+capabilities to those achieved with ``C++ Template Metaprogramming'',
+described by Czarnecki et al. in\cite{cza04}.
 
 The code in listing \vref{lst:cljmacro} shows a Clojure macro example
 (from\cite{hal09}). The \texttt{bench} macro is a simple benchmarking
@@ -2302,14 +2377,14 @@ tool to time how long an expression takes to complete, returning a map
 containing both the result of the expression and the time it took to
 execute (in nanoseconds). The \texttt{let} expression binds the
 start-time to the \texttt{start\#} name, and the results of the
-expression given to the \texttt{result\#} name. The symbols \texttt{`}
-and \texttt{~} are used to quote and un-quote symbols in the macro
-expansion. It finishes off by returning the result together with the
-computed time difference. It may not look that impressive, but it is a
-powerful mechanism that will not find anything similar to in any of
-the other languages. In fact, much of the Clojure library is
-implemented as macros, even the \texttt{defmacro} definition used to
-define macros is itself a macro.
+expression given to the \texttt{result\#} name. The symbols
+\texttt{\`} and \texttt{\~} are used to quote and un-quote symbols in
+the macro expansion. It finishes off by returning the result together
+with the computed time difference. It may not look that impressive,
+but it is a powerful mechanism that you will not find anything similar
+to in any of the other languages. In fact, much of the Clojure library
+is implemented as macros, even the \texttt{defmacro} definition used
+to define macros is itself a macro.
 
 \begin{lstlisting}[float,language=lisp,caption=Simple Clojure macro example.,label=lst:cljmacro]
 (defmacro bench [expr]
@@ -2322,25 +2397,6 @@ define macros is itself a macro.
 ; Output: {:result 5, :elapsed 27000}
 \end{lstlisting}
 
-Clojure also has some explicit functions to work with metadata --
-\texttt{meta} and \texttt{with-meta}. Some examples of use are shown
-in code listing \vref{lst:clojuremeta}.
-
-\begin{lstlisting}[float,caption=Clojure metaprogramming example.,label=lst:clojuremeta,language=lisp]
-(def my-user {:login "test" :password "secret"})
-; #'user/my-user
-my-user
-; {:login "test", :password "secret"}
-(meta my-user)
-; nil
-(def my-cached-user (with-meta my-user {:cached-at (java.util.Date. )}))
-; #'user/my-cached-user
-my-cached-user
-; {:login "test", :password "secret"}
-(meta my-cached-user)
-; {:cached-at #<Date Sat Feb 06 20:38:28 CET 2010>}
-\end{lstlisting}
-
 \section{Open Classes/Monkey Patching}
 \label{sec:monkey_patching}
 
@@ -2351,15 +2407,21 @@ conversions, by adding new functionality to built-in or other
 types. In the example in listing \vref{lst:rubymonkeypatch} code we
 re-implement with open classes/monkey patching the same example shown
 in section \vref{sec:implicit_type_conversion} with implicit type
-conversions, giving the integer class a new method \texttt{doubleIt}.
+conversions, giving the integer class a new method
+\texttt{doubleIt}. Note that the \texttt{Integer} class already
+exists, and is simply modified with this code. If it did not exist it
+would be defined here, as the syntax is the same for defining new
+classes and modifying existing ones.
 
 \begin{lstlisting}[language=Ruby,caption={[Ruby ``monkey patching'' example]Ruby example showing ``monkey patching'' on open classes.},label=lst:rubymonkeypatch]
+# Add method doubleIt to class Integer
 class Integer
   def doubleIt
     self * 2
   end
 end
 
+# Example of use
 ten = 5.doubleIt
 \end{lstlisting}
 
@@ -2370,15 +2432,19 @@ conversion in Scala the \texttt{String} type was converted to
 \texttt{StringShouldWrapper}, making it seem like it had a
 \texttt{should} method. With monkey patching in Ruby it is possible to
 add the method directly to the \texttt{String} class. A small example,
-suggesting how the signature would look, is shown in listing
-\vref{lst:rubymonkeypatchshould}.
+suggesting how the signature would look with an example of how it
+could be used, is shown in listing \vref{lst:rubymonkeypatchshould}.
 
-\begin{lstlisting}[float,language=Ruby,caption=Ruby \texttt{should} method added to String.,label=lst:rubymonkeypatchshould]
+\begin{lstlisting}[language=Ruby,caption=Ruby \texttt{should} method added to String.,label=lst:rubymonkeypatchshould]
+# Add method should to class String
 class String
   def should(arg)
     ...
   end
 end
+
+# Example of use
+"A stack" should ...
 \end{lstlisting}
 
 \section{Dynamic Dispatch -- Method Missing}
@@ -2386,8 +2452,8 @@ end
 Dynamic programming languages use dynamic dispatch to determine what
 code to run when a message is received. This means that errors related
 to missing methods are postponed until runtime. Some languages provide
-interesting ways to handle these errors, that can be utilized in DSL
-creation.
+ways to handle these errors programatically, that can be utilized in
+DSL creation.
 
 In Ruby there is a notion of custom dispatch behaviour that can be
 controlled by the programmer. The base class, that all other classes
@@ -2403,7 +2469,10 @@ framework, as shown in listing \vref{lst:rubymethodmissing}. It maps
 objects to database tables and allows dynamic querying through the DSL
 syntax. In the example the method named \texttt{find\_by\_username} is
 mapped to data extraction functionality through the
-\texttt{method\_missing} implementation.
+\texttt{method\_missing} implementation. Notice how a regular
+expression is used to extract the different parts of the original
+method name as separate values. These values can then be used to build
+and run some kind of dynamic SQL expression.
 
 \begin{lstlisting}[float,language=Ruby,caption=Ruby on Rails \texttt{ActiveRecord} example.,label=lst:rubymethodmissing]
 class ActiveRecord
@@ -2430,7 +2499,7 @@ possible to implement.
 
 \section{Summary}
 
-Modern statically typed languages like Scala offer some very powerful
+Modern statically typed languages like Scala offer some useful
 features for building embedded DSLs, combining concepts from
 object-oriented and functional programming languages. Advanced type
 systems offering type interference, implicit conversions and anonymous
@@ -2443,9 +2512,9 @@ difference with regards to DSL syntax seems to be that between static
 and dynamic languages. Even with feature rich static programming
 languages like Scala there are a series of concepts from dynamic
 languages which does not have a natural counterpart in the statically
-typed domain. Most notably are the powerful metaprogramming features
-found in many dynamic languages and the dynamic dispatch mechanism
-allowing custom handling of missing methods.
+typed domain. Most notably are the metaprogramming features found in
+many dynamic languages and the dynamic dispatch mechanism allowing
+custom handling of missing methods.
 
 \clearpage{\pagestyle{plain}\cleardoublepage}
 
