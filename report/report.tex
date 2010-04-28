@@ -2697,18 +2697,15 @@ being aware of the capabilities that can be achieved using AOP.
 Another way that a DSL can be created to allow specialization is by
 using virtual types (abstract type members) and/or type
 parametrization (generics) of classes. Scala supports higher-order
-genericity\cite{moo08} and abstract type members. In this section it
-is demonstrated how these features are used to make the image
-processing DSL more general, allowing specializations in a number of
-ways. The main reason for using these features in the image processing
-DSL is to ease the process of extending with new specializations.
-
-% TODO - integrate:
-\textbf{Generics implemented with erasure} -- This was a design
-  choice when generics were implemented for the JVM, removing the type
-  information at compile-time. For example for Scala, a language which
-  implements generics with erasure to be 100\% compliant with Java,
-  this leads to some limitations\cite{emi06}.
+genericity\cite{moo08} and abstract type members. Scala uses the
+erasure model of generics, just like Java does\cite{emi06}. This means
+that no information about type arguments is maintained at runtime,
+with the exception of arrays which are handled specially (as they also
+are in Java). In this section it is demonstrated how these features
+are used to make the image processing DSL more general, allowing
+specializations in a number of ways. The main reason for using these
+features in the image processing DSL is to ease the process of
+extending with new specializations.
 
 The \texttt{Matrix} trait used in the image processing DSL uses type
 parametrization to denote the type of the values in the matrix. A
@@ -2729,7 +2726,7 @@ that users can extend the matrix data structure with support for new
 types simply by extending the \texttt{Matrix} trait with whatever type
 they need.
 
-\begin{lstlisting}[float,caption=Matrix example using type parameters.,label=lst:typeparameters]
+\begin{lstlisting}[caption=Matrix example using type parameters.,label=lst:typeparameters]
 trait Matrix[T] {
   ... // Implementation of general matrix interface
 }
@@ -2812,7 +2809,7 @@ in Java). This example does basically the same as object-oriented
 languages do with polymorphism, it dispatches based on the type of the
 argument.
 
-\begin{lstlisting}[float,language=lisp,caption=Clojure multi-method example,label=lst:cljmm]
+\begin{lstlisting}[language=lisp,caption=Clojure multi-method example,label=lst:cljmm]
 (defmulti my-print class)
 
 (defmethod my-print String [s]
@@ -3338,7 +3335,7 @@ surround function arguments. Notice how the condition is given in
 parenthesis, and the body statements in curly braces, although they
 are both just by-name parameters.
 
-\begin{lstlisting}[float,caption={[Scala built-in keyword functions]Scala example making functions look like built-in keywords.},label=lst:scalabuiltinkeywords]
+\begin{lstlisting}[caption={[Scala built-in keyword functions]Scala example making functions look like built-in keywords.},label=lst:scalabuiltinkeywords]
 def mywhile(cond: => Boolean)(body: => Unit) {
   if(cond) {
     body
@@ -4732,27 +4729,25 @@ best possible way.
 \chapter{Summary}
 \label{chp:summary}
 
-This chapter first provides a conclusion of the results
-found. Secondly follows a section providing a critical discussion of
-the work performed, and the method/scope followed. At last a section
-suggesting future work is given.
+This chapter first provides a conclusion of the results found, and the
+work performed. Secondly a section suggesting future work based on the
+key findings is given.
 
 \section{Conclusion}
 
 This section concludes the results found during the work of the
 thesis. It is divided into subsection grouping related results on the
 same structure as the main chapters in the report. At the end follows
-a small section highlighting the research contributions of this thesis
-work.
+a small section highlighting the key findings of this thesis work,
+with an overview of what kind of DSL tasks the different programming
+languages are suited for.
 
 \subsection{Language Categories and Embedded DSLs}
 
 There is no doubt that all the languages studied in this thesis
 provide many features that are not found in the Java
 language. Features that enable new and exciting capabilities regarding
-embedded DSL development on the JVM platform. This section summarizes
-when (for what kind of tasks) the different languages would be a good
-match.
+embedded DSL development on the JVM platform.
 
 The dynamic object-oriented languages (Groovy and Ruby) offer a very
 concise coding-style, a central requirement when developing embedded
@@ -4789,7 +4784,7 @@ specific DSLs, as it can be adjusted to exactly the way you want
 it. The language was included in the project as an ``outsider'', but
 proved its worth very quickly.
 
-\subsection{Composition}
+\subsection{Customizing DSLs}
 
 Mixin-composition is a powerful mechanism enabling code reuse and
 modular design in a more precise way than in Java which only supports
@@ -4853,11 +4848,11 @@ be highly relevant for a numerical computation environment including
 the example DSLs of image processing, statistics and charting.
 
 An advantage all the languages share is the ability to utilize the
-existing tools and frameworks on the JVM. Java is an extremely popular
-language, and there are thousands of useful open source or other
-easily available tools to choose from. A good example is the charting
-DSL that was implemented in Scala, but almost entirely based on an
-existing Java open source framework (JFreeChart).
+existing tools and frameworks on the JVM. Java is a popular language,
+and there are thousands of useful open source or other easily
+available tools to choose from. An example is the charting DSL that
+was implemented in Scala, but almost entirely based on an existing
+Java open source framework (JFreeChart).
 
 When it comes to error handling all the languages support the
 exception mechanism being used in Java. In addition the functional
@@ -4875,7 +4870,7 @@ change in future versions of the JVM, as the \texttt{invokedynamic}
 instruction is added to the JVM. But at the moment a DSL that needs
 effective code, like those adding thousands of numbers or similar (as
 the image processing examples designed in this thesis), should
-probably be implemented in static languages (like Java or Scala).
+probably be implemented in a static language (like Java or Scala).
 
 The functional languages provide ways to create very concise
 code. However, some of these features seem to cost quite a lot when it
@@ -4900,58 +4895,83 @@ of the main processor. This is something that potentially can make a
 lot of software run faster, as most modern computers are equipped with
 advanced GPUs capable of high numbers of numeric calculations.
 
-\subsection{Research Contributions}
+\subsection{Key Findings}
 
 The following list summarized what I believe are research
 contributions made in the progress of writing this thesis:
 
-\begin{itemize*}
+\begin{itemize}
 \item Suggesting using the package template mechanism of the
-  \textsc{swat} project to combine embedded DSLs.
+  \textsc{Swat} project to combine embedded DSLs.
 \item Embedding high-performance DSLs on the JVM. Finding a good
   combination of concise syntax and good performance, utilizing
   parallel programming, seems to be quite a new area.
 \item Image processing on the JVM using Scala.
 \item The language comparison focus with regards to embedding DSLs on
   the JVM.
-\end{itemize*}
+\end{itemize}
 
-\section{Evaluation and Discussion}
+\subsection{Programming Languages and Tasks}
 
-This section is meant to provide a critical self-evaluation and
-discussion of the work performed. As this project is coming to an end,
-I realize that there are a few things that could have been done and/or
-prioritized differently.
+The goal in this thesis was to compare the various programming
+languages and find out what kind of tasks they were suited for. This
+section summarizes the key advantages of each language, and suggests
+an answer to when each language should be chosen.
 
-A first observation that should be made is regarding the scope of the
-project, and the programming languages included. When I started
-working on this thesis I had a very good understanding and experience
-with the Java programming language. All the other programming
-languages were relatively new to me. The amount of time and
-mindset-shifting needed to learn 3-4 new programming languages in less
-than a year was seriously under-estimated. As such, a more narrow
-focus with only one alternative language may have been more
-effective with regards to the domain-specific language angle. For me
-personally it has been an extremely interesting year, with a massive
-amount of useful knowledge added, but I have a feeling that the
-research contribution of the thesis could have been bigger with a
-slightly more narrow focus.
+I have found that all the languages studied provide features that let
+the user write much more concise and to-the-point code than what is
+possible in Java. This is to some extent due to the fact that all the
+languages support higher-order functions. Passing functions as
+parameters to other functions is a very useful feature, that hopefully
+will get added to the Java programming language in a future release. I
+have tried to identify the points where the languages differ. The main
+advantages of each language, compared to the others, are summarized in
+the following list:
 
-Secondly one could also question the domain-specific language
-focus. As it turned out, this thesis is just as much focused on
-general capabilities in different programming languages than it is
-focused on domain-specific languages. Although these things are
-closely related, as language features certainly are important when
-implementing domain-specific languages. Maybe a more pure focus on
-programming language comparison would have been better?
+\begin{itemize}
+\item \textbf{Java} -- Java is the fastest language on the JVM,
+  producing the most efficient bytecode.
+\item \textbf{Scala} -- Scala is fast, due to its static typing, and
+  it has good abstractions for programming concurrency. The
+  combination of object-orientation and functional programming brings
+  a whole familiy of new features to the JVM.
+\item \textbf{JRuby} -- Features specific for dynamic typing; dynamic
+  metaprogramming, dynamic dispatch/method\_missing and open
+  classes/monkey patching.
+\item \textbf{Groovy} -- Same as JRuby, but better for tight Java
+  integration.
+\item \textbf{Clojure} -- Multimethods have more possibilities
+  regarding dynamic dispatch than polymorphism. The macro system is
+  unique, and opens up many possibilities not found in any other
+  languages.
+\end{itemize}
 
-All in all I am still quite happy with the results of this thesis
-work. I have learned many new programming languages, and certainly
-gained a new understanding of what it means to work in a
-research-oriented setting. As described in the final section of this
-chapter, I feel that this thesis could be used as a basis for several
-new master-assignments, all narrowing down on parts that the wide
-scope did not allow detailing further in this report.
+Table \vref{tab:taskslangs} gives an overview of some characteristics
+of tasks, and what programming language a DSL should be implemented
+in. An \texttt{x} in the table means good match, while an \texttt{(x)}
+means partially good match and a \texttt{-} means not recommended.
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular*}{1\textwidth}{l c c c c c l}
+    \hline
+    Type of Task & Java & Scala & Groovy & JRuby & Clojure & Example \\ [0.5ex]
+    \hline
+    Dynamic Query Languages & - & - & x & x & - & Rails \\
+    Efficient bytecode/high performance & x & x & - & - & - & Image Processing \\
+    Good concurrency abstractions & (x) & x & - & - & x & Image Processing \\
+    Combining DSLs & - & x & - & x & x & Image Analysis \\
+    Custom control structures & - & (x) & - & - & x & Modify host language \\
+    Good error checking & x & x & - & - & - & Space Ship DSL \\
+    Interactive interpreter & - & x & x & x & x & All \\
+    Concice syntax & - & x & x & x & x & All \\
+    \hline
+  \end{tabular*}
+  \caption{Overview of tasks and suited programming languages.}
+  \label{tab:taskslangs}
+\end{table}
+
+
 
 \section{Suggestions for Future Work}
 \label{sec:futurework}
