@@ -69,9 +69,11 @@
 \lstset{basicstyle=\footnotesize,
   numbers=none,
   numberstyle=\tiny\color{gray},
-  keywordstyle=\color{blue}\bfseries,
-  commentstyle=\color{dkgreen}\it,
-  stringstyle=\color{mauve},
+%  keywordstyle=\color{blue}\bfseries,
+  keywordstyle=\bfseries,
+%  commentstyle=\color{dkgreen}\it,
+  commentstyle=\it,
+%  stringstyle=\color{mauve},
   frame=single,
   frameround=tttt,
   rulecolor=\color{lightgray},
@@ -913,7 +915,7 @@ included in my work. Clojure was first released in 2007.
 
 The main reason I have looked at Clojure is the amount of embedded DSL
 papers written using functional programming languages as host language
-(some examples are\cite{hud96},\cite{hud98} and\cite{atk09}), making
+(\cite{hud96},\cite{hud98},\cite{kam98} and\cite{atk09}), making
 Clojure an interesting language with respect to embedding DSLs on the
 JVM. In listing \vref{lst:clojurefibonacci} is an example of the
 ``hello world'' function in Clojure, as well as an example
@@ -4895,35 +4897,14 @@ of the main processor. This is something that potentially can make a
 lot of software run faster, as most modern computers are equipped with
 advanced GPUs capable of high numbers of numeric calculations.
 
-\subsection{Key Findings}
-
-The following list summarized what I believe are research
-contributions made in the progress of writing this thesis:
-
-\begin{itemize}
-\item Suggesting using the package template mechanism of the
-  \textsc{Swat} project to combine embedded DSLs.
-\item Embedding high-performance DSLs on the JVM. Finding a good
-  combination of concise syntax and good performance, utilizing
-  parallel programming, seems to be quite a new area.
-\item Image processing on the JVM using Scala.
-\item The language comparison focus with regards to embedding DSLs on
-  the JVM.
-\end{itemize}
-
-\subsection{Programming Languages and Tasks}
+\subsection{Final Results -- Programming Languages and Tasks}
 
 The goal in this thesis was to compare the various programming
 languages and find out what kind of tasks they were suited for. This
 section summarizes the key advantages of each language, and suggests
 an answer to when each language should be chosen.
 
-I have found that all the languages studied provide features that let
-the user write much more concise and to-the-point code than what is
-possible in Java. This is to some extent due to the fact that all the
-languages support higher-order functions. Passing functions as
-parameters to other functions is a very useful feature, that hopefully
-will get added to the Java programming language in a future release. I
+ I
 have tried to identify the points where the languages differ. The main
 advantages of each language, compared to the others, are summarized in
 the following list:
@@ -4946,10 +4927,12 @@ the following list:
   languages.
 \end{itemize}
 
-Table \vref{tab:taskslangs} gives an overview of some characteristics
-of tasks, and what programming language a DSL should be implemented
-in. An \texttt{x} in the table means good match, while an \texttt{(x)}
-means partially good match and a \texttt{-} means not recommended.
+Using the advantages in the list above I have created table
+\vref{tab:taskslangs}. It gives an overview of some characteristics of
+tasks, and a suggestion to what programming language a DSL should be
+implemented in. An \texttt{x} in the table means good match, while an
+\texttt{(x)} means partially good match and a \texttt{-} means not
+recommended.
 
 \begin{table}[ht]
   \centering
@@ -4958,12 +4941,12 @@ means partially good match and a \texttt{-} means not recommended.
     Type of Task & Java & Scala & Groovy & JRuby & Clojure & Example \\ [0.5ex]
     \hline
     Dynamic Query Languages & - & - & x & x & - & Rails \\
-    Efficient bytecode/high performance & x & x & - & - & - & Image Processing \\
-    Good concurrency abstractions & (x) & x & - & - & x & Image Processing \\
-    Combining DSLs & - & x & - & x & x & Image Analysis \\
-    Custom control structures & - & (x) & - & - & x & Modify host language \\
-    Good error checking & x & x & - & - & - & Space Ship DSL \\
-    Interactive interpreter & - & x & x & x & x & All \\
+    Efficient bytecode/high performance & x & x & - & - & - & Image Processing DSL \\
+    Good concurrency abstractions & (x) & x & - & - & x & Image Processing DSL \\
+    Combining DSLs & (x) & x & (x) & x & x & Image Analysis DSL \\
+    Custom control structures & - & (x) & - & - & x & Modified host lang DSL \\
+    Compiler error checking & x & x & - & - & - & Mission Critical DSL \\
+    Need interactive interpreter & - & x & x & x & x & All \\
     Concice syntax & - & x & x & x & x & All \\
     \hline
   \end{tabular*}
@@ -4971,7 +4954,49 @@ means partially good match and a \texttt{-} means not recommended.
   \label{tab:taskslangs}
 \end{table}
 
+As a summary I think that Scala is the language that supports the
+biggest amount of tasks. Together with Java, it is the only
+alternative if one needs to create efficient bytecode or compiler
+error checking (because of the static typing + compilation). Writing
+concurrent applications seems to be best done in Scala or Clojure, or
+alternatively in Java (but with lower level concurrency
+abstractions). All the languages support combining DSLs, as this can
+be as simple as using two different libraries written in the same
+language together. However, some languages offer better features
+minimizing the work needed to convert between different data
+structures (implicit conversions in Scala, multimethods in Clojure or
+open classes in JRuby).
 
+Clojure seems like a good alternative for a number of different
+tasks. However, the only area where it is clearly better than the
+other languages seems in building custom control structures and
+possibly removing existing ones (modifications to the host
+language). Functional languages on the JVM seem to have had an uprise
+in popularity the last years (my personal opinion based on observed
+Internet activity), and Clojure provides the most ``pure'' functional
+option.
+
+The dynamic object-oriented languages (JRuby and Groovy) are best
+suited for building DSLs exploiting the capabilities of dynamic typing
+(dynamic metaprogramming, open classes and dynamic dispatching). The
+framework Ruby on Rails is a prime example of the possibilities these
+languages offer, examplifying a super-concise syntax not matched by
+any other languages. If you have a use for these dynamic mechanisms,
+and don't require compiler type errors or high-performance bytecode, I
+believe these languages are good alternatives to Java.
+
+I have found that all the languages studied provide features that let
+the user write much more concise and to-the-point code than what is
+possible in Java. This is to some extent due to the fact that all the
+languages support higher-order functions. Passing functions as
+parameters to other functions is a very useful feature, that hopefully
+will get added to the Java programming language in a future
+release. All the languages, except Java, also support running as
+scripts or directly in interactive
+interpreters/REPL-environments. Writing less code for the same
+functionality, and being able to test it directly in an interactive
+environment, are both features that suggest shorter development time
+than what is possible in Java.
 
 \section{Suggestions for Future Work}
 \label{sec:futurework}
