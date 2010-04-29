@@ -149,7 +149,7 @@ existing language features.
 \addcontentsline{toc}{chapter}{Preface}
 
 This is a master-thesis of 60 credits in the field of Informatics. It
-was supervised by the Object-orientation, Modelling, and Languages
+was supervised at the Object-orientation, Modelling, and Languages
 research
 group\footnote{\url{http://www.ifi.uio.no/research/groups/oms/}} at
 the Department of Informatics, Faculty of Mathematics and Natural
@@ -707,8 +707,8 @@ will be explained later when used in examples).
 Scala also has many features of functional programming included. This
 includes support for higher-order functions, pattern matching, type
 inference, implicit conversions, currying, partial functions, lazy
-data-structures and a very advanced type system. The type system has
-been a showcase for what is possible in a static language on the
+data-structures and an advanced type system. The type system has been
+a showcase for what is possible in a static language on the
 JVM\cite{moo08b}. Many of the functional programming capabilities of
 Scala will be explained in detail later, with regards to the various
 DSL requirements.
@@ -839,8 +839,8 @@ println(squareNumbers)
 
 \subsubsection{Groovy and Java}
 
-Groovy is very tightly integrated with Java. In most cases, an
-existing Java code file can be renamed to \texttt{.groovy} and run
+Groovy is tightly integrated with Java. In most cases, an existing
+Java code file can be renamed to \texttt{.groovy} and run
 directly. This is due to the fact that Groovy supports most of the
 native Java syntax, as well as all the ``new'' dynamic style
 syntax. All Java classes can be imported and used directly in
@@ -1003,11 +1003,11 @@ used.
 
 In addition all Clojure data structures implement standard Java
 interfaces, making it easy to run code implemented in Clojure from
-Java. The very good interoperability between Clojure and Java is a bit
+Java. The good interoperability between Clojure and Java is a bit
 surprising looking at the differences in syntax and programming
 paradigm, but is a powerful addition to the Lisp world. Combining the
 macros of a Lisp language with all the available libraries on the Java
-platform seems to be a very good idea.
+platform seems to be a good idea.
 
 \section{Examples}
 
@@ -1128,9 +1128,9 @@ To create the structuring element, the \texttt{StrEl} trait has a
 ``companion object''\footnote{A companion object is a singleton
   \texttt{object} having the same name as an associated \texttt{trait}
   or \texttt{class}\cite{ode08}.} with an \texttt{apply} method
-(described in section \vref{sec:applymethod}). This gives a very
-compact syntax, combined with the import of the available structuring
-element types as shown above. An example is shown in listing
+(described in section \vref{sec:applymethod}). This gives a compact
+syntax, combined with the import of the available structuring element
+types as shown above. An example is shown in listing
 \vref{lst:scalacompobj}.
 
 \begin{lstlisting}[caption=Scala companion object example.,label=lst:scalacompobj]
@@ -1200,7 +1200,7 @@ processing DSL to create a more complete DSL environment for image
 analysis.
 
 A minimal DSL for statistics has been created in Scala for this
-work. It only has a very basic data structure, with a few rudimentary
+work. It only has a basic data structure, with a few rudimentary
 operations. The main reason for creating this little DSL is to provide
 a basis when working with DSL composition (see chapter
 \vref{chp:customization}).
@@ -1305,13 +1305,13 @@ for querying databases. The \texttt{ActiveRecord} can be seen as a
 separate DSL on its own. An example of using \texttt{ActiveRecord} is
 shown in listing \vref{lst:activerecordex} (from\cite{rails}). The
 relationship between tables in the database is directly mapped to Ruby
-classes, using a very specific syntax. In the example the
-\texttt{Client} class will be mapped to a ``client'' table in the
-database, and the \texttt{Address} class to an ``address'' table and
-so on. The framework takes care of producing the SQL code needed to
-bind data to objects when classes are instantiated, and makes sure
-that foreign keys refer to the correct tables based on the
-relationship mappings like \texttt{has\_one} and \texttt{has\_many}.
+classes, using a specific syntax. In the example the \texttt{Client}
+class will be mapped to a ``client'' table in the database, and the
+\texttt{Address} class to an ``address'' table and so on. The
+framework takes care of producing the SQL code needed to bind data to
+objects when classes are instantiated, and makes sure that foreign
+keys refer to the correct tables based on the relationship mappings
+like \texttt{has\_one} and \texttt{has\_many}.
 
 \begin{lstlisting}[language=ruby,caption={[Ruby on Rails \texttt{ActiveRecord} example]Example using the Ruby on Rails \texttt{ActiveRecord} database querying classes.},label=lst:activerecordex]
 class Client < ActiveRecord::Base
@@ -1662,9 +1662,9 @@ framework supporting Behaviour Driven Development\footnote{BDD is a
   software development technique first introduced in\cite{nor06}. It
   aims at writing automated tests in a natural language, and has been
   implemented as embedded DSLs in a number of different languages.} in
-a very fluent style. Notice how operator notation is used in all
-method calls related to the DSL testing syntax. Other parts of the
-example will be explained in later sections.
+a fluent style. Notice how operator notation is used in all method
+calls related to the DSL testing syntax. Other parts of the example
+will be explained in later sections.
 
 \begin{lstlisting}[caption=Scala ScalaTest example.,label=lst:scalatest]
 import org.scalatest.FlatSpec
@@ -1971,8 +1971,8 @@ it should "throw NoSuchElementException if an empty stack is popped" in {
 
 In dynamic languages a mechanism that can give much the same results
 is Monkey Patching described in section
-\vref{sec:monkey_patching}. Implicit conversions are also very useful
-when combining DSLs. This will be further described in chapter
+\vref{sec:monkey_patching}. Implicit conversions are also useful when
+combining DSLs. This will be further described in chapter
 \vref{chp:customization}.
 
 \section{By-name Parameters}
@@ -2143,7 +2143,7 @@ var results =
 
 In the functional world of Clojure, all data-structures are basically
 anonymous types. They are defined as maps of key-value pairs. The
-``person'' type shown in the Scala example above can be defined very
+``person'' type shown in the Scala example above can be defined
 similarly in Clojure:
 
 \begin{lstlisting}[language=lisp,caption=Clojure data structure example.]
@@ -2802,14 +2802,13 @@ basically a kind of dynamic dispatch where you specify a function to
 perform the dispatch rather than only the type as is done in
 polymorphism. Instead of the type itself providing some implementation
 of an interface, the whole dispatch is done outside using the type as
-a parameter. A very basic example is shown in listing
-\vref{lst:cljmm}. The \texttt{my-print} function uses the
-\texttt{class} function, which returns the class of an object, to
-dispatch on the argument. So the method can be called on objects of
-type \texttt{String} or \texttt{Number} (super-type for numeric types
-in Java). This example does basically the same as object-oriented
-languages do with polymorphism, it dispatches based on the type of the
-argument.
+a parameter. A basic example is shown in listing \vref{lst:cljmm}. The
+\texttt{my-print} function uses the \texttt{class} function, which
+returns the class of an object, to dispatch on the argument. So the
+method can be called on objects of type \texttt{String} or
+\texttt{Number} (super-type for numeric types in Java). This example
+does basically the same as object-oriented languages do with
+polymorphism, it dispatches based on the type of the argument.
 
 \begin{lstlisting}[language=lisp,caption=Clojure multi-method example,label=lst:cljmm]
 (defmulti my-print class)
@@ -2957,7 +2956,7 @@ the histogram, while the better contrast of the second image is shown
 with a more evenly distributed histogram.
 
 \begin{lstlisting}[float,caption=Scala image histogram example,label=lst:scalaipchart]
-// Function provided by the DSL designer
+// Function provided by the DSL designer defining the conversion
 implicit def img2DS(img: GrayScaleImage) = {
   val dataset = new DefaultCategoryDataset
   val imgData = img.data.toList
@@ -3047,15 +3046,15 @@ int average = img.avg();
 
 This chapter has explored ways to create customizable DSL components,
 as well as techniques used to combine several DSLs. Mixin-composition,
-found in Groovy, Ruby and Scala, is a powerful way to create loosely
-coupled modular DSLs. New versions of the DSL can be created very
-easily only varying on the specific traits included in the actual
+found in Groovy, Ruby and Scala, is a way to create loosely coupled
+modular DSLs. New versions of the DSL can be created easily only
+varying on the specific traits included in the actual
 implementations. Another approach to creating generic DSLs is using
 type parameters or abstract types. The functional composition
 techniques in Clojure provide some exiting new ways to compose modular
 code, compared to the more imperative languages. Implicit conversion
 is a good technique found in Scala that enables combining two DSLs in
-a very smooth manner. The package templates mechanism research at the
+a smooth manner. The package templates mechanism research at the
 University of Oslo seems like a good alternative to combine DSLs.
 
 \clearpage{\pagestyle{plain}\cleardoublepage}
@@ -3079,8 +3078,8 @@ likely to cause errors if used together with the DSL. In that
 situation, it would be useful to disable or remove that feature in the
 scope of the DSL. This would ``protect'' the user from doing something
 wrong. At the same time it must be done with care, as users who are
-familiar with the host language may get offended if features are
-missing.
+familiar with the host language may get offended or confused if
+features are missing.
 
 Another situation is that where the DSL uses some kind of pattern that
 one would like to include in the host language. If features can be
@@ -3313,9 +3312,9 @@ The functional languages have a few different ways to extend the host
 language. The first subsection below describes how functions
 themselves can be implemented to appear as built-in keywords. This is
 not really an extension of the language, but still included here as it
-offers some of the same possibilities. The second subsection describe
-Clojure macros, an extremely flexible mechanism when it comes to
-extending the language.
+offers some of the same possibilities. The second subsection describes
+Clojure macros, a flexible mechanism when it comes to extending the
+language.
 
 \subsubsection{First-class Functions as Built-in Control Structures}
 
@@ -3354,8 +3353,8 @@ mywhile(i < 3) {
 \end{lstlisting}
 
 As we can see it is simple to define functions that act and look like
-built-in control structures. This is very useful designing DSLs where
-we want it to seem like the host language has been extended with new
+built-in control structures. This is useful designing DSLs where we
+want it to seem like the host language has been extended with new
 features supporting the DSL. So this is not really a genuine extension
 of the language, but something that appears to be and does the same
 job in many cases.
@@ -3416,9 +3415,9 @@ first provides a multiplication of two values (\texttt{x} and
 
 The example with the reverse macro shown above may seem pretty
 useless, and it probably is. However, it was included here just to
-show the amazing power released by the Clojure macro support. It would
-probably prove extremely difficult to write anything like that in any
-of the other languages studied in this report. Clojure gives you huge
+show some of the power made available by the Clojure macro support. It
+would probably prove difficult to write anything like that in any of
+the other languages studied in this report. Clojure gives you huge
 possibilities in extending/changing the host language. The uniform and
 simple syntax together with the macro system lets you build your own
 language, however you want it. Just about any control structure can be
@@ -3580,10 +3579,11 @@ interactive interpreter (like the Scala REPL mentioned in the previous
 section). This can in many cases be configured to be used with a
 specific library pre-loaded, which means it is possible to create a
 custom version for working interactively with a DSL. Similar to the
-scripting example shown above this opens possibilities to work with
-the DSL without wrapping it in any host language code. But the main
-advantage of using the DSL in an interactive console is the unique
-ability it offers in issuing commands that are run directly.
+scripting example shown in the previous section this opens
+possibilities to work with the DSL without wrapping it in any host
+language code. But the main advantage of using the DSL in an
+interactive console is the ability it offers in issuing commands that
+are run directly.
 
 The Scala REPL has an option to pre-load a file with commands on
 start-up. Typically this can be used to include imports, implicit
@@ -3615,10 +3615,10 @@ Type :help for more information.
 scala> 
 \end{lstlisting}
 
-We can the issue the same commands used in the script example one by
+We can then issue the same commands used in the script example one by
 one (notice the output for every line which is simply the interpreter
 calling the \texttt{toString} method after printing the type on the
-newly created object -- very useful for debugging purposes):
+newly created object -- useful for debugging purposes):
 
 \begin{lstlisting}[language=,caption=Scala REPL image processing example.]
 scala> val img = loadImageFile("cell.jpg")
@@ -3649,8 +3649,8 @@ languages support interactive interpreters. Clojure has a REPL, much
 like that shown for Scala. Ruby has an \texttt{irb} (Interactive
 Ruby), and Groovy provides a Groovy-shell. These tools give all the
 languages some advantages over using Java directly. The ability to
-directly execute statements is extremely useful when you need to test a
-piece of code. Most of the minor examples shown in this report where
+directly execute statements is typically useful when you need to test
+a piece of code. Most of the minor examples shown in this report where
 implemented directly in the interactive interpreter environments, and
 then copied out when working.
 
@@ -3660,23 +3660,23 @@ If we want to take the interactive interpreter in Scala a step further
 it is actually possible to embed it in your own
 application\footnote{\url{http://suereth.blogspot.com/2009/04/embedding-scala-interpreter.html}}
 \footnote{\url{http://speaking-my-language.blogspot.com/2009/11/embedded-scala-interpreter.html}}
-(see footnotes for some examples). This could be a very powerful way
-to create a standalone application having a console or similar being
-able to run DSL commands directly. For the image processing example
-shown in chapter \vref{chp:examples} it would be possible to create
-some kind of application combining such a console with an image viewer
-window showing the results of the operations directly on an
-image. This is similar to how \matlab{} works, a proven environment
-for image analysis and other mathematical calculations.
+(see footnotes for some examples). This could be a way to create a
+standalone application having a console or similar being able to run
+DSL commands directly. For the image processing example shown in
+chapter \vref{chp:examples} it would be possible to create some kind
+of application combining such a console with an image viewer window
+showing the results of the operations directly on an image. This is
+similar to how \matlab{} works, a proven environment for image
+analysis and other mathematical calculations.
 
-I think this technique could be very useful for a number of cases. All
+I think this technique could be useful for a number of cases. All
 kinds of DSLs where you may want to see some immediate results of your
 commands could be candidates. Examples could typically be statistical,
 financial or graphical DSLs. A generic application may even be reused
-for several different DSLs, thus being a powerful base for building
-custom running environments for any embedded DSL implemented in Scala
-(or any other language that compiles to regular Java bytecode). A
-project using this approach is
+for several different DSLs, thus being a base for building custom
+running environments for any embedded DSL implemented in Scala (or any
+other language that compiles to regular Java bytecode). A project
+using this approach is
 Kojo\footnote{\url{http://www.kogics.net/sf:kojo}}, a programming
 learning environment for children. They have their own Scala-based DSL
 for programming in a visual environment, utilizing an embedded REPL
@@ -3707,7 +3707,7 @@ exist for all the three mentioned IDEs giving some support to all the
 languages used in this thesis. For example the Image Processing DSL
 was to a large extent implemented using the IntelliJ IDEA environment,
 with a Scala plugin (screen-shot shown in figure
-\vref{fig:intellijss}. A thorough comparison between the various
+\vref{fig:intellijss}). A thorough comparison between the various
 alternative environments have not been carried out, but as a general
 comment it is interesting to see the difference between static and
 dynamic languages. Static languages seem to be easier to implement
@@ -3723,10 +3723,10 @@ refactoring).
 
 \subsection{Command Line Tools}
 
-The Java platform has an incredible large amount of command line based
-tools available, both from Sun and third party providers. Many of
-these tools can be used more or less directly on all languages running
-on the JVM, as they can analyze bytecode or other JVM-based management
+The Java platform has a large amount of command line based tools
+available, both from Sun and third party providers. Many of these
+tools can be used more or less directly on all languages running on
+the JVM, as they can analyze bytecode or other JVM-based management
 options. Typical examples are standard Java tools like \texttt{jps},
 \texttt{jstat}, \texttt{jstack} and \texttt{javap} (all included in
 standard Java Development Kit
@@ -3758,18 +3758,18 @@ following sections discuss differences related to language category.
 
 The Java programming language uses exceptions to handle errors and
 other exceptional
-events.\footnote{\url{http://java.sun.com/docs/books/tutorial/essential/exceptions/index.html}} It
-is a basic mechanism where code can be wrapped in a \texttt{try}
+events.\footnote{\url{http://java.sun.com/docs/books/tutorial/essential/exceptions/index.html}}
+It is a basic mechanism where code can be wrapped in a \texttt{try}
 block, and any exception thrown can be handled in separate
 \texttt{catch} blocks (one for each type of exception). Additionally
-one can use a \texttt{finally} for code that must be run no matter if
-an exception has been thrown or not. There are two main types of
-exceptions: checked exceptions that \textit{must} be caught by the
-calling code (failing to do so will lead to a compile error in Java),
-and unchecked exceptions that \textit{can} be caught by the calling
-code. This section will not go into details about the exception
-mechanism in Java, but will show how the different alternative
-programming languages relate to the exception mechanism.
+one can use a \texttt{finally} block for code that must be run no
+matter if an exception has been thrown or not. There are two main
+types of exceptions: checked exceptions that \textit{must} be caught
+by the calling code (failing to do so will lead to a compile error in
+Java), and unchecked exceptions that \textit{can} be caught by the
+calling code. This section will not go into details about the
+exception mechanism in Java, but will show how the different
+alternative programming languages relate to the exception mechanism.
 
 In Scala, exceptions can be thrown in the same way as in
 Java\cite{ode08}. Instead of returning a value, one can throw an
@@ -3837,7 +3837,7 @@ implementing the same example as shown for Scala and JRuby.
 \subsubsection{Functional Alternatives}
 
 Even though the functional languages Scala and Clojure support normal
-exception handling, there are other alternatives in many cases that
+exception handling, there are other alternatives that in many cases
 may be better. \cite{ode08} describes the \textit{loan pattern}, where
 a control-abstraction function opens a resource and ``loans'' it to a
 function before it closes the resource. The exception handling would
@@ -3993,8 +3993,8 @@ significantly slower than the static ones.
 
 A mini-benchmark was created with the languages studied in this
 thesis, trying to show that dynamic languages are indeed slower than
-the static ones. The code is extremely simple, just adding numbers in
-a loop of 10 million iterations. The implementations for the different
+the static ones. The code is quite simple, just adding numbers in a
+loop of 10 million iterations. The implementations for the different
 languages are shown in figure \vref{fig:jvmbenchmark}. The goal was to
 make the implementations as similar as possible. This succeeded for
 all languages except Clojure, which does not really have variables
@@ -4069,10 +4069,11 @@ matrix I ended up testing a few different variants:
 \item \textbf{List of Lists} -- A very logical implementation of
   matrix can be made by using Scala \texttt{Lists}. The idea for this
   implementation was inspired by a blog post by Jonathan
-  Merritt.\footnote{\url{http://jsmerritt.blogspot.com/2008/07/matrix-multiplication-in-scala.html}} A
-  simple example of using a list of lists is shown in listing
+  Merritt.\footnote{\url{http://jsmerritt.blogspot.com/2008/07/matrix-multiplication-in-scala.html}}
+  A simple example of using a list of lists is shown in listing
   \vref{lst:listoflist}. However, this implementation proves to be
-  very slow in specific element access and iteration.
+  slow in specific element access and iteration (see discussion
+  below).
 \item \textbf{2D Array} -- In Scala an \texttt{Array} will usually be
   faster than \texttt{List} because it is compiled to a native array
   in bytecode. It is also faster to implement as one flat array,
@@ -4083,15 +4084,15 @@ matrix I ended up testing a few different variants:
   \vref{lst:2darray}.
 \end{itemize}
 
-Some very basic comparison measurements were made, comparing a matrix
-based on an array vs. a matrix based on list. The output is shown
-below. On a 200x1000 element matrix the list based matrix was nearly
-10 times slower than the equivalent array implementation when
-performing an anonymous structuring-element operation. When performing
-simple subtractions on the same structures the list implementation was
-a bit faster. However, it is quite clear that implementation of a
-matrix needs to be done using arrays to obtain anything close to
-acceptable performance for advanced operations.
+Some basic comparison measurements were made, comparing a matrix based
+on an array vs. a matrix based on list. The output is shown below. On
+a 200x1000 element matrix the list based matrix was nearly 10 times
+slower than the equivalent array implementation when performing an
+anonymous structuring-element operation. When performing simple
+subtractions on the same structures the list implementation was a bit
+faster. However, it is quite clear that implementation of a matrix
+needs to be done using arrays to obtain anything close to acceptable
+performance for advanced operations.
 
 \begin{lstlisting}[language=]
 Matrix rows:200 cols:1000
@@ -4144,10 +4145,10 @@ matrix is essential. Scala provides two basic forms of iterating;
 \begin{itemize}
 \item \textbf{for comprehensions} -- In Scala, for comprehensions are
   implemented as a monadic combination of the methods \texttt{filter},
-  \texttt{map} and \texttt{flatMap}. This is a very powerful structure
-  allowing compact and readable code. An example of implementing a
-  general structuring-element operation based on for comprehensions is
-  shown in listing \vref{lst:forcomp}.
+  \texttt{map} and \texttt{flatMap}. This is a functional control
+  structure allowing compact and readable code. An example of
+  implementing a general structuring-element operation based on for
+  comprehensions is shown in listing \vref{lst:forcomp}.
 \item \textbf{while loops} -- For regular loops Scala provides the
   \texttt{while} keyword. Using this instead of the for comprehensions
   gives a much more iterative implementation, as shown in listing
@@ -4295,8 +4296,8 @@ class MyList[@specialized(Int, Double) T] ...
 Clojure also has some support for specifying primitive types, despite
 the dynamic typing used throughout the language. This is called giving
 the compiler ``type hints''\cite{hal09}, and can be used for
-optimization. A very simple example is shown adding two integers,
-first the regular Clojure way:
+optimization. A simple example is shown adding two integers, first the
+regular Clojure way:
 
 \begin{lstlisting}[language=lisp]
 (+ 2 3)
@@ -4311,12 +4312,12 @@ used with type hints that will make the code much more efficient:
 \end{lstlisting}
 
 With code that requires maximum performance on numerical calculations
-it is very important to be aware of these mechanisms. A good thing is
-that one can always write code without thinking about performance
-first, and then add specializations, type hints or other mechanisms
-whenever you see a need to improve the performance. Another approach
-that could be done is to write the performance-critical code parts in
-regular Java code, and simply include the compiled Java-classes in the
+it is important to be aware of these mechanisms. A good thing is that
+one can always write code without thinking about performance first,
+and then add specializations, type hints or other mechanisms whenever
+you see a need to improve the performance. Another approach that could
+be done is to write the performance-critical code parts in regular
+Java code, and simply include the compiled Java-classes in the
 classpath of the programming language in use.
 
 \section{Concurrency -- Parallel or Distributed Computing}
@@ -4504,12 +4505,11 @@ was made splittable, and could then be used to implement parallel
 operations on images. The code in listing \vref{lst:scalaparallelip}
 shows both a parallel and a non-parallel version of the average
 operation discussed several places earlier in this report. Worth
-noting is the very small code difference needed to make it
-parallel. In a way one could say that the parallel mechanism itself is
-a small DSL for enabling parallelization in Scala. The next version of
-Java will most likely include a similar mechanism to that developed
-here with Scala, namely the Fork/Join framework described
-in\cite{lea00}.
+noting is the small code difference needed to make it parallel. In a
+way one could say that the parallel mechanism itself is a small DSL
+for enabling parallelization in Scala. The next version of Java will
+most likely include a similar mechanism to that developed here with
+Scala, namely the Fork/Join framework described in\cite{lea00}.
 
 \begin{lstlisting}[caption=Scala parallel image processing operations.,label=lst:scalaparallelip]
 trait Standard { this: GrayScaleImage =>
@@ -4548,10 +4548,10 @@ functions implement the \texttt{java.lang.Runnable} and
 classes added to the JDK from version 1.5. This allows all Clojure
 functions being able to run directly in separate Java threads, or
 using executors or other mechanisms from the Java concurrent API. So
-spawning several threads to perform separate tasks is extremely
-easy. An example is shown in the following listing, where the function
-printing ``hello!''  is run in a separate thread (also created
-directly) on the JVM:
+spawning several threads to perform separate tasks is not
+difficult. An example is shown in the following listing, where the
+function printing ``hello!''  is run in a separate thread (also
+created directly) on the JVM:
 
 \begin{lstlisting}[language=lisp]
 (.start (Thread. (fn [] (print "hello!"))))
@@ -4612,12 +4612,12 @@ run two times for the given values:
 (time (dorun (map mem-double values)))
 \end{lstlisting}
 
-The memoization mechanism in Clojure would be very useful when
-implementing an image processing DSL or similar requiring heavy
-computations. Large parts of many images are similar, and would most
-likely lead to the functions being called with the same parameters
-several times when passing over the image. A memoized version would
-simply return the already calculated value the second time around.
+The memoization mechanism in Clojure would be useful when implementing
+an image processing DSL or similar requiring heavy computations. Large
+parts of many images are similar, and would most likely lead to the
+functions being called with the same parameters several times when
+passing over the image. A memoized version would simply return the
+already calculated value the second time around.
 
 \section{Secondary Processors -- GPU}
 
@@ -4625,8 +4625,8 @@ Recent years manufacturers of graphics cards and GPUs (Graphics
 Processing Unit) have made libraries available to run general code
 (not just graphics processing) on their hardware. This is typically
 hardware optimized for matrices and image processing, so it should be
-very interesting to utilize this possibility to speed up the
-operations in a Image Processing library.
+interesting to utilize this possibility to speed up the operations in
+a Image Processing library.
 
 OpenCL\texttrademark\footnote{\url{http://www.khronos.org/opencl/}} is
 an open standard for parallel programming that utilizes the power of
@@ -4670,11 +4670,11 @@ prog !
 println("First: " + prog.output.get(0)) // Print 6
 \end{lstlisting}
 
-The ScalaCL library is still very new and limited in functionality,
-but works for small examples. It is a new and exiting domain that will
-be important to keep up with in the future. Programs leveraging the
-power of the GPU will have vastly more computing power available than
-those who do not.
+The ScalaCL library is still new and limited in functionality, but
+works for small examples. It is a new and exiting domain that will be
+important to keep up with in the future. Programs leveraging the power
+of the GPU will have vastly more computing power available than those
+who do not.
 
 \section{JVM Tuning -- JVM Arguments}
 
@@ -4753,16 +4753,16 @@ embedded DSL development on the JVM platform.
 
 The dynamic object-oriented languages (Groovy and Ruby) offer a very
 concise coding-style, a central requirement when developing embedded
-DSLs. Code looks very clean without information about types included,
+DSLs. Code looks clean without information about types included,
 something that is valuable for many types of DSLs. A mathematician
 would maybe not care if the numbers are stored as doubles or ints, as
-long as the results are correct and as expected. Another extremely
-powerful mechanism only available in the dynamic languages is the
-dynamic metaprogramming described in section
-\vref{sec:dynamicmetaprogramming}. Code that dynamically generates new
-code, combined with dynamic dispatch in the form of the
-\texttt{method\_missing} feature and monkey patching, provides a basis
-for popular DSL environments like the Ruby on Rails framework.
+long as the results are correct and as expected. Another mechanism
+only available in the dynamic languages is the dynamic metaprogramming
+described in section \vref{sec:dynamicmetaprogramming}. Code that
+dynamically generates new code, combined with dynamic dispatch in the
+form of the \texttt{method\_missing} feature and monkey patching,
+provides a basis for popular DSL environments like the Ruby on Rails
+framework.
 
 The multi-paradigm language Scala, combining object-orientation with
 functional programming, offers a huge set of new capabilities when it
@@ -4784,12 +4784,12 @@ that is capable of creating most control structures. As such the
 language is maybe one of the best suited for writing narrow and
 specific DSLs, as it can be adjusted to exactly the way you want
 it. The language was included in the project as an ``outsider'', but
-proved its worth very quickly.
+proved its worth quickly.
 
 \subsection{Customizing DSLs}
 
-Mixin-composition is a powerful mechanism enabling code reuse and
-modular design in a more precise way than in Java which only supports
+Mixin-composition is a mechanism enabling code reuse and modular
+design in a more precise way than in Java which only supports
 polymorphism through interfaces. All the object-oriented languages
 (Ruby, Groovy and Scala) support some form of mixin-composition. Most
 thoroughly studied was the traits in Scala, which were used to build
@@ -4802,9 +4802,9 @@ polymorphism. Multimethods can be used outside the object structure,
 giving the types new structure without altering them at all.
 
 When it comes to combining DSLs the implicit conversion mechanism in
-Scala proved very concise and easy to use. With only a few lines of
-code, converting from one data-structure to another, we are able to
-combine several different separate DSLs into one environment.
+Scala proved concise and easy to use. With only a few lines of code,
+converting from one data-structure to another, we are able to combine
+several different separate DSLs into one environment.
 
 \subsection{Modifying the Host Language}
 
@@ -4883,12 +4883,12 @@ code and high performance. Scala 2.8 may improve this a little, with
 better support for JVM primitives and annotations to create effective
 recursions and pattern matching statements.
 
-The functional languages of Scala and Clojure offer very good
-mechanisms for concurrency. The immutable world of functional
-programming makes it very easy to create threads that cooperate in
-solving problems. The biggest advantage is that they make concurrency
-easy to implement without risks for deadlocks and other common
-problems when working with Java concurrency.
+The functional languages of Scala and Clojure offer good mechanisms
+for concurrency abstractions. The immutable world of functional
+programming makes it easy to create threads that cooperate in solving
+problems. The biggest advantage is that they make concurrency easy to
+implement without risks for deadlocks and other common problems when
+working with Java concurrency.
 
 A final note on performance is the support for GPU programming that is
 becoming available, even on the JVM. An example was shown were Scala
@@ -4989,14 +4989,13 @@ I have found that all the languages studied provide features that let
 the user write much more concise and to-the-point code than what is
 possible in Java. This is to some extent due to the fact that all the
 languages support higher-order functions. Passing functions as
-parameters to other functions is a very useful feature, that hopefully
-will get added to the Java programming language in a future
-release. All the languages, except Java, also support running as
-scripts or directly in interactive
-interpreters/REPL-environments. Writing less code for the same
-functionality, and being able to test it directly in an interactive
-environment, are both features that suggest shorter development time
-than what is possible in Java.
+parameters to other functions is a useful feature, that hopefully will
+get added to the Java programming language in a future release. All
+the languages, except Java, also support running as scripts or
+directly in interactive interpreters/REPL-environments. Writing less
+code for the same functionality, and being able to test it directly in
+an interactive environment, are both features that suggest shorter
+development time than what is possible in Java.
 
 \section{Suggestions for Future Work}
 \label{sec:futurework}
@@ -5033,7 +5032,7 @@ dynamically typed languages. A suggestion of future work is to add
 similar support to one of the statically typed languages running on
 the JVM (as Scala or Java used in this thesis).
 
-\subsection{Implement More Powerful Meta Programming Features in Scala}
+\subsection{Implement More Metaprogramming Features in Scala}
 
 As described in section \vref{sec:dynamicmetaprogramming} one of the
 major benefits of using a dynamically typed language is the powerful
@@ -5046,23 +5045,23 @@ most exciting capabilities provided by dynamic metaprogramming.
 
 \subsection{Create Image Processing DSL in Clojure}
 
-Clojure is a very interesting language providing a more pure
-functional programming model than Scala on the JVM. It would be
-interesting investigating further using the functional capabilities of
-Clojure in implementing an image processing DSL similar to the one
-implemented in Scala in this thesis.
+Clojure is an interesting language providing a more pure functional
+programming model than Scala on the JVM. It would be interesting
+investigating further using the functional capabilities of Clojure in
+implementing an image processing DSL similar to the one implemented in
+Scala in this thesis.
 
 \subsection{Implement a Complete Environment for Computationally Intensive Tasks}
 
 The main example in this thesis work has been the DSLs for image
-processing, statistics and charts. Joint together these form a very
-basic foundation for an environment providing a friendly syntax in
+processing, statistics and charts. Joint together these form a basic
+foundation for an environment providing a friendly syntax in
 programming computationally intensive tasks.
 
-It would be very interesting working further with these ideas,
-focusing more on the specific domain of image processing and other
-tasks requiring high performance computations. A JVM based environment
-could potentially support several different host languages, each being
+It would be interesting working further with these ideas, focusing
+more on the specific domain of image processing and other tasks
+requiring high performance computations. A JVM based environment could
+potentially support several different host languages, each being
 leveraged for its benefits. For example using Scala and Clojure for
 concurrency, and Groovy for more dynamic queries (charting, reporting
 or similar). The building blocks requiring full control of the
