@@ -175,7 +175,7 @@ enthusiasm has motivated me from beginning to end.
 \begin{flushright}
 \textsc{Eivind Barstad Waaler}\\
 Oslo, Norway\\
-April 2010
+May 2010
 \end{flushright}
 
 \chapter{Introduction}
@@ -200,16 +200,16 @@ gives a brief outline of how the rest of the report is structured.
 
 \textit{Evaluate some major alternative programming languages on the
   Java Virtual Machine (JVM) with regards to embedding domain-specific
-  languages. Identify important aspects when working with embedded
-  domain-specific languages and show what programming languages are
-  suited and how they solve the problems.}
+  languages. Identify important requirements when working with
+  embedded domain-specific languages and show what programming
+  languages are best suited.}
 
 \subsection{Background}
 \label{sec:background}
 
-A domain-specific language (DSL\footnote{Also known as
+A domain-specific language (DSL)\footnote{Also known as
   problem-oriented or special-purpose programming language in computer
-  literature.}) is a programming (or modeling) language dedicated to a
+  literature.} is a programming (or modeling) language dedicated to a
 particular problem domain. This thesis looks at embedding programming
 DSLs into existing general-purpose programming languages, with a focus
 on several categories of languages with different features, and how
@@ -349,7 +349,8 @@ DSLs are often categorized in two major types; external or embedded
 programming language with custom syntax and a full parser. Some
 well-known examples of external DSLs are SQL (domain of database
 queries), CSS (domain of HTML styles) and XML (domain of data
-exchange). An embedded DSL on the other hand, is created in a host
+exchange). An embedded DSL, on the other hand, is created in a general
+purpose programming language, often referred to as a ``host''
 language. Various capabilities in the host language are exploited to
 create interfaces that look and behave almost like a particular
 programming language. So the syntax and semantics of the DSL are
@@ -360,10 +361,12 @@ the programmer to implement the DSL is reduced (as a separate parser
 and interpreter does not have to be implemented), and it is easier for
 the user who does not necessarily need to learn an entirely new
 language. Second, in integration with the host language and other DSLs
-implemented in the same language. The boundary between external and
-embedded DSLs is not necessarily a fixed one. Elements from both
-categories can be mixed in a single DSL implementation, as shown by
-Bravenboer and Visser in\cite{bra04}.
+implemented in the same language (as integration of two DSLs written
+in the same language is essentially the same as using two different
+libraries in the same language together). The boundary between
+external and embedded DSLs is not necessarily a fixed one. Elements
+from both categories can be mixed in a single DSL implementation, as
+shown by Bravenboer and Visser in\cite{bra04}.
 
 In this thesis I have focused solely on embedded DSLs running on the
 JVM. As described in the book <<DSLs in Action>> by Debasish
@@ -532,9 +535,9 @@ used.
 \section{JVM Programming Languages}
 \label{sec:programminglanguages}
 
-The goal platform of this thesis is JVM. One of the reasons for this
-is that the popularity of the Java programming language has made the
-JVM one of the most widespread multi-language platforms in the
+The goal platform of this thesis is the JVM. One of the reasons for
+this is that the popularity of the Java programming language has made
+the JVM one of the most widespread multi-language platforms in the
 world. At the same time the Java language itself is getting old, and
 many other languages have been created (or ported) for the JVM. This
 thesis looks at how some of these languages provide various
@@ -567,14 +570,13 @@ platform:
 \end{itemize}
 
 The main disadvantage using the JVM as a platform is in the
-limitiations set by the currently supported bytecode, as it was
+limitations set by the currently supported bytecode, as it was
 developed targeting one language (Java). Many of the languages studied
 here have features that are not found in Java, and thus not being
 directly supported at the bytecode level. Examples of this is tail
 call optimization of recursive functions and dynamic dispatching of
 functions. An important aspect of the performance requirement will be
-to look into the performance of DSLs making using these kind of
-features.
+to look into the performance of DSLs using these kind of features.
 
 \subsection{Categories of Languages}
 
@@ -658,7 +660,7 @@ used in a mock \texttt{Offer} class. The techniques described in the
 paper can be seen as a sort of baseline for what is possible in
 Java. The majority of work done in this report is showing what can be
 achieved using features from other languages, going beyond what is
-capable in the Java language.
+possible in the Java language.
 
 \begin{lstlisting}[float,caption=Java jMock example.,label=lst:jmock,language=java]
 void testAcceptsOfferIfLowPrice() {
@@ -679,7 +681,7 @@ void testAcceptsOfferIfLowPrice() {
   and functional languages, enabling Java and other programmers to be
   more productive. Code sizes are typically reduced by a factor of two
   to three when compared to an equivalent Java
-  application''.}\cite{scala}
+  application.''}\cite{scala}(Scala Website)
 
 Scala is a relatively new language (first version released
 2003\cite{scala}) providing many new programming capabilities on the
@@ -825,7 +827,7 @@ is run passing the previously created \texttt{square} function as
 parameter. This loops through the array, calling the given function
 for each element, and returning the result as a new array.
 
-\begin{lstlisting}[language=java,caption=Groovy closure example.,label=lst:groovyclosure]
+\begin{lstlisting}[language=java,caption=Groovy anonymous function example.,label=lst:groovyclosure]
 // Define anonymous function 'square'
 square = { it * it }
 // Example of use:
@@ -866,9 +868,9 @@ the \texttt{end} keyword, instead of being surrounded by curly braces
 (as in Java, Scala and Groovy). Functions are defined using the
 \texttt{def} keyword. Instance variables are created using the
 \texttt{@} character, as in the \texttt{@name} variable in the
-example.
+example. Comments are lines starting with a \texttt{\#} character.
 
-\begin{lstlisting}[float,caption=Ruby ``hello world'' example.,label=lst:rubyhello,language=ruby]
+\begin{lstlisting}[caption=Ruby ``hello world'' example.,label=lst:rubyhello,language=ruby]
 class Greet
   @name
 
@@ -915,7 +917,7 @@ included in my work. Clojure was first released in 2007.
 
 The main reason I have looked at Clojure is the amount of embedded DSL
 papers written using functional programming languages as host language
-(\cite{hud96},\cite{hud98},\cite{kam98} and\cite{atk09}), making
+(\cite{atk09},\cite{hud98},\cite{hud96} and\cite{kam98}), making
 Clojure an interesting language with respect to embedding DSLs on the
 JVM. In listing \vref{lst:clojurefibonacci} is an example of the
 ``hello world'' function in Clojure, as well as an example
@@ -990,7 +992,7 @@ function name always comes first, even in the case of calling the
 the \texttt{java.util.Date} class can be imported, instantiated and
 used.
 
-\begin{lstlisting}[float,caption=Clojure -- Java integration.,label=lst:clojurejava,language=lisp]
+\begin{lstlisting}[caption=Clojure -- Java integration.,label=lst:clojurejava,language=lisp]
 ; Get a system property
 (System/getProperty "java.vm.version")
 ; Call "toUpperCase" on the String "clojure"
@@ -1047,7 +1049,7 @@ result of the operation is shown in figure \vref{fig:eximg}, original
 and blurred images side by side. The process is illustrated in figure
 \vref{fig:exavg}, showing how each pixel in the new image is an
 average of an area of pixels in the old image. This is a good example
-to use, as it involves potensially many operations (depending on the
+to use, as it involves potentially many operations (depending on the
 image size) such that performance considerations also must be taken.
 
 The \matlab{} code to perform the operation could typically look like
@@ -1111,7 +1113,7 @@ available directly.\footnote{The Scala member import is similar to the
 \vref{lst:scalaipsyn}, where the comments show how the statements
 would look without using the static member import.
 
-\begin{lstlisting}[float,caption=Scala image processing syntax example.,label=lst:scalaipsyn]
+\begin{lstlisting}[caption=Scala image processing syntax example.,label=lst:scalaipsyn]
 import io.SImageIO._
 import structs.StrElType._
 
@@ -1160,10 +1162,12 @@ small example, where the trait \texttt{Standard} implements a function
 \texttt{Image} object in the example).
 
 \begin{lstlisting}[caption=Scala image processing traits.,label=lst:scalaimgtraits]
+// Trait defining standard operation 'avg'
 trait Standard { this: GrayScaleImage =>
   def avg(se: StrEl[Int]) = { ... }
 }
 
+// Image class constructing objects from specific classes and traits
 object Image {
   import operations.{Morphology, Standard}
 
@@ -1172,10 +1176,8 @@ object Image {
   }
 }
 
+// Example of use
 val imgAvg = img.avg(se)
-
-// Equivalent - operator notation
-val imgAvg = img avg se
 \end{lstlisting}
 
 \subsubsection{Performance and Parallel Computing}
@@ -1219,7 +1221,7 @@ features of Scala. The factory object uses a variable number of
 integers (denoted with the type \texttt{Int*}) to build the array
 needed for the dataset.
 
-\begin{lstlisting}[caption={[Scala statistics DSL]Minimal statistics DSL implemented in Scala.},label=lst:statsdsl]
+\begin{lstlisting}[float,caption={[Scala statistics DSL]Minimal statistics DSL implemented in Scala.},label=lst:statsdsl]
 class DataSet(private val intArr: Array[Int]) {
    def average = intArr.reduceLeft(_ + _) / intArr.size.toDouble
 
@@ -1239,7 +1241,7 @@ example calculating and printing (to the standard console) the average
 value of a standard 6-sided dice (numbers 1-6) is given in listing
 \vref{lst:scalastatsdsluse}.
 
-\begin{lstlisting}[caption=Scala statistics DSL usage.,label=lst:scalastatsdsluse]
+\begin{lstlisting}[float,caption=Scala statistics DSL usage.,label=lst:scalastatsdsluse]
 val dice = DataSet(1, 2, 3, 4, 5, 6)
 
 println("Dice average: " + dice.average)
@@ -1270,7 +1272,7 @@ An example creating a basic pie chart is shown in listing
 \texttt{createPieChart} and \texttt{pieData}, creating the chart with
 a variable number of data values.
 
-\begin{lstlisting}[float,caption={[Scala charting DSL]Scala charting DSL -- create a basic pie chart.},label=lst:chartdsl]
+\begin{lstlisting}[caption={[Scala charting DSL]Scala charting DSL -- create a basic pie chart.},label=lst:chartdsl]
 createPieChart("Pie Chart",
    pieData(
       ("One", 43.2D),
@@ -1281,7 +1283,7 @@ createPieChart("Pie Chart",
       ("Six", 19.3D)))
 \end{lstlisting}
 
-\begin{figure}[b]
+\begin{figure}[h]
   \includegraphics[width=1.0\textwidth]{images/piechart}
   \caption{Example pie chart created with the JFreeChart based
     charting DSL.\label{fig:piechartex}}
@@ -1293,7 +1295,7 @@ This section describes some other DSLs used as examples. They have not
 been implemented as part of the work, but are used as examples as they are
 popular Open Source frameworks being used in many enterprise
 projects. They also exercise some exciting features in the host
-languages to obtain some of the features that make the suited for the
+languages to obtain some of the features that make them suited for the
 domains they provide solutions for.
 
 \subsection{Ruby on Rails}
@@ -1313,7 +1315,7 @@ objects when classes are instantiated, and makes sure that foreign
 keys refer to the correct tables based on the relationship mappings
 like \texttt{has\_one} and \texttt{has\_many}.
 
-\begin{lstlisting}[language=ruby,caption={[Ruby on Rails \texttt{ActiveRecord} example]Example using the Ruby on Rails \texttt{ActiveRecord} database querying classes.},label=lst:activerecordex]
+\begin{lstlisting}[float,language=ruby,caption={[Ruby on Rails \texttt{ActiveRecord} example]Example using the Ruby on Rails \texttt{ActiveRecord} database querying classes.},label=lst:activerecordex]
 class Client < ActiveRecord::Base
   has_one :address
   has_one :mailing_address
@@ -1386,8 +1388,8 @@ was shown in listing \vref{lst:jmock}.
 \chapter{Syntax and Semantics}
 \label{chp:syntax}
 
-\textit{The syntax of a language defines its surface
-  form.}\cite{fri08}
+\textit{``The syntax of a language defines its surface
+  form.''}\cite{fri08}
 
 It is the set of rules that define the combinations of symbols that
 are considered to be correctly structured programs in that
@@ -1509,6 +1511,8 @@ instance and not with objects created from the class. The example in
 listing \vref{lst:javastaticsort} shows how to sort a list of strings
 in Java, using the static method \texttt{sort} in the
 \texttt{Collections} class.
+
+\clearpage
 
 \begin{lstlisting}[float,language=java,caption=Java static sort example.,label=lst:javastaticsort]
 // Create a list of strings
@@ -2014,7 +2018,7 @@ does not support anonymous functions, would result in something
 similar to the example in listing \vref{lst:javaforloop} using a
 \texttt{for-loop} combined with an \texttt{if-statement}.
 
-\begin{lstlisting}[float,language=java,caption=Java simple for-loop/if example,label=lst:javaforloop]
+\begin{lstlisting}[language=java,caption=Java simple for-loop/if example,label=lst:javaforloop]
 List<Integer> numbers = ... // Make instance of list of integers
 List<Integer> evenNumbers = new ArrayList<Integer>();
 
@@ -2065,11 +2069,11 @@ a value in a new matrix, which is the final return value of the whole
 function. In the image processing DSL based on the Matrix DSL this
 functionality is used to implement a number of operations, using
 anonymous functions. Some examples are shown in listing
-\vref{lst:scalaanonfunc}. Notice how the only thing differenciating
+\vref{lst:scalaanonfunc}. Notice how the only thing differentiating
 the functions is the actual implementation of the anonymous function
 setting the rule for how two numbers should be handled.
 
-\begin{lstlisting}[caption=Scala anonymous function example.,label=lst:scalaanonfunc]
+\begin{lstlisting}[float,caption=Scala anonymous function example.,label=lst:scalaanonfunc]
 val matrix: Matrix[Int] // Internal image representation as a matrix
 
 // Use average anonymous function to create blur effect
@@ -3053,9 +3057,10 @@ implementations. Another approach to creating generic DSLs is using
 type parameters or abstract types. The functional composition
 techniques in Clojure provide some exiting new ways to compose modular
 code, compared to the more imperative languages. Implicit conversion
-is a good technique found in Scala that enables combining two DSLs in
-a smooth manner. The package templates mechanism research at the
-University of Oslo seems like a good alternative to combine DSLs.
+is a good technique found in Scala that enables the combining of two
+DSLs in a smooth manner. The package templates mechanism research at
+the University of Oslo also seems like a good alternative to combining
+DSLs.
 
 \clearpage{\pagestyle{plain}\cleardoublepage}
 
@@ -3681,11 +3686,11 @@ Kojo\footnote{\url{http://www.kogics.net/sf:kojo}}, a programming
 learning environment for children. They have their own Scala-based DSL
 for programming in a visual environment, utilizing an embedded REPL
 for writing and executing commands. Figure \vref{fig:kojoss} shows a
-screen-shot of Kojo, with the embedded REPL in the bottom left window.
+screenshot of Kojo, with the embedded REPL in the bottom left window.
 
 \begin{figure}[h]
   \includegraphics[width=1.0\textwidth]{images/kojo_ss}
-  \caption{Screen-shot from Kojo, a programming learning environment with
+  \caption{Screenshot from Kojo, a programming learning environment with
     an embedded DSL-REPL.\label{fig:kojoss}}
 \end{figure}
 
@@ -3706,7 +3711,7 @@ IDEA being central contributors to developer effectivity. Plugins
 exist for all the three mentioned IDEs giving some support to all the
 languages used in this thesis. For example the Image Processing DSL
 was to a large extent implemented using the IntelliJ IDEA environment,
-with a Scala plugin (screen-shot shown in figure
+with a Scala plugin (screenshot shown in figure
 \vref{fig:intellijss}). A thorough comparison between the various
 alternative environments have not been carried out, but as a general
 comment it is interesting to see the difference between static and
@@ -3717,8 +3722,8 @@ refactoring).
 
 \begin{figure}[h]
   \includegraphics[width=1.0\textwidth]{images/intellij_ss}
-  \caption{Screen-shot from IntelliJ IDEA, an Integrated Development
-    Environment having good support for Scala.\label{fig:intellijss}}
+  \caption{Screenshot from IntelliJ IDEA, an IDE having good support
+    for Scala.\label{fig:intellijss}}
 \end{figure}
 
 \subsection{Command Line Tools}
@@ -3915,7 +3920,7 @@ in statically typed languages like Java and Scala.
 \section{Summary}
 
 DSLs on the JVM can be used in a variety of ways; as a library,
-script, directly in interpreter or even embedded with the
+script, directly in an interpreter or even embedded with the
 interpreter. All the languages studied, except Java, support some kind
 of interactive interpreter/REPL. This can be used to evaluate DSL code
 directly, without the need to set up a full environment with source
@@ -3935,7 +3940,7 @@ that is compiled first, compared to code being run on an interpreter,
 when it comes to error handling. Static languages have an advantage,
 in that they can discover type errors earlier than is the case with
 dynamic languages. Dynamic languages seem to rely on automated unit
-tests to a larger extend, to cope with the disadvantage of not knowing
+tests to a larger extent, to cope with the disadvantage of not knowing
 the types up front.
 
 \clearpage{\pagestyle{plain}\cleardoublepage}
@@ -3945,10 +3950,10 @@ the types up front.
 
 This chapter looks at the performance aspects of the various DSLs and
 host languages. The categories of languages are compared with regards
-to performance, and some example DSLs that depend on high throughput
-are implemented and analyzed. The chapter concludes with some key
-points to consider when dealing with DSLs that need to run as fast as
-possible on the JVM.
+to performance, and the image processing DSL example is analyzed with
+a focus on efficient implementation details. The final section of the
+chapter considers some key points when dealing with DSLs that need to
+run as fast as possible on the JVM.
 
 \section{Host Language -- Dynamic vs. Static Typing}
 
@@ -4709,7 +4714,7 @@ synthetic types and use of reflection-based mechanisms. This may
 change in future releases of Java as more native support for dynamic
 invocation is added to the JVM.
 
-Functional language provide an exciting new view on concurrency, with
+Functional languages provide an exciting new view on concurrency, with
 a focus on immutable data structures. Scala combines
 object-orientation with functional programming style to enable
 concurrency through a variety of mechanisms, such as actors and
@@ -4731,9 +4736,9 @@ best possible way.
 \chapter{Summary}
 \label{chp:summary}
 
-This chapter first provides a conclusion of the results found, and the
-work performed. Secondly a section suggesting future work based on the
-key findings is given.
+This final chapter first provides a conclusion of the work performed
+and the results found. It ends with a section suggesting future work
+based on some of the results found.
 
 \section{Conclusion}
 
@@ -4891,7 +4896,7 @@ implement without risks for deadlocks and other common problems when
 working with Java concurrency.
 
 A final note on performance is the support for GPU programming that is
-becoming available, even on the JVM. An example was shown were Scala
+becoming available, even on the JVM. An example was shown where Scala
 was used to add arrays of integers using the power of the GPU instead
 of the main processor. This is something that potentially can make a
 lot of software run faster, as most modern computers are equipped with
@@ -4915,7 +4920,7 @@ the following list:
 \item \textbf{Scala} -- Scala is fast, due to its static typing, and
   it has good abstractions for programming concurrency. The
   combination of object-orientation and functional programming brings
-  a whole familiy of new features to the JVM.
+  a whole family of new features to the JVM.
 \item \textbf{JRuby} -- Features specific for dynamic typing; dynamic
   metaprogramming, dynamic dispatch/method\_missing and open
   classes/monkey patching.
@@ -4946,8 +4951,9 @@ recommended.
     Combining DSLs & (x) & x & (x) & x & x & Image Analysis DSL \\
     Custom control structures & - & (x) & - & - & x & Modified host lang DSL \\
     Compiler error checking & x & x & - & - & - & Mission Critical DSL \\
+    Error handling abstractions & - & x & (x) & (x) & x & All \\
     Need interactive interpreter & - & x & x & x & x & All \\
-    Concice syntax & - & x & x & x & x & All \\
+    Concise syntax & - & x & x & x & x & All \\
     \hline
   \end{tabular*}
   \caption{Overview of tasks and suited programming languages.}
@@ -4968,19 +4974,20 @@ structures (implicit conversions in Scala, multimethods in Clojure or
 open classes in JRuby).
 
 Clojure seems like a good alternative for a number of different
-tasks. However, the only area where it is clearly better than the
-other languages seems in building custom control structures and
-possibly removing existing ones (modifications to the host
-language). Functional languages on the JVM seem to have had an uprise
-in popularity the last years (my personal opinion based on observed
-Internet activity), and Clojure provides the most ``pure'' functional
-option.
+tasks. Memoization support and type hints may make it more suited to
+create efficient code than the other dynamic languages. However, the
+only area where it is clearly better than the other languages seems in
+building custom control structures and possibly removing existing ones
+(modifications to the host language). Functional languages on the JVM
+seem to have had an uprise in popularity the last years (my personal
+opinion based on observed Internet activity), and Clojure provides the
+most ``pure'' functional option.
 
 The dynamic object-oriented languages (JRuby and Groovy) are best
 suited for building DSLs exploiting the capabilities of dynamic typing
 (dynamic metaprogramming, open classes and dynamic dispatching). The
 framework Ruby on Rails is a prime example of the possibilities these
-languages offer, examplifying a super-concise syntax not matched by
+languages offer, exemplifying a super-concise syntax not matched by
 any other languages. If you have a use for these dynamic mechanisms,
 and don't require compiler type errors or high-performance bytecode, I
 believe these languages are good alternatives to Java.
@@ -5049,7 +5056,8 @@ Clojure is an interesting language providing a more pure functional
 programming model than Scala on the JVM. It would be interesting
 investigating further using the functional capabilities of Clojure in
 implementing an image processing DSL similar to the one implemented in
-Scala in this thesis.
+Scala in this thesis. Although being a dynamic language, features such
+as memoization and type hints may make it efficient enough.
 
 \subsection{Implement a Complete Environment for Computationally Intensive Tasks}
 
@@ -5165,11 +5173,11 @@ and run the examples:
 % LocalWords:  rubyundefmethod hei cljredefcore cljbinding noprint buf cljjava
 % LocalWords:  dynlangprune invokedynamic linewidth scalastatsdsluse Kojo IDE
 % LocalWords:  kojoss refactoring effectivity IDEs intellijss jps jstat jstack
-% LocalWords:  javap unix sbt leiningen futurework packagetemplates Debasish
-% LocalWords:  Ghosh groovyhello nolol matlabimgproc scalaipsyn scalacompobj
+% LocalWords:  javap unix sbt leiningen futurework packagetemplates Debasish et
+% LocalWords:  Ghosh groovyhello nolol matlabimgproc scalaipsyn scalacompobj al
 % LocalWords:  scalaimgtraits javahibernate getMailingAddress getOrders mixins
 % LocalWords:  ManyToMany getRoles scalaimgsingleton javastaticimport rubyparam
-% LocalWords:  cljrelalg rubyvariabledefs scalabyname DoIntTimes javaforloop
+% LocalWords:  cljrelalg rubyvariabledefs scalabyname DoIntTimes javaforloop ok
 % LocalWords:  scalaipanonfunc cljmacro nanoTime rubymonkeypatch scalaipchart
 % LocalWords:  rubymonkeypatchshould rubymethodmissing iphistogram dataset mue
 % LocalWords:  DefaultCategoryDataset createShowWindow ChartFactory urlFor url
@@ -5181,5 +5189,11 @@ and run the examples:
 % LocalWords:  avgSimple Microsystems scalaintro MathTrait addNumbers selftype
 % LocalWords:  MathDoubler Selftype DoubleArray typeparameters els intMtx RGB
 % LocalWords:  doubleMtx DataType virtualtypes datatype RGBImage scalaipstats
-% LocalWords:  createHistogram scalacompilerplugin namespaces cljundefcore
-% LocalWords:  unmap functionalmetaprogramming pointcut
+% LocalWords:  createHistogram scalacompilerplugin namespaces cljundefcore un
+% LocalWords:  unmap functionalmetaprogramming pointcut Atkey Bravenboer Visser
+% LocalWords:  Hofer groovyclosure squareNumbers clojurefibonacci versa alot cd
+% LocalWords:  halfOrSome downloadingexamples scalatraitsorder StartSyntax lang
+% LocalWords:  BodySyntax EndSyntax doSomething doSomethingElse javastaticsort
+% LocalWords:  scalaoperator scalatest scalaapply scalaapplyfactory scalafor
+% LocalWords:  datastructure anonymized Czarnecki screenshot taskslangs uprise
+% LocalWords:  Online online sourcecode mvn
